@@ -25,9 +25,6 @@ public enum Axis {
 	
 	/**
 	 * Gets the axis the location faces
-	 * 
-	 * @param loc
-	 * @return Axis
 	 */
 	public static Axis getAxis(Location loc) {
 		Axis[]  axis = new Axis[] {Axis.SOUTH, Axis.WEST, Axis.NORTH, Axis.EAST};
@@ -44,7 +41,6 @@ public enum Axis {
 	 * North = South
 	 * South = North
 	 * 
-	 * @param axis
 	 * @return Opposite of axis
 	 */
 	public static Axis opposite(Axis axis) {
@@ -77,10 +73,7 @@ public enum Axis {
 	
 	/**
 	 * Rotates a point around the center by a number of degrees.
-	 * 
-	 * @param center
-	 * @param point
-	 * @param degrees
+	 *
 	 * @return Rotated location
 	 */
 	public static Location rotateRight(Location center, Location point, float degrees) {

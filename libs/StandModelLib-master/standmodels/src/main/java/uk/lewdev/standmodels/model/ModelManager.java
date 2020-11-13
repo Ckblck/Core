@@ -2,6 +2,7 @@ package uk.lewdev.standmodels.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,8 +11,8 @@ public class ModelManager {
 
 	private final JavaPlugin plugin;
 
-	private List<Model> staticModels = new ArrayList<Model>();
-	private List<AnimatedModel> animatedModels = new ArrayList<AnimatedModel>();
+	private final List<Model> staticModels = new ArrayList<Model>();
+	private final List<AnimatedModel> animatedModels = new ArrayList<AnimatedModel>();
 
 	public ModelManager(JavaPlugin plugin) {
 		this.plugin = plugin;
@@ -41,7 +42,7 @@ public class ModelManager {
 
 	public void removeModel(Model model) {
 		if (model instanceof AnimatedModel) {
-			this.animatedModels.remove((AnimatedModel) model);
+			this.animatedModels.remove(model);
 		} else {
 			this.staticModels.remove(model);
 		}
@@ -52,22 +53,22 @@ public class ModelManager {
 	/**
 	 * Get a Model a ArmorStand belongs to. Can return static or animated model.
 	 * 
-	 * @param stand
 	 * @return Model | Null if stand doesn't belong to a model
 	 */
-	public Model getModel(ArmorStand stand) {
+	public Optional<Model> getModel(ArmorStand stand) {
 		for (Model m : this.staticModels) {
 			if (m.isStandPart(stand)) {
-				return m;
+				return Optional.of(m);
 			}
 		}
 		
 		for (Model m : this.animatedModels) {
 			if (m.isStandPart(stand)) {
-				return m;
+				return Optional.of(m);
 			}
 		}
-		return null;
+
+		return Optional.empty();
 	}
 
 	/**

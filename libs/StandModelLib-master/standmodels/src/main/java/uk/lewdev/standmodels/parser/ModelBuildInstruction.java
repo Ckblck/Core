@@ -9,7 +9,6 @@ import org.bukkit.util.EulerAngle;
 import uk.lewdev.standmodels.utils.Axis;
 
 public class ModelBuildInstruction {
-
 	public static final String MODEL_PART_NAME = "StandModelLib-Model-Part";
 
 	private double relativeX;

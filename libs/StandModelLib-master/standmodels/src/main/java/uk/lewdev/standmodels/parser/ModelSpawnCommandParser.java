@@ -21,10 +21,8 @@ import uk.lewdev.standmodels.utils.UMaterial;
  * use Regex to extract the data we need through out the process.
  */
 public class ModelSpawnCommandParser {
-
-	private String command;
-
-	List<ModelBuildInstruction> instructions;
+	private final String command;
+	private final List<ModelBuildInstruction> instructions;
 
 	public ModelSpawnCommandParser(String command) {
 		this.command = command;
@@ -42,7 +40,7 @@ public class ModelSpawnCommandParser {
 		// Selects the commands out of the string, which would of been inserted into
 		// command blocks.
 
-		Matcher m = Pattern.compile("\\\".*?\\\"").matcher(this.command);
+		Matcher m = Pattern.compile("\".*?\"").matcher(this.command);
 
 		while (m.find()) {
 			String subCmd = m.group();
@@ -124,50 +122,47 @@ public class ModelSpawnCommandParser {
 		// Head:[-60f,0f,0f],Leg:[0f,0f,0f]
 		String[] poses = data.split(firstLevelSplit(','));
 
-		for (int i = 0; i < poses.length; i++) {
+		for (String pose : poses) {
 			// Format= Head:[-60f,0f,0f]
 
-			String[] poseArgs = poses[i].split(":");
+			String[] poseArgs = pose.split(":");
 
 			String standPart = poseArgs[0].trim(); // Format= Head
 
 			String anglesStr = removeAll(poseArgs[1], '[', ']', 'f'); // Format= -60f,0f,0f
 
 			String[] angleStrArray = anglesStr.split(","); // We now have individual floats as strings
-			
+
 			double x = Double.parseDouble(angleStrArray[0]);
 			double y = Double.parseDouble(angleStrArray[1]);
 			double z = Double.parseDouble(angleStrArray[2]);
-			
+
 			//Minecraft uses degrees, where as Spigot uses radians.
 			x = Math.toRadians(x);
 			y = Math.toRadians(y);
 			z = Math.toRadians(z);
 
-			EulerAngle angle = new EulerAngle(x,y,z);
-			
-			if (standPart.equals("Head")) {
-				ins.setHeadAngle(angle);
-			}
+			EulerAngle angle = new EulerAngle(x, y, z);
 
-			else if (standPart.equals("Body")) {
-				ins.setBodyAngle(angle);
-			}
-
-			else if (standPart.equals("LeftArm")) {
-				ins.setLeftArmAngle(angle);
-			}
-
-			else if (standPart.equals("RightArm")) {
-				ins.setRightArmAngle(angle);
-			}
-
-			else if (standPart.equals("LeftLeg")) {
-				ins.setLeftLegAngle(angle);
-			}
-
-			else if (standPart.equals("RightLeg")) {
-				ins.setRightLegAngle(angle);
+			switch (standPart) {
+				case "Head":
+					ins.setHeadAngle(angle);
+					break;
+				case "Body":
+					ins.setBodyAngle(angle);
+					break;
+				case "LeftArm":
+					ins.setLeftArmAngle(angle);
+					break;
+				case "RightArm":
+					ins.setRightArmAngle(angle);
+					break;
+				case "LeftLeg":
+					ins.setLeftLegAngle(angle);
+					break;
+				case "RightLeg":
+					ins.setRightLegAngle(angle);
+					break;
 			}
 		}
 	}
@@ -193,12 +188,16 @@ public class ModelSpawnCommandParser {
 					String attName = attribute.split(":")[0].trim();
 					String attValue = attribute.split(":")[1].trim();
 
-					if (attName.equals("id")) {
-						matName = attValue;
-					} else if (attName.equals("Damage")) {
-						mData = Byte.parseByte(attValue);
-					} else if (attName.equals("Count")) {
-						amount = Integer.parseInt(attValue);
+					switch (attName) {
+						case "id":
+							matName = attValue;
+							break;
+						case "Damage":
+							mData = Byte.parseByte(attValue);
+							break;
+						case "Count":
+							amount = Integer.parseInt(attValue);
+							break;
 					}
 				}
 				
@@ -225,14 +224,17 @@ public class ModelSpawnCommandParser {
 	}
 
 	private String removeAll(String str, char... cs) {
-		String regex = "";
+		StringBuilder regex = new StringBuilder();
+
 		for (char c : cs) {
-			if (!regex.isEmpty()) {
-				regex += "|";
+			if (regex.length() > 0) {
+				regex.append("|");
 			}
-			regex += Pattern.quote(c + "");
+			regex.append(Pattern.quote(c + ""));
 		}
-		str = str.replaceAll(regex, "");
+
+		str = str.replaceAll(regex.toString(), "");
+
 		return str;
 	}
 }

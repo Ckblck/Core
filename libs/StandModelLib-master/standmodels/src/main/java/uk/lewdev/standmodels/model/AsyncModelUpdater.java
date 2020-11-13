@@ -9,8 +9,8 @@ import uk.lewdev.standmodels.StandModelLib;
 
 public class AsyncModelUpdater extends BukkitRunnable {
 	
-	private StandModelLib lib;
-	private ModelManager modelManager;
+	private final StandModelLib lib;
+	private final ModelManager modelManager;
 	protected boolean inTick = false;
 	
 	public AsyncModelUpdater(StandModelLib lib, long updateTickSpeed) {
@@ -21,7 +21,7 @@ public class AsyncModelUpdater extends BukkitRunnable {
 
 	@Override
 	public void run() {
-		if (this.inTick) { return; }
+		if (this.inTick) return;
 
 		this.inTick = true;
 		
@@ -60,8 +60,8 @@ public class AsyncModelUpdater extends BukkitRunnable {
 
 		// Swap back to main thread to update entities
 		Bukkit.getScheduler().runTask(lib.getPlugin(), () -> {
-			this.modelManager.getStaticModels().forEach(model -> model.updateTick());
-			this.modelManager.getAnimatedModels().forEach(model -> model.updateTick());
+			this.modelManager.getStaticModels().forEach(Model::updateTick);
+			this.modelManager.getAnimatedModels().forEach(Model::updateTick);
 			
 			this.inTick = false;
 		});

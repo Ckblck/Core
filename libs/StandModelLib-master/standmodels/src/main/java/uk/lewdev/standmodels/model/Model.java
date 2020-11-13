@@ -2,31 +2,27 @@ package uk.lewdev.standmodels.model;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 
+import org.bukkit.entity.Entity;
 import uk.lewdev.standmodels.parser.ModelBuildInstruction;
 import uk.lewdev.standmodels.utils.Axis;
 
 public class Model {
 
 	private Location center;
-
 	private float rotation;
-	
 	private double renderDistance;
-
-	private long lastUpdate = System.currentTimeMillis(); // TimeMillis
-
-	private final List<ModelBuildInstruction> instructions;
-	private HashSet<ArmorStand> stands = new HashSet<>();
-
+	private long lastUpdate = System.currentTimeMillis();
+	private final Set<ModelBuildInstruction> instructions;
+	private final Set<ArmorStand> stands = new HashSet<>();
 	private boolean playerInRenderDistance = false;
+	private final boolean itemsTakeable;
 	
-	private boolean itemsTakeable;
-	
-	public Model(List<ModelBuildInstruction> ins, Location center, Axis facing, Axis desired,
+	public Model(Set<ModelBuildInstruction> ins, Location center, Axis facing, Axis desired,
 			double renderDistance, boolean itemsTakeable) {
 		this.center = center;
 		this.instructions = ins;
@@ -66,10 +62,7 @@ public class Model {
 		double yDiff = loc.getY() - this.center.getY();
 		double zDiff = loc.getZ() - this.center.getZ();
 		
-		this.stands.stream().forEach(stand -> {
-			stand.teleport(stand.getLocation().add(xDiff, yDiff, zDiff));
-		});
-		
+		this.stands.forEach(stand -> stand.teleport(stand.getLocation().add(xDiff, yDiff, zDiff)));
 		this.center = loc;
 	}
 
@@ -123,7 +116,7 @@ public class Model {
 			return;
 		}
 		
-		this.stands.forEach(stand -> stand.remove());
+		this.stands.forEach(Entity::remove);
 		this.stands.clear();
 	}
 }

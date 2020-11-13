@@ -2,6 +2,7 @@ package uk.lewdev.standmodels.model;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -20,9 +21,9 @@ public class AnimatedModel extends Model {
 
 	private double animationDistance;
 	
-	private HashSet<Player> playersInAnimationDistance = new HashSet<>();
+	private final Set<Player> playersInAnimationDistance = new HashSet<>();
 
-	public AnimatedModel(List<ModelBuildInstruction> ins, Location center, Axis facing, Axis desired,
+	public AnimatedModel(Set<ModelBuildInstruction> ins, Location center, Axis facing, Axis desired,
 			double renderDistance, double animationDistance, boolean itemsTakeable) {
 		super(ins, center, facing, desired, renderDistance, itemsTakeable);
 
@@ -34,7 +35,7 @@ public class AnimatedModel extends Model {
 	 * This method will automatically be called if a player is within the animation distance.
 	 */
 	protected void doAnimationTick() {
-		return;
+		// Override
 	}
 
 	public final double getAnimationDistance() {
@@ -49,7 +50,7 @@ public class AnimatedModel extends Model {
 		this.playersInAnimationDistance.add(player);
 	}
 	
-	protected final HashSet<Player> getPlayersInAnimDistance() {
+	protected final Set<Player> getPlayersInAnimDistance() {
 		return this.playersInAnimationDistance;
 	}
 	
