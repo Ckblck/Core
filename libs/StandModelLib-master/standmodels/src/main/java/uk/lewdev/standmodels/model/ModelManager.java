@@ -11,8 +11,8 @@ public class ModelManager {
 
 	private final JavaPlugin plugin;
 
-	private final List<Model> staticModels = new ArrayList<Model>();
-	private final List<AnimatedModel> animatedModels = new ArrayList<AnimatedModel>();
+	private final List<Model> staticModels = new ArrayList<>();
+	private final List<AnimatedModel> animatedModels = new ArrayList<>();
 
 	public ModelManager(JavaPlugin plugin) {
 		this.plugin = plugin;

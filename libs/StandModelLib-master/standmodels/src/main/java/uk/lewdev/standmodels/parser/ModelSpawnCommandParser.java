@@ -1,7 +1,7 @@
 package uk.lewdev.standmodels.parser;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,26 +21,27 @@ import uk.lewdev.standmodels.utils.UMaterial;
  * use Regex to extract the data we need through out the process.
  */
 public class ModelSpawnCommandParser {
+	private static final Pattern PATTERN = Pattern.compile("\".*?\"");
 	private final String command;
-	private final List<ModelBuildInstruction> instructions;
+	private final Set<ModelBuildInstruction> instructions;
 
 	public ModelSpawnCommandParser(String command) {
 		this.command = command;
 		this.instructions = this.parse();
 	}
 
-	public List<ModelBuildInstruction> getInstructions() {
+	public Set<ModelBuildInstruction> getInstructions() {
 		return this.instructions;
 	}
 
-	private List<ModelBuildInstruction> parse() {
+	private Set<ModelBuildInstruction> parse() {
 
-		List<ModelBuildInstruction> instructions = new ArrayList<>();
+		Set<ModelBuildInstruction> instructions = new HashSet<>();
 
 		// Selects the commands out of the string, which would of been inserted into
 		// command blocks.
 
-		Matcher m = Pattern.compile("\".*?\"").matcher(this.command);
+		Matcher m = PATTERN.matcher(this.command);
 
 		while (m.find()) {
 			String subCmd = m.group();
