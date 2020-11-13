@@ -1,5 +1,7 @@
 package com.oldust.core;
 
+import com.oldust.core.inherited.plugins.InheritedPluginsManager;
+import com.oldust.core.models.ModelPlugin;
 import com.oldust.core.utils.CUtils;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -9,13 +11,16 @@ public class Core extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        CUtils.log("Core", "Inicializando core...");
+        CUtils.inform("Core", "Inicializando core...");
         instance = this;
+
+        InheritedPluginsManager.loadInheritedPlugin(ModelPlugin.class);
+        InheritedPluginsManager.onEnable();
     }
 
     @Override
     public void onDisable() {
-
+        InheritedPluginsManager.onDisable();
     }
 
 }

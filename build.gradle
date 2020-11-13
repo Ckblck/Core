@@ -7,11 +7,10 @@ version '1.0-DEVELOPMENT'
 
 repositories {
     mavenCentral()
-    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.16.4-R0.1-SNAPSHOT'
+    compileOnly fileTree(dir: 'libs', include: 'spigot-1.16.4.jar')
 
     compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
@@ -23,4 +22,12 @@ dependencies {
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+}
+
+sourceSets {
+    libs {
+        java {
+            srcDir("libs/StandModelLib-master/standmodels/src/main/java")
+        }
+    }
 }
