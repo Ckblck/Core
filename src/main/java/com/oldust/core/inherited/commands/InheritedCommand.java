@@ -4,24 +4,28 @@ import com.oldust.core.Core;
 import com.oldust.core.inherited.plugins.Plugin;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
+import lombok.Getter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public abstract class InheritedCommand extends Command {
+public abstract class InheritedCommand<T extends Plugin> extends Command {
     private final BiConsumer<CommandSender, String[]> commandConsumer;
+    @Getter private final T plugin;
 
-    public InheritedCommand(Plugin plugin, String name, @Nullable List<String> aliases) {
+    public InheritedCommand(T plugin, String name, @Nullable List<String> aliases) {
         super(name);
 
         Core core = Core.getInstance();
         core.getServer().getCommandMap().register(plugin.getName(), this);
 
-        commandConsumer = onCommand();
+        this.commandConsumer = onCommand();
+        this.plugin = plugin;
 
         if (aliases != null)
             setAliases(aliases);
@@ -42,5 +46,15 @@ public abstract class InheritedCommand extends Command {
     }
 
     public abstract BiConsumer<CommandSender, String[]> onCommand();
+
+    public boolean isNotPlayer(CommandSender sender) {
+        boolean notPlayer = !(sender instanceof Player);
+
+        if (notPlayer) {
+            CUtils.msg(sender, Lang.MUST_BE_PLAYER);
+        }
+
+        return notPlayer;
+    }
 
 }

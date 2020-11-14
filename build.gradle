@@ -18,10 +18,6 @@ tasks.withType(JavaCompile) {
 repositories {
     mavenCentral()
     maven {
-        name 'spigot-repo'
-        url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-    }
-    maven {
         name 'md-5-repo'
         url 'https://repo.md-5.net/content/repositories/snapshots/'
     }
@@ -43,14 +39,9 @@ dependencies {
 
     implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.16'
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.16'
-}
 
-sourceSets {
-    libs {
-        java {
-            srcDir("libraries/StandModelLib/standmodels/src/main/java")
-        }
-    }
+    compile fileTree(dir: 'libraries', include: 'StandModelLib.jar')
+    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
 }
 
 shadowJar {
