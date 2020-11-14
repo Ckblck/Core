@@ -23,6 +23,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import uk.lewdev.standmodels.events.custom.ModelInteractEvent;
 import uk.lewdev.standmodels.model.Model;
 import uk.lewdev.standmodels.model.ModelManager;
 import uk.lewdev.standmodels.parser.ModelBuildInstruction;
@@ -90,7 +91,7 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
                     CUtils.msg(sender, Lang.ERROR_COLOR + "You are not modifying any models!");
                 } else {
                     InteractivePanel panel = playersModifying.remove(uuid);
-                    panel.exit((Player) sender);
+                    if (panel != null) panel.exit((Player) sender);
 
                     CUtils.msg(sender, Lang.SUCCESS_COLOR + "Exited from the modification panel.");
                 }
@@ -100,27 +101,21 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
         };
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onInteract(PlayerInteractAtEntityEvent e) {
-        UUID uuid = e.getPlayer().getUniqueId();
-        Entity entity = e.getRightClicked();
+    @EventHandler
+    public void onInteract(ModelInteractEvent e) {
+        Player player = e.getInteractor();
+        UUID uuid = e.getInteractor().getUniqueId();
 
-        if (!playersModifying.containsKey(uuid)
-                || entity.getType() != EntityType.ARMOR_STAND
-                || !entity.getName().equals(ModelBuildInstruction.MODEL_PART_NAME)) return;
+        if (!playersModifying.containsKey(uuid)) return;
 
-        Player player = e.getPlayer();
         boolean isEditing = playersModifying.get(uuid) != null;
 
         if (isEditing) return;
 
-        ModelManager modelManager = getPlugin().getStandModelLib().getModelManager();
-        Optional<Model> model = modelManager.getModel((ArmorStand) entity);
+        Model model = e.getModel();
 
-        model.ifPresentOrElse(foundModel -> {
-            InteractivePanel panel = createPanel(player, foundModel);
-            playersModifying.replace(uuid, panel);
-        }, () -> CUtils.msg(player, Lang.ERROR_COLOR + "Could not identify such model."));
+        InteractivePanel panel = createPanel(player, model);
+        playersModifying.replace(uuid, panel);
     }
 
     @EventHandler
