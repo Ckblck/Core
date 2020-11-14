@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import uk.lewdev.standmodels.exceptions.MaterialMismatchException;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
@@ -25,7 +26,7 @@ public class ModelSpawnCommandParser {
 	private final String command;
 	private final Set<ModelBuildInstruction> instructions;
 
-	public ModelSpawnCommandParser(String command) {
+	public ModelSpawnCommandParser(String command) throws MaterialMismatchException {
 		this.command = command;
 		this.instructions = this.parse();
 	}
@@ -34,8 +35,7 @@ public class ModelSpawnCommandParser {
 		return this.instructions;
 	}
 
-	private Set<ModelBuildInstruction> parse() {
-
+	private Set<ModelBuildInstruction> parse() throws MaterialMismatchException {
 		Set<ModelBuildInstruction> instructions = new HashSet<>();
 
 		// Selects the commands out of the string, which would of been inserted into
@@ -79,7 +79,7 @@ public class ModelSpawnCommandParser {
 		return instructions;
 	}
 
-	private void parseEntityData(String entityData, ModelBuildInstruction ins) {
+	private void parseEntityData(String entityData, ModelBuildInstruction ins) throws MaterialMismatchException {
 		if (entityData.startsWith("{")) {
 			entityData = entityData.replaceFirst("\\{", "");
 		}
@@ -168,7 +168,10 @@ public class ModelSpawnCommandParser {
 		}
 	}
 
-	private void parseArmourData(String data, ModelBuildInstruction ins) {
+	private void parseArmourData(String data, ModelBuildInstruction ins) throws MaterialMismatchException {
+		MaterialMismatchException exception = new MaterialMismatchException();
+		boolean throwException = false;
+
 		data = removeAll(data, '[', ']');
 
 		String[] armourPartData = data.split(firstLevelSplit(','));
@@ -204,13 +207,20 @@ public class ModelSpawnCommandParser {
 				
 				@SuppressWarnings("deprecation")
 				ItemStack item = UMaterial.valueOf(matName, mData);
-				item.setAmount(amount);
-				armour[i] = item;
+				if (item != null) {
+					item.setAmount(amount);
+					armour[i] = item;
+				} else {
+					exception.addMismatch(matName);
+					throwException = true;
+				}
 			}
 			i++;
 		}
 
 		ins.setArmour(armour);
+
+		if (throwException) throw exception;
 	}
 
 	/**

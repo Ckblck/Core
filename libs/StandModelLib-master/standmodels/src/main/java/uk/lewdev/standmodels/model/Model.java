@@ -1,7 +1,6 @@
 package uk.lewdev.standmodels.model;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Location;
@@ -30,6 +29,7 @@ public class Model {
 		this.itemsTakeable = itemsTakeable;
 
 		this.rotation = Axis.calcRightRotationAngle(facing, desired);
+		render();
 	}
 	
 	public final boolean isRendered() {
@@ -103,7 +103,7 @@ public class Model {
 		}
 	}
 
-	protected final void render() {
+	public final void render() {
 		if (isRendered()) {
 			return;
 		}

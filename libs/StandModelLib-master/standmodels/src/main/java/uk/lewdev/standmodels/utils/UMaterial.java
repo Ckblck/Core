@@ -243,7 +243,7 @@ public enum UMaterial implements Versionable {
     COBWEB("WEB", null, null, null, null, "COBWEB"),
     COCOA("COCOA"),
     COCOA_BEANS(3, "INK_SACK", null, null, null, null, "COCOA_BEANS"),
-    COD(2, "RAW_FISH", null, null, null, null, "COD"),
+    COD(2, "RAW_FISH", null, null, null, null, "COD", "FISH"),
     COD_BUCKET(null, null, null, null, null, null, "COD_BUCKET"),
     COD_SPAWN_EGG(null, null, null, null, null, null, "COD_SPAWN_EGG"),
     COMMAND_BLOCK("COMMAND", null, null, null, null, "COMMAND_BLOCK"),
@@ -854,11 +854,11 @@ public enum UMaterial implements Versionable {
     OAK_FENCE_GATE("FENCE_GATE", null, null, null, null, "OAK_FENCE_GATE"),
     OAK_LEAVES("LEAVES", null, null, null, null, "OAK_LEAVES"),
     OAK_LOG("LOG", null, null, null, null, "OAK_LOG"),
-    OAK_PLANKS("WOOD", null, null, null, null, "OAK_PLANKS"),
+    OAK_PLANKS("WOOD", null, null, null, null, "OAK_PLANKS", "DOUBLE_WOODEN_SLAB"),
     OAK_PRESSURE_PLATE("WOOD_PLATE", null, null, null, null, "OAK_PRESSURE_PLATE"),
     OAK_SAPLING("SAPLING", null, null, null, null, "OAK_SAPLING"),
     OAK_SIGN("SIGN", null, null, null, null, null, "OAK_SIGN"),
-    OAK_SLAB("WOOD_STEP", null, null, null, null, "OAK_SLAB"),
+    OAK_SLAB("WOOD_STEP", null, null, null, null, "OAK_SLAB", "WOODEN_SLAB"),
     OAK_STAIRS("WOOD_STAIRS", null, null, null, null, "OAK_STAIRS"),
     OAK_TRAPDOOR("TRAP_DOOR", null, null, null, null, "OAK_TRAPDOOR"),
     OAK_WALL_SIGN("WALL_SIGN", null, null, null, null, null, "OAK_WALL_SIGN"),
@@ -1504,7 +1504,7 @@ public enum UMaterial implements Versionable {
         for(UMaterial u : values()) {
             if(u.getData() == data) {
                 for(String n : u.names) {
-                    if(n != null && n.equals(name)) {
+                    if(n != null && n.equalsIgnoreCase(name)) {
                         final ItemStack i = u.getItemStack();
                         inMemory.put(name+data, i);
                         return i;

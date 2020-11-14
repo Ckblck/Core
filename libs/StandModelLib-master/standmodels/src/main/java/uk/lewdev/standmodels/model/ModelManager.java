@@ -53,7 +53,7 @@ public class ModelManager {
 	/**
 	 * Get a Model a ArmorStand belongs to. Can return static or animated model.
 	 * 
-	 * @return Model | Null if stand doesn't belong to a model
+	 * @return Model
 	 */
 	public Optional<Model> getModel(ArmorStand stand) {
 		for (Model m : this.staticModels) {
