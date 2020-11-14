@@ -1,8 +1,15 @@
 package com.oldust.core.utils;
 
+import com.oldust.core.Core;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CUtils {
 
@@ -26,6 +33,26 @@ public class CUtils {
 
     public static String color(String text) {
         return text.replace("&", "§");
+    }
+
+    public static void registerEvents(Listener listener) {
+        Core.getInstance().getServer().getPluginManager().registerEvents(listener, Core.getInstance());
+    }
+
+    public static void unregisterEvents(Listener listener) {
+        HandlerList.unregisterAll(listener);
+    }
+
+    public static List<String> colorizeList(List<String> list) {
+        return list.stream()
+                .map(line -> line = color(line))
+                .collect(Collectors.toList());
+    }
+
+    public static String[] colorizeArray(String[] array) {
+        return Arrays.stream(array)
+                .map(CUtils::color)
+                .toArray(String[]::new);
     }
 
 }

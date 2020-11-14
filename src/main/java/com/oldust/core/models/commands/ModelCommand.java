@@ -53,18 +53,23 @@ public class ModelCommand extends InheritedCommand<ModelPlugin> {
 
             try {
                 Set<ModelBuildInstruction> instructions = LOADER.getInstructions(fileName);
-                Location location = player.getLocation().getBlock().getLocation();
-                Model model = new Model(instructions, location, Axis.getAxis(player.getLocation()), Axis.SOUTH, 15, false);
+                Location playerLocation = player.getLocation();
+                Location location = playerLocation.getBlock().getLocation().clone().add(0.5, 0, 0.5);
+                Axis axis = Axis.getAxis(playerLocation);
+
+                Model model = new Model(instructions, location, Axis.WEST, axis, 15, false);
 
                 getPlugin().getModelManager().spawnModel(model);
                 model.render();
+
+                getPlugin().getModelModifyCommand().createPanel(player, model);
             } catch (NoSuchFileException e) {
                 CUtils.msg(sender, Lang.ERROR_COLOR + "That file does not exist.");
             } catch (IllegalArgumentException e) {
                 CUtils.msg(sender, Lang.ERROR_COLOR + "The file does not contain any readable model.");
             } catch (MaterialMismatchException e) {
                 CUtils.msg(sender, Lang.ERROR_COLOR + "There is a material mismatch in the model provided. Please contact a developer.");
-                e.getMismatched().forEach(mismatch -> CUtils.msg(sender, ChatColor.of("#6e6e6e") + "  - " + mismatch + " does not exist in the material's table."));
+                e.getMismatched().forEach(mismatch -> CUtils.msg(sender, ChatColor.of("#6e6e6e") + "  - " + mismatch + " does not exist in the materials table."));
             }
 
         };
