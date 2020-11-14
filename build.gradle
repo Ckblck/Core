@@ -1,33 +1,61 @@
 plugins {
-    id 'java'
+    id 'java-library'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 group 'com.oldust'
-version '1.0-DEVELOPMENT'
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    compileOnly fileTree(dir: 'libs', include: 'spigot-1.16.4.jar')
-
-    compileOnly 'org.projectlombok:lombok:1.18.16'
-    annotationProcessor 'org.projectlombok:lombok:1.18.16'
-
-    testCompileOnly 'org.projectlombok:lombok:1.18.16'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
-}
+version '1.0-SNAPSHOT'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 }
 
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name 'spigot-repo'
+        url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+    maven {
+        name 'md-5-repo'
+        url 'https://repo.md-5.net/content/repositories/snapshots/'
+    }
+    maven {
+        name 'sonatype-repo'
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+    maven {
+        name 'papermc-repo'
+        url 'https://papermc.io/repo/repository/maven-public'
+    }
+}
+
+dependencies {
+    api group: 'com.zaxxer', name: 'HikariCP', version: '3.4.5'
+
+    implementation group: 'org.jetbrains', name: 'annotations', version: '19.0.0'
+    implementation group: 'com.destroystokyo.paper', name: 'paper-api', version: '1.16.4-R0.1-SNAPSHOT'
+
+    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.16'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.16'
+}
+
 sourceSets {
     libs {
         java {
-            srcDir("libs/StandModelLib-master/standmodels/src/main/java")
+            srcDir("libraries/StandModelLib/standmodels/src/main/java")
         }
     }
 }
+
+shadowJar {
+    project.configurations.api.canBeResolved = true
+    configurations = [project.configurations.api]
+}
+build.dependsOn shadowJar
+
