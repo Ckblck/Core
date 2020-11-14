@@ -6,10 +6,10 @@ import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 public abstract class InheritedCommand extends Command {
@@ -19,17 +19,16 @@ public abstract class InheritedCommand extends Command {
         super(name);
 
         Core core = Core.getInstance();
-        CraftServer server = (CraftServer) core.getServer();
+        core.getServer().getCommandMap().register(plugin.getName(), this);
 
-        server.getCommandMap().register(plugin.getName(), this);
         commandConsumer = onCommand();
 
         if (aliases != null)
-            core.getCommand(name).setAliases(aliases);
+            setAliases(aliases);
     }
 
     @Override
-    public boolean execute(CommandSender sender, String label, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         try {
             commandConsumer.accept(sender, args);
         } catch (Throwable t) {

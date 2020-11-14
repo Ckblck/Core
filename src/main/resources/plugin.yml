@@ -1,6 +1,7 @@
-main: com.oldust.core.Core
 name: OldustCore
-version: 1.0.0-DEVELOPMENT
+main: com.oldust.core.Core
+description: A core made for the Oldust server, containing inner plugins that represents server features
+version: 1.0.0
 api-version: 1.16
-website: oldust.com
-authors: [Fadest, Rektb, Cookieblack]
+website: https://oldust.com
+authors: [ Fadest, Rektb, Cookieblack ]
