@@ -57,9 +57,9 @@ public class ModelCommand extends InheritedCommand<ModelPlugin> {
                 Location location = playerLocation.getBlock().getLocation().clone().add(0.5, 0, 0.5);
                 Axis axis = Axis.getAxis(playerLocation);
 
-                Model model = new Model(instructions, location, Axis.WEST, axis, 15, false);
+                Model model = new Model(instructions, location, Axis.WEST, axis, 15);
 
-                getPlugin().getModelManager().spawnModel(model);
+                getPlugin().getStandModelLib().getModelManager().spawnModel(model);
                 model.render();
 
                 getPlugin().getModelModifyCommand().createPanel(player, model);

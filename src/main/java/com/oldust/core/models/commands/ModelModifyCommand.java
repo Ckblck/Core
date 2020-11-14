@@ -7,6 +7,7 @@ import com.oldust.core.utils.ItemBuilder;
 import com.oldust.core.utils.Lang;
 import com.oldust.core.utils.interactive.InteractivePanel;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -14,9 +15,11 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -111,7 +114,7 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
 
         if (isEditing) return;
 
-        ModelManager modelManager = getPlugin().getModelManager();
+        ModelManager modelManager = getPlugin().getStandModelLib().getModelManager();
         Optional<Model> model = modelManager.getModel((ArmorStand) entity);
 
         model.ifPresentOrElse(foundModel -> {
@@ -143,7 +146,7 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
         interactivePanel.add(5, ROTATE_PLUS_5, (click) -> model.rotate(5));
 
         interactivePanel.add(7, REMOVE, (click) -> {
-            getPlugin().getModelManager().removeModel(model);
+            getPlugin().getStandModelLib().getModelManager().removeModel(model);
             playersModifying.remove(player.getUniqueId());
             interactivePanel.exit(player);
         });
