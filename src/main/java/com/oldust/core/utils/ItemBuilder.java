@@ -1,8 +1,5 @@
 package com.oldust.core.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -13,6 +10,9 @@ import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemBuilder {
 
@@ -30,6 +30,11 @@ public class ItemBuilder {
         return stack.getItemMeta();
     }
 
+    public ItemBuilder setItemMeta(ItemMeta meta) {
+        stack.setItemMeta(meta);
+        return this;
+    }
+
     public ItemBuilder setColor(Color color) {
         LeatherArmorMeta meta = (LeatherArmorMeta) stack.getItemMeta();
         meta.setColor(color);
@@ -37,7 +42,7 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setGlow (boolean glow) {
+    public ItemBuilder setGlow(boolean glow) {
         if (glow) {
             addEnchant(Enchantment.KNOCKBACK, 1);
             addItemFlag(ItemFlag.HIDE_ENCHANTS);
@@ -50,14 +55,14 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setUnbreakable (boolean unbreakable) {
+    public ItemBuilder setUnbreakable(boolean unbreakable) {
         ItemMeta meta = stack.getItemMeta();
         meta.setUnbreakable(unbreakable);
         stack.setItemMeta(meta);
         return this;
     }
 
-    public ItemBuilder setBannerColor (DyeColor color) {
+    public ItemBuilder setBannerColor(DyeColor color) {
         BannerMeta meta = (BannerMeta) stack.getItemMeta();
         meta.setBaseColor(color);
         setItemMeta(meta);
@@ -66,11 +71,6 @@ public class ItemBuilder {
 
     public ItemBuilder setAmount(int amount) {
         stack.setAmount(amount);
-        return this;
-    }
-
-    public ItemBuilder setItemMeta(ItemMeta meta) {
-        stack.setItemMeta(meta);
         return this;
     }
 
@@ -88,7 +88,7 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setItemStack (ItemStack stack) {
+    public ItemBuilder setItemStack(ItemStack stack) {
         this.stack = stack;
         return this;
     }

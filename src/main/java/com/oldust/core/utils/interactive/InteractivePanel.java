@@ -35,7 +35,7 @@ public class InteractivePanel implements Listener {
         this.previousInventory = player.getInventory().getContents();
     }
 
-    @EventHandler (priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onDeath(PlayerDeathEvent e) {
         if (!player.equals(e.getEntity().getUniqueId())) return;
 
@@ -99,8 +99,8 @@ public class InteractivePanel implements Listener {
      * Agrega un nuevo item al cual
      * el jugador puede interactuar.
      *
-     * @param slot slot en el cual el item se colocará
-     * @param item item que el jugador deberá presionar
+     * @param slot     slot en el cual el item se colocará
+     * @param item     item que el jugador deberá presionar
      * @param consumer consumer que se ejecutará cada vez
      *                 que el jugador interactúe.
      */

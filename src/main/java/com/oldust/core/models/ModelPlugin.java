@@ -24,6 +24,7 @@ public class ModelPlugin extends Plugin {
     }
 
     @Override
-    public void onDisable() {}
+    public void onDisable() {
+    }
 
 }

@@ -16,7 +16,8 @@ import java.util.function.BiConsumer;
 
 public abstract class InheritedCommand<T extends Plugin> extends Command {
     private final BiConsumer<CommandSender, String[]> commandConsumer;
-    @Getter private final T plugin;
+    @Getter
+    private final T plugin;
 
     public InheritedCommand(T plugin, String name, @Nullable List<String> aliases) {
         super(name);

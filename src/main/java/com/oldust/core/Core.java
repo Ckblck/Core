@@ -1,4 +1,3 @@
-
 package com.oldust.core;
 
 import com.oldust.core.inherited.plugins.InheritedPluginsManager;

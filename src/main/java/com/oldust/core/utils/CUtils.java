@@ -13,7 +13,8 @@ import java.util.stream.Collectors;
 
 public class CUtils {
 
-    private CUtils() {}
+    private CUtils() {
+    }
 
     public static void logConsole(String message) {
         Bukkit.getConsoleSender().sendMessage(color(message));
