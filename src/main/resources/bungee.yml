@@ -1,0 +1,6 @@
+name: OldustCore
+version: 1.0-DEVELOPMENT
+authors: [ Fadest, Cookieblack, Rektb ]
+main: com.oldust.core.BungeeCore
+website: https://oldust.com
+description: Core del servidor funcionando como dependencia en Bungee. (sin funcionalidad)

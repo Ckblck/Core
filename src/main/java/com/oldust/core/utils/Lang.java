@@ -7,4 +7,5 @@ public class Lang {
     public static final ChatColor SUCCESS_COLOR = ChatColor.of("#11c21d");
     public static final String MUST_BE_PLAYER = ERROR_COLOR + "¡Debes ser un jugador para ejecutar este comando!";
     public static final String MISSING_ARGUMENT_FORMATABLE = ERROR_COLOR + "Error! Argument <%s> expected.";
+    public static final String DB_DISAPPEARED = ERROR_COLOR + "Uh oh! Your database disappeared.";
 }

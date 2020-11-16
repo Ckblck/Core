@@ -16,6 +16,12 @@ public class CUtils {
     private CUtils() {
     }
 
+    public static void warnSyncCall() {
+        if (Bukkit.isPrimaryThread()) {
+            inform("SERVER", Lang.ERROR_COLOR + "¡IMPORTANTE! Se realizó una llamada a un método que debía ser Async el el main thread.");
+        }
+    }
+
     public static void logConsole(String message) {
         Bukkit.getConsoleSender().sendMessage(color(message));
     }
