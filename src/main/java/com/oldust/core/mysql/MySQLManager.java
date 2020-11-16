@@ -25,34 +25,36 @@ public class MySQLManager {
     private final File credentialsFile = new File(Core.getInstance().getDataFolder(), "db_credentials.yml");
 
     public MySQLManager() {
-        if (!credentialsFile.exists())
-            createFile();
+        Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), () -> {
+            if (!credentialsFile.exists())
+                createFile();
 
-        try {
-            HikariConfig config = new HikariConfig();
-            YamlConfiguration yamlConfig = new YamlConfiguration();
+            try {
+                HikariConfig config = new HikariConfig();
+                YamlConfiguration yamlConfig = new YamlConfiguration();
 
-            yamlConfig.load(credentialsFile);
+                yamlConfig.load(credentialsFile);
 
-            String hostName = yamlConfig.getString("host-name");
-            String password = yamlConfig.getString("password");
-            String username = yamlConfig.getString("username");
-            int port = yamlConfig.getInt("port");
+                String hostName = yamlConfig.getString("host-name");
+                String password = yamlConfig.getString("password");
+                String username = yamlConfig.getString("username");
+                int port = yamlConfig.getInt("port");
 
-            config.setJdbcUrl("jdbc:mysql://" + hostName + ":" + port + "/?autoReconnect=true&allowMultiQueries=true&characterEncoding=utf-8&serverTimezone=UTC&useSSL=false");
-            config.setDriverClassName("com.mysql.jdbc.Driver");
-            config.setUsername(username);
-            config.setPassword(password);
-            config.setConnectionTimeout(7000);
-            config.addDataSourceProperty("cachePrepStmts", true);
+                config.setJdbcUrl("jdbc:mysql://" + hostName + ":" + port + "/?autoReconnect=true&allowMultiQueries=true&characterEncoding=utf-8&serverTimezone=UTC&useSSL=false");
+                config.setDriverClassName("com.mysql.jdbc.Driver");
+                config.setUsername(username);
+                config.setPassword(password);
+                config.setConnectionTimeout(7000);
+                config.addDataSourceProperty("cachePrepStmts", true);
 
-            pool = new HikariDataSource(config);
-        } catch (Exception e) {
-            CUtils.inform("DB", "No ha sido posible iniciar la conexión a la base de datos.");
-            e.printStackTrace();
+                pool = new HikariDataSource(config);
+            } catch (Exception e) {
+                CUtils.inform("DB", "No ha sido posible iniciar la conexión a la base de datos.");
+                e.printStackTrace();
 
-            Bukkit.shutdown();
-        }
+                Bukkit.shutdown();
+            }
+        });
     }
 
     public static void queryAsync(String statement, CompletableFuture<ResultSet> future, Object... placeholders) {
