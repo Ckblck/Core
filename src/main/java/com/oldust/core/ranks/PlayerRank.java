@@ -4,14 +4,16 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
 
+import java.util.Arrays;
+
 @Getter
 @RequiredArgsConstructor
 public enum PlayerRank {
 
-    ADMIN(ChatColor.of("#ff3019") + "ADMIN ", 1000, 0),
-    MOD(ChatColor.of("#0f60ff") + "MOD ", 500, 1),
-    BUILDER(ChatColor.of("#baa988") + "BUILDER ", 200, 2),
-    USER(ChatColor.of("#88baa7") + "", 0, 3);
+    ADMIN(ChatColor.of("#ff3019") + "ADMIN ", 500, 3),
+    MOD(ChatColor.of("#0f60ff") + "MOD ", 20, 2),
+    BUILDER(ChatColor.of("#baa988") + "BUILDER ", 10, 1),
+    USER(ChatColor.of("#88baa7") + "", 0, 0);
 
     private static final PlayerRank[] VALUES = values();
     private final String prefix;
@@ -24,6 +26,13 @@ public enum PlayerRank {
         }
 
         throw new IllegalArgumentException("No se pudo encontrar rango para la ID proporcionada: " + id);
+    }
+
+    public static PlayerRank getByName(String name) {
+        return Arrays.stream(VALUES)
+                .filter(rank -> rank.name().equalsIgnoreCase(name))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("No se pudo encontrar rango para el nombre proporcionado: " + name));
     }
 
     public boolean isEqualOrHigher(PlayerRank rank) {

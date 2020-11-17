@@ -12,6 +12,8 @@ public class JedisManager {
     private static final String PASSWORD = "pAaSsSwoOoOrDd"; // TODO Change this in production.
 
     @Getter
+    private static JedisManager instance;
+    @Getter
     private final JedisPool pool;
 
     public JedisManager() {
@@ -24,6 +26,7 @@ public class JedisManager {
         jedisPoolConfig.setMinEvictableIdleTimeMillis(TimeUnit.MINUTES.toMillis(6));
 
         pool = new JedisPool(jedisPoolConfig, HOST, PORT, 5000, PASSWORD);
+        instance = this;
     }
 
 }

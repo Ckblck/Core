@@ -13,10 +13,10 @@ public class PlayerManager {
 
     private final RedisRepository<WrappedPlayerDatabase> playerRepository;
 
-    public PlayerManager(JedisManager jedisManager) {
+    public PlayerManager() {
         instance = this;
 
-        JedisPool pool = jedisManager.getPool();
+        JedisPool pool = JedisManager.getInstance().getPool();
         playerRepository = new RedisRepository<>(pool, "pl_repo");
     }
 

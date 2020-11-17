@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 public class MySQLManager {
     private static HikariDataSource pool;
@@ -58,17 +59,26 @@ public class MySQLManager {
         });
     }
 
+    /**
+     * Realizar una query de forma asíncrona.
+     * Siempre acompañar el future con {@link CompletableFuture#exceptionally(Function)}.
+     * Obviar esto resultará en excepciones no avisadas debido al comportamiento natural de un CompletableFuture.
+     * {@code      CompletableFuture<CachedRowSet> future = new CompletableFuture<>();
+     * future.thenAccept(set -> { ... })
+     * .exceptionally(ex -> {
+     * ex.printStackTrace();
+     * <p>
+     * return null;
+     * });}
+     */
+
     public static void queryAsync(String statement, CompletableFuture<CachedRowSet> future, Object... placeholders) {
         Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), () -> {
-            try {
-                future.complete(queryThrowable(statement, placeholders));
-            } catch (SQLException e) {
-                future.completeExceptionally(e);
-            }
+            future.complete(query(statement, placeholders));
         });
     }
 
-    public static CachedRowSet queryThrowable(String statement, Object... placeholders) throws SQLException {
+    public static CachedRowSet query(String statement, Object... placeholders) {
         try (Connection conn = pool.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(statement);
 
@@ -80,17 +90,15 @@ public class MySQLManager {
             cachedRowSet.populate(ps.executeQuery());
 
             return cachedRowSet;
-        }
-    }
-
-    public static Optional<CachedRowSet> query(String statement, Object... placeholders) {
-        try {
-            return Optional.of(queryThrowable(statement, placeholders));
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return Optional.empty();
+        return null;
+    }
+
+    public static Optional<CachedRowSet> queryOptional(String statement, Object... placeholders) {
+        return Optional.ofNullable(query(statement, placeholders));
     }
 
 

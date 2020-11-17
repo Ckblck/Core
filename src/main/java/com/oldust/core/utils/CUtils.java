@@ -7,6 +7,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
+import java.time.Duration;
+import java.time.Period;
+import java.time.temporal.TemporalAmount;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +22,19 @@ public class CUtils {
     public static void warnSyncCall() {
         if (Bukkit.isPrimaryThread()) {
             inform("SERVER", Lang.ERROR_COLOR + "¡IMPORTANTE! Se realizó una llamada a un método que debía ser Async el el main thread.");
+        }
+    }
+
+    /**
+     * Obtiene una duración a partir
+     * de un string. Ejemplo: 1w, 1m (minute), 1M (month)
+     */
+
+    public static TemporalAmount parseLiteralTime(String duration) {
+        if (Character.isUpperCase(duration.charAt(duration.length() - 1))) {
+            return Period.parse("P" + duration);
+        } else {
+            return Duration.parse("PT" + duration);
         }
     }
 

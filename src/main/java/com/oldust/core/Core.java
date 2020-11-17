@@ -1,5 +1,6 @@
 package com.oldust.core;
 
+import com.oldust.core.actions.ActionsReceiver;
 import com.oldust.core.chat.ChatHandler;
 import com.oldust.core.inherited.plugins.InheritedPluginsManager;
 import com.oldust.core.models.ModelPlugin;
@@ -19,8 +20,10 @@ public class Core extends JavaPlugin {
         CUtils.inform("Core", "Inicializando core...");
         instance = this;
 
+        new JedisManager();
         new MySQLManager();
-        new PlayerManager(new JedisManager());
+        new PlayerManager();
+        new ActionsReceiver();
 
         InheritedPluginsManager.loadInheritedPlugin(ModelPlugin.class);
         InheritedPluginsManager.loadInheritedPlugin(ChatHandler.class);
@@ -32,5 +35,4 @@ public class Core extends JavaPlugin {
     public void onDisable() {
         InheritedPluginsManager.onDisable();
     }
-
 }
