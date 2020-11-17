@@ -8,13 +8,14 @@ import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetProvider;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 import java.util.Optional;
@@ -57,7 +58,7 @@ public class MySQLManager {
         });
     }
 
-    public static void queryAsync(String statement, CompletableFuture<ResultSet> future, Object... placeholders) {
+    public static void queryAsync(String statement, CompletableFuture<CachedRowSet> future, Object... placeholders) {
         Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), () -> {
             try {
                 future.complete(queryThrowable(statement, placeholders));
@@ -67,7 +68,7 @@ public class MySQLManager {
         });
     }
 
-    public static ResultSet queryThrowable(String statement, Object... placeholders) throws SQLException {
+    public static CachedRowSet queryThrowable(String statement, Object... placeholders) throws SQLException {
         try (Connection conn = pool.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(statement);
 
@@ -75,11 +76,14 @@ public class MySQLManager {
                 ps.setObject(i + 1, placeholders[i]);
             }
 
-            return ps.executeQuery();
+            CachedRowSet cachedRowSet = RowSetProvider.newFactory().createCachedRowSet();
+            cachedRowSet.populate(ps.executeQuery());
+
+            return cachedRowSet;
         }
     }
 
-    public static Optional<ResultSet> query(String statement, Object... placeholders) {
+    public static Optional<CachedRowSet> query(String statement, Object... placeholders) {
         try {
             return Optional.of(queryThrowable(statement, placeholders));
         } catch (SQLException e) {
