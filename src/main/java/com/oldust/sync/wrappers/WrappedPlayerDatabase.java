@@ -77,6 +77,11 @@ public class WrappedPlayerDatabase implements Savable, Serializable {
             return clazz.cast(value);
         }
 
+        @SuppressWarnings("unchecked")
+        public <K, V> Map<K, V> asMap(Class<K> key, Class<V> val) {
+            return (Map<K, V>) value;
+        }
+
     }
 
 }

@@ -26,11 +26,13 @@ public class ChatListener implements Listener {
             PlayerRank rank = playerRank.asClass(PlayerRank.class);
 
             String format = rank.getPrefix()
-                    + player.getName()
+                    + "%s"
                     + ChatColor.of("#fcba03")
-                    + " » ";
+                    + " » "
+                    + ChatColor.RESET
+                    + "%s";
 
-            e.setFormat(format + ChatColor.RESET + e.getMessage());
+            e.setFormat(format);
         }, () -> player.kickPlayer(Lang.DB_DISAPPEARED));
 
     }

@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum PlayerDatabaseKeys {
-    RANK("rank");
+    RANK("rank"),
+    PERSONAL_PERMISSIONS("personal_permissions");
 
     private final String key;
 }

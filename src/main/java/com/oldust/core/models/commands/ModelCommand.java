@@ -3,6 +3,7 @@ package com.oldust.core.models.commands;
 import com.oldust.core.inherited.commands.InheritedCommand;
 import com.oldust.core.models.ModelPlugin;
 import com.oldust.core.models.file.FileLoader;
+import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
 import net.md_5.bungee.api.ChatColor;
@@ -32,6 +33,7 @@ public class ModelCommand extends InheritedCommand<ModelPlugin> {
     public BiConsumer<CommandSender, String[]> onCommand() {
         return (sender, args) -> {
             if (isNotPlayer(sender)) return;
+            if (isNotAboveOrEqual(sender, PlayerRank.ADMIN)) return;
 
             if (args.length < 1) {
                 CUtils.msg(sender, Lang.ERROR_COLOR + String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "file_name"));

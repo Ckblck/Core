@@ -34,6 +34,10 @@ public class InheritedPluginsManager {
 
     }
 
+    public static <T> T getPlugin(Class<T> plugin) {
+        return (T) plugins.get(plugin.getAnnotation(InheritedPlugin.class).name());
+    }
+
     public static void onEnable() {
         plugins.values().forEach(Plugin::onEnable);
     }

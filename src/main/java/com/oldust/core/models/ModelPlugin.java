@@ -17,7 +17,7 @@ public class ModelPlugin extends Plugin {
     private ModelModifyCommand modelModifyCommand;
 
     @Override
-    public void onEnable() { // TODO: RANKS PERMISSIONS
+    public void onEnable() {
         standModelLib = new StandModelLib(Core.getInstance());
         new ModelCommand(this, "model", null);
         modelModifyCommand = new ModelModifyCommand(this, "modelmodify", Collections.singletonList("mmodify"));

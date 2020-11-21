@@ -2,6 +2,7 @@ package com.oldust.core.models.commands;
 
 import com.oldust.core.inherited.commands.InheritedCommand;
 import com.oldust.core.models.ModelPlugin;
+import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.ItemBuilder;
 import com.oldust.core.utils.Lang;
@@ -51,6 +52,7 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
     public BiConsumer<CommandSender, String[]> onCommand() {
         return (sender, args) -> {
             if (isNotPlayer(sender)) return;
+            if (isNotAboveOrEqual(sender, PlayerRank.ADMIN)) return;
 
             if (args.length == 0) {
                 CUtils.msg(sender, Lang.ERROR_COLOR + "Insufficient arguments!");

@@ -2,6 +2,7 @@ package com.oldust.core.inherited.commands;
 
 import com.oldust.core.Core;
 import com.oldust.core.inherited.plugins.Plugin;
+import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
 import lombok.Getter;
@@ -56,6 +57,16 @@ public abstract class InheritedCommand<T extends Plugin> extends Command {
         }
 
         return notPlayer;
+    }
+
+    public boolean isNotAboveOrEqual(CommandSender sender, PlayerRank rank) {
+        boolean notAboveOrEqual = !PlayerRank.getPlayerRank(sender).isEqualOrHigher(rank);
+
+        if (notAboveOrEqual) {
+            CUtils.msg(sender, Lang.NO_PERMISSIONS);
+        }
+
+        return notAboveOrEqual;
     }
 
 }

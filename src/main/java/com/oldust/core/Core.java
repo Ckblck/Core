@@ -5,6 +5,7 @@ import com.oldust.core.chat.ChatHandler;
 import com.oldust.core.inherited.plugins.InheritedPluginsManager;
 import com.oldust.core.models.ModelPlugin;
 import com.oldust.core.mysql.MySQLManager;
+import com.oldust.core.ranks.permission.PermissionsManager;
 import com.oldust.core.utils.CUtils;
 import com.oldust.sync.JedisManager;
 import com.oldust.sync.PlayerManager;
@@ -24,9 +25,11 @@ public class Core extends JavaPlugin {
         new MySQLManager();
         new PlayerManager();
         new ActionsReceiver();
+        new PermissionsManager();
 
         InheritedPluginsManager.loadInheritedPlugin(ModelPlugin.class);
         InheritedPluginsManager.loadInheritedPlugin(ChatHandler.class);
+        InheritedPluginsManager.loadInheritedPlugin(PermissionsManager.class);
 
         InheritedPluginsManager.onEnable();
     }
