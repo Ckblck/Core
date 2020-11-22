@@ -8,7 +8,7 @@ import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
-import com.oldust.sync.wrappers.WrappedPlayerDatabase;
+import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

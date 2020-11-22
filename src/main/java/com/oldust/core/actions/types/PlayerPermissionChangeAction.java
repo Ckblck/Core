@@ -6,7 +6,7 @@ import com.oldust.core.ranks.permission.BukkitCompat;
 import com.oldust.core.utils.PlayerUtils;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
-import com.oldust.sync.wrappers.WrappedPlayerDatabase;
+import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.Bukkit;
 
 import java.io.Serializable;

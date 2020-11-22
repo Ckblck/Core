@@ -1,5 +1,7 @@
-package com.oldust.sync.wrappers;
+package com.oldust.sync.wrappers.defaults;
 
+import com.oldust.sync.wrappers.PlayerDatabaseKeys;
+import com.oldust.sync.wrappers.Savable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

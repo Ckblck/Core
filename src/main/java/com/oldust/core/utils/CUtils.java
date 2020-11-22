@@ -39,11 +39,11 @@ public class CUtils {
     }
 
     public static void logConsole(String message) {
-        Bukkit.getConsoleSender().sendMessage(color(message));
+        Core.getInstance().getServer().getConsoleSender().sendMessage(color(message));
     }
 
     public static void inform(String prefix, String message) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.BLUE
+        Core.getInstance().getServer().getConsoleSender().sendMessage(ChatColor.BLUE
                 + "[" + prefix + "]"
                 + ChatColor.DARK_GRAY
                 + " -> " + ChatColor.RESET
@@ -76,6 +76,10 @@ public class CUtils {
         return Arrays.stream(array)
                 .map(CUtils::color)
                 .toArray(String[]::new);
+    }
+
+    public static void runSync(Runnable runnable) {
+        Bukkit.getScheduler().runTask(Core.getInstance(), runnable);
     }
 
 }

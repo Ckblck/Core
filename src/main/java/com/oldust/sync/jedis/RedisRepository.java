@@ -52,6 +52,12 @@ public class RedisRepository<T extends Savable> {
         }
     }
 
+    public boolean exists(String name) {
+        try (Jedis jedis = pool.getResource()) {
+            return jedis.exists(getKeyName(name));
+        }
+    }
+
     private String getKeyName(T element) {
         return getKeyName(element.getId());
     }

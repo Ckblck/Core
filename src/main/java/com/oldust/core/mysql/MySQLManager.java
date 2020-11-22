@@ -12,6 +12,8 @@ import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
@@ -49,6 +51,8 @@ public class MySQLManager {
             config.addDataSourceProperty("cachePrepStmts", true);
 
             pool = new HikariDataSource(config);
+
+            validateAddress();
         } catch (Exception e) {
             CUtils.inform("DB", "No ha sido posible iniciar la conexión a la base de datos.");
             e.printStackTrace();
@@ -134,6 +138,38 @@ public class MySQLManager {
         }
 
         Bukkit.shutdown();
+    }
+
+    private void validateAddress() {
+        try {
+            String ip = Core.getInstance().getServer().getIp();
+            String address = (ip.isEmpty()) ? InetAddress.getLocalHost().getHostAddress() : ip;
+            CachedRowSet set = query("SELECT name FROM dustservers.servers WHERE address = ?;", address);
+
+            try {
+                if (set.next()) {
+                    Core.getInstance().setServerName(set.getString("name"));
+                } else {
+                    CUtils.logConsole("--------------------------------------------------------------------------------------");
+                    CUtils.logConsole("Este servidor no está registrado en la base de datos de Oldust.");
+                    CUtils.logConsole("--------------------------------------------------------------------------------------");
+
+                    Bukkit.shutdown();
+                }
+            } catch (SQLException e) {
+                CUtils.logConsole("--------------------------------------------------------------------------------------");
+                CUtils.logConsole("Hubo un error al obtener el nombre del servidor. No se pudo validar.");
+                CUtils.logConsole("--------------------------------------------------------------------------------------");
+
+                Bukkit.shutdown();
+            }
+        } catch (UnknownHostException e) {
+            CUtils.logConsole("--------------------------------------------------------------------------------------");
+            CUtils.logConsole("Hubo un error al obtener la dirección IP local. No se pudo validar.");
+            CUtils.logConsole("--------------------------------------------------------------------------------------");
+
+            Bukkit.shutdown();
+        }
     }
 
 }

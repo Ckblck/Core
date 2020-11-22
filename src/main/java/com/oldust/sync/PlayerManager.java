@@ -1,7 +1,7 @@
 package com.oldust.sync;
 
 import com.oldust.sync.jedis.RedisRepository;
-import com.oldust.sync.wrappers.WrappedPlayerDatabase;
+import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import lombok.Getter;
 import redis.clients.jedis.JedisPool;
 

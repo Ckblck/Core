@@ -5,7 +5,7 @@ import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.utils.PlayerUtils;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
-import com.oldust.sync.wrappers.WrappedPlayerDatabase;
+import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
