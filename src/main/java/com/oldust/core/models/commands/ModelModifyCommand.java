@@ -7,7 +7,6 @@ import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.ItemBuilder;
 import com.oldust.core.utils.Lang;
 import com.oldust.core.utils.interactive.InteractivePanel;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -25,18 +24,18 @@ import java.util.function.BiConsumer;
 
 public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements Listener {
     private static final ItemStack TELEPORT_MODEL = new ItemBuilder(Material.ENDER_PEARL)
-            .setDisplayName(ChatColor.of("#0f8c69") + "Teleport here").build();
+            .setDisplayName("#0f8c69 Teleport here").build();
     private static final ItemStack ROTATE_MINUS_5 = new ItemBuilder(Material.LANTERN)
-            .setDisplayName(ChatColor.of("#e1c699") + "Rotate -5°").build();
+            .setDisplayName("#e1c699 Rotate -5°").build();
     private static final ItemStack ROTATE_1 = new ItemBuilder(Material.GOLD_NUGGET)
-            .setDisplayName(ChatColor.of("#e1c699") + "Rotate +-1°")
+            .setDisplayName("#e1c699 Rotate +-1°")
             .setLore(Arrays.asList(
-                    ChatColor.of("#f7be60") + "Right Click: +1",
-                    ChatColor.of("#f7be60") + "Left Click: -1")).build();
+                    "#f7be60 Right Click: +1",
+                    "#f7be60 Left Click: -1")).build();
     private static final ItemStack ROTATE_PLUS_5 = new ItemBuilder(Material.SOUL_LANTERN)
-            .setDisplayName(ChatColor.of("#e1c699") + "Rotate +5°").build();
+            .setDisplayName("#e1c699 Rotate +5°").build();
     private static final ItemStack REMOVE = new ItemBuilder(Material.NETHER_WART)
-            .setDisplayName(ChatColor.of("#e1c699") + "Remove model").build();
+            .setDisplayName("#e1c699 Remove model").build();
     private static final ItemStack EXIT = new ItemBuilder(Material.NETHERITE_SCRAP)
             .setDisplayName(Lang.ERROR_COLOR + "Exit").build();
 

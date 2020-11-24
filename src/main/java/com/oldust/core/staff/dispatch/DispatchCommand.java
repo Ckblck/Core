@@ -1,5 +1,6 @@
 package com.oldust.core.staff.dispatch;
 
+import com.oldust.core.Core;
 import com.oldust.core.actions.types.DispatchCommandAction;
 import com.oldust.core.inherited.commands.InheritedCommand;
 import com.oldust.core.ranks.PlayerRank;
@@ -7,7 +8,6 @@ import com.oldust.core.staff.StaffPlugin;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
 import com.oldust.sync.JedisManager;
-import com.oldust.sync.ServerManager;
 import org.bukkit.command.CommandSender;
 
 import java.util.Arrays;
@@ -38,7 +38,7 @@ public class DispatchCommand extends InheritedCommand<StaffPlugin> {
 
             String serverName = args[0];
             String[] command = Arrays.copyOfRange(args, 1, args.length);
-            boolean validServer = serverName.equals("*") || ServerManager.getInstance().contains(serverName);
+            boolean validServer = serverName.equals("*") || Core.getInstance().getServerManager().contains(serverName);
 
             if (!validServer) {
                 CUtils.msg(sender, Lang.ERROR_COLOR + "El servidor proporcionado es inválido o no está encendido.");

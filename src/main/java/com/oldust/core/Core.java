@@ -11,29 +11,37 @@ import com.oldust.core.utils.CUtils;
 import com.oldust.sync.JedisManager;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.ServerManager;
+import fr.minuskube.inv.InventoryManager;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.plugin.java.JavaPlugin;
 
+@Getter
 public class Core extends JavaPlugin {
     @Getter
     private static Core instance;
-    @Getter
+
     @Setter
     private String serverName;
+    private InventoryManager inventoryManager;
+    private ServerManager serverManager;
 
     @Override
     public void onEnable() {
         instance = this;
 
+        long start = System.currentTimeMillis();
         CUtils.inform("Core", "Inicializando core...");
 
         new JedisManager();
         new MySQLManager();
         new PlayerManager();
-        new ServerManager();
         new ActionsReceiver();
         new PermissionsManager();
+
+        serverManager = new ServerManager();
+        inventoryManager = new InventoryManager(this);
+        inventoryManager.init();
 
         InheritedPluginsManager.loadInheritedPlugin(ModelPlugin.class);
         InheritedPluginsManager.loadInheritedPlugin(ChatHandler.class);
@@ -42,12 +50,12 @@ public class Core extends JavaPlugin {
 
         InheritedPluginsManager.onEnable();
 
-        CUtils.inform("Core", "Iniciado con éxito.");
+        CUtils.inform("Core", "Core iniciado en " + (System.currentTimeMillis() - start) + "ms.");
     }
 
     @Override
     public void onDisable() {
-        ServerManager.getInstance().remove();
+        serverManager.remove();
         InheritedPluginsManager.onDisable();
     }
 }

@@ -6,8 +6,6 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.params.SetParams;
 
-import java.io.Serializable;
-
 public class RedisRepository<T extends Savable> {
     private final JedisPool pool;
     private final String repositoryName;
@@ -17,10 +15,10 @@ public class RedisRepository<T extends Savable> {
         this.repositoryName = repositoryName;
     }
 
-    public void add(T element) {
+    public void put(T element) {
         try (Jedis jedis = pool.getResource()) {
             String key = getKeyName(element);
-            String serialize = Base64Serializer.serialize((Serializable) element);
+            String serialize = Base64Serializer.serialize(element);
 
             jedis.set(key, serialize);
         }
@@ -45,7 +43,7 @@ public class RedisRepository<T extends Savable> {
 
     public void update(T element) {
         try (Jedis jedis = pool.getResource()) {
-            String serializedData = Base64Serializer.serialize((Serializable) element);
+            String serializedData = Base64Serializer.serialize(element);
             String key = getKeyName(element);
 
             jedis.set(key, serializedData, SetParams.setParams().xx());

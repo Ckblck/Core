@@ -12,9 +12,12 @@ import java.time.Period;
 import java.time.temporal.TemporalAmount;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class CUtils {
+    private static final Pattern COLOR_PATTERN = Pattern.compile("#[a-fA-F0-9]{6}( )?");
 
     private CUtils() {
     }
@@ -54,8 +57,30 @@ public class CUtils {
         sender.sendMessage(color(message));
     }
 
+    /**
+     * Colorea una string, ya sea con #404899 o &6.
+     * Se recomienda agregar un espacio para # de esta manera:
+     * {@code #404899 Coloured text} para claridad en el código.
+     * Este método quitará el último espacio EN CASO que lo tenga.
+     */
+
     public static String color(String text) {
-        return text.replace("&", "§");
+        Matcher matcher = COLOR_PATTERN.matcher(text);
+
+        while (matcher.find()) {
+            String color = text.substring(matcher.start(), matcher.end());
+            StringBuilder buffer = new StringBuilder(text);
+
+            if (color.endsWith(" ")) {
+                buffer.replace(matcher.end() - 1, matcher.end(), "");
+                color = color.trim();
+            }
+
+            text = buffer.toString().replace(color, ChatColor.of(color) + "");
+            matcher = COLOR_PATTERN.matcher(text);
+        }
+
+        return ChatColor.translateAlternateColorCodes('&', text);
     }
 
     public static void registerEvents(Listener listener) {

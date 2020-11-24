@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Consumer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,10 +26,10 @@ import java.util.UUID;
  * con determinado Item.
  */
 
-public class InteractivePanel implements Listener {
+public class InteractivePanel implements Listener, Serializable {
     private final UUID player;
-    private final ItemStack[] previousInventory;
-    private final List<InteractiveItem> items = new ArrayList<>();
+    private transient final ItemStack[] previousInventory;
+    private transient final List<InteractiveItem> items = new ArrayList<>();
 
     public InteractivePanel(Player player) {
         this.player = player.getUniqueId();
@@ -131,8 +132,12 @@ public class InteractivePanel implements Listener {
      */
 
     public void exit(Player player) {
-        for (int i = 0; i < previousInventory.length; i++) {
-            player.getInventory().setItem(i, previousInventory[i]);
+        if (previousInventory != null) {
+            for (int i = 0; i < previousInventory.length; i++) {
+                player.getInventory().setItem(i, previousInventory[i]);
+            }
+        } else {
+            player.getInventory().clear();
         }
 
         CUtils.unregisterEvents(this);

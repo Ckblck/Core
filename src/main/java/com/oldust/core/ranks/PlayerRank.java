@@ -20,8 +20,8 @@ import java.util.UUID;
 public enum PlayerRank {
 
     ADMIN(ChatColor.of("#ff3019") + "ADMIN ", 500, 3),
-    MOD(ChatColor.of("#0f60ff") + "MOD ", 20, 2),
-    BUILDER(ChatColor.of("#baa988") + "BUILDER ", 10, 1),
+    MOD(ChatColor.of("#0f60ff") + "MOD ", 80, 2),
+    BUILDER(ChatColor.of("#baa988") + "BUILDER ", 50, 1),
     USER(ChatColor.of("#88baa7") + "", 0, 0);
 
     private static final PlayerRank[] VALUES = values();
@@ -73,6 +73,10 @@ public enum PlayerRank {
 
     public boolean isEqualOrHigher(PlayerRank rank) {
         return this.priority >= rank.priority;
+    }
+
+    public boolean isStaff() {
+        return this == ADMIN || this == MOD || this == BUILDER;
     }
 
 }

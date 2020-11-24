@@ -21,7 +21,7 @@ public class PlayerManager {
     }
 
     public void saveDatabase(WrappedPlayerDatabase database) {
-        playerRepository.add(database);
+        playerRepository.put(database);
     }
 
     public WrappedPlayerDatabase getDatabase(UUID uuid) {
