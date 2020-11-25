@@ -1,5 +1,8 @@
 package com.oldust.core.ranks.permission;
 
+import com.oldust.core.Core;
+import com.oldust.core.commons.EventsProvider;
+import com.oldust.core.commons.Operation;
 import com.oldust.core.inherited.plugins.InheritedPlugin;
 import com.oldust.core.inherited.plugins.Plugin;
 import com.oldust.core.mysql.MySQLManager;
@@ -10,8 +13,6 @@ import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import javax.sql.rowset.CachedRowSet;
@@ -21,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @InheritedPlugin(name = "Permisos")
-public class PermissionsManager extends Plugin implements Listener {
+public class PermissionsManager extends Plugin {
     private final Map<PlayerRank, RankPermissions> rankPermissions = new EnumMap<>(PlayerRank.class);
 
     @Override
@@ -65,7 +66,8 @@ public class PermissionsManager extends Plugin implements Listener {
         });
 
         MySQLManager.queryAsync("SELECT * FROM dustpermissions.ranks_permissions;", future);
-        CUtils.registerEvents(this);
+
+        onJoin(); // Registramos el evento.
     }
 
     @Override
@@ -73,11 +75,15 @@ public class PermissionsManager extends Plugin implements Listener {
 
     }
 
-    @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        Player player = e.getPlayer();
+    public void onJoin() {
+        EventsProvider eventsProvider = Core.getInstance().getEventsProvider();
 
-        setupPlayer(player);
+        eventsProvider.newOperation(PlayerJoinEvent.class, new Operation<PlayerJoinEvent>((join, db) -> {
+            Player player = join.getPlayer();
+
+            setupPlayer(player);
+        }));
+
     }
 
     /**

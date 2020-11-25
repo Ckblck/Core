@@ -1,12 +1,12 @@
 package com.oldust.core.models.commands;
 
 import com.oldust.core.inherited.commands.InheritedCommand;
+import com.oldust.core.interactive.panels.InteractivePanel;
 import com.oldust.core.models.ModelPlugin;
 import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.ItemBuilder;
 import com.oldust.core.utils.Lang;
-import com.oldust.core.utils.interactive.InteractivePanel;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;

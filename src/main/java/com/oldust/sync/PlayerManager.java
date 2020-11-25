@@ -28,7 +28,7 @@ public class PlayerManager {
         return playerRepository.get(uuid.toString());
     }
 
-    public void remove(UUID uuid) {
+    public void remove(UUID uuid) { // Ejecutado en OldustBungee
         playerRepository.remove(uuid.toString());
     }
 

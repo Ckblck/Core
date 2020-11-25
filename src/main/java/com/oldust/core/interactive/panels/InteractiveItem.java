@@ -1,4 +1,4 @@
-package com.oldust.core.utils.interactive;
+package com.oldust.core.interactive.panels;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

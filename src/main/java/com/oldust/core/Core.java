@@ -2,6 +2,7 @@ package com.oldust.core;
 
 import com.oldust.core.actions.ActionsReceiver;
 import com.oldust.core.chat.ChatHandler;
+import com.oldust.core.commons.EventsProvider;
 import com.oldust.core.inherited.plugins.InheritedPluginsManager;
 import com.oldust.core.models.ModelPlugin;
 import com.oldust.core.mysql.MySQLManager;
@@ -16,6 +17,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.concurrent.TimeUnit;
+
 @Getter
 public class Core extends JavaPlugin {
     @Getter
@@ -25,6 +28,7 @@ public class Core extends JavaPlugin {
     private String serverName;
     private InventoryManager inventoryManager;
     private ServerManager serverManager;
+    private EventsProvider eventsProvider;
 
     @Override
     public void onEnable() {
@@ -39,6 +43,7 @@ public class Core extends JavaPlugin {
         new ActionsReceiver();
         new PermissionsManager();
 
+        eventsProvider = new EventsProvider();
         serverManager = new ServerManager();
         inventoryManager = new InventoryManager(this);
         inventoryManager.init();
@@ -50,7 +55,8 @@ public class Core extends JavaPlugin {
 
         InheritedPluginsManager.onEnable();
 
-        CUtils.inform("Core", "Core iniciado en " + (System.currentTimeMillis() - start) + "ms.");
+        long diff = System.currentTimeMillis() - start;
+        CUtils.inform("Core", "Core iniciado en " + TimeUnit.MILLISECONDS.toSeconds(diff) + "seg.");
     }
 
     @Override

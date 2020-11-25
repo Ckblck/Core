@@ -1,5 +1,8 @@
-package com.oldust.core.utils.interactive;
+package com.oldust.core.interactive.panels;
 
+import com.oldust.core.Core;
+import com.oldust.core.commons.EventsProvider;
+import com.oldust.core.commons.Operation;
 import com.oldust.core.utils.CUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,15 +13,14 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Consumer;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Un panel interactivo es aquel que
@@ -27,40 +29,65 @@ import java.util.UUID;
  */
 
 public class InteractivePanel implements Listener, Serializable {
+    private static final long serialVersionUID = 453634506934853L;
+
+    // TODO Add here sync between when server-changing.
+
     private final UUID player;
     private transient final ItemStack[] previousInventory;
     private transient final List<InteractiveItem> items = new ArrayList<>();
+    private final Set<InteractiveListener> listeners = new HashSet<>();
 
     public InteractivePanel(Player player) {
         this.player = player.getUniqueId();
         this.previousInventory = player.getInventory().getContents();
+
+        joinQuitEvents();
+    }
+
+    public void joinQuitEvents() {
+        EventsProvider provider = Core.getInstance().getEventsProvider();
+
+        provider.newOperation(PlayerJoinEvent.class, new Operation<PlayerJoinEvent>((join, db) -> {
+            Player player = join.getPlayer();
+            UUID uuid = player.getUniqueId();
+
+            if (!uuid.equals(this.player)) return;
+
+            exit(player);
+        }));
+
+        provider.newOperation(PlayerQuitEvent.class, new Operation<PlayerQuitEvent>((quit, db) -> {
+            Player player = quit.getPlayer();
+            UUID uuid = player.getUniqueId();
+
+            if (!uuid.equals(this.player)) return;
+
+            exit(player);
+        }));
+
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDeath(PlayerDeathEvent e) {
-        if (!player.equals(e.getEntity().getUniqueId())) return;
+        if (isNotSamePlayer(e.getEntity())) return;
 
         e.getDrops().clear();
         e.getDrops().addAll(Arrays.asList(previousInventory));
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent e) {
-        if (!player.equals(e.getPlayer().getUniqueId())) return;
-
-        exit(e.getPlayer());
-    }
-
-    @EventHandler
     public void onPlace(BlockPlaceEvent e) {
-        if (!player.equals(e.getPlayer().getUniqueId())) return;
+        if (isNotSamePlayer(e.getPlayer())) return;
 
         e.setCancelled(true);
     }
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
-        if (!player.equals(e.getPlayer().getUniqueId()) || e.getItem() == null) return;
+        Player player = e.getPlayer();
+
+        if (isNotSamePlayer(player) || e.getItem() == null) return;
 
         items.stream()
                 .filter(interactiveItem -> interactiveItem.getItem().isSimilar(e.getItem()))
@@ -68,12 +95,14 @@ public class InteractivePanel implements Listener, Serializable {
                 .ifPresent(interactiveItem -> {
                     interactiveItem.getConsumer().accept(e);
                     e.setCancelled(true);
+
+                    listeners.forEach(listener -> listener.onInteract(player, interactiveItem));
                 });
     }
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent e) {
-        if (!player.equals(e.getPlayer().getUniqueId())) return;
+        if (isNotSamePlayer(e.getPlayer())) return;
 
         boolean isInteractiveItem = items.stream()
                 .anyMatch(interativeItem -> interativeItem.getItem().isSimilar(e.getItemDrop().getItemStack()));
@@ -85,15 +114,22 @@ public class InteractivePanel implements Listener, Serializable {
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        if (!player.equals(e.getWhoClicked().getUniqueId())) return;
+        if (isNotSamePlayer((Player) e.getWhoClicked())) return;
 
+        Player player = (Player) e.getWhoClicked();
+        AtomicReference<InteractiveItem> item = new AtomicReference<>();
         boolean isInteractiveItem = items.stream()
-                .anyMatch(interativeItem -> interativeItem.getItem().isSimilar(e.getCurrentItem()));
+                .anyMatch(interativeItem -> {
+                    item.set(interativeItem);
+
+                    return interativeItem.getItem().isSimilar(e.getCurrentItem());
+                });
 
         if (isInteractiveItem) {
             e.setCancelled(true);
         }
 
+        listeners.forEach(listener -> listener.onInventoryClick(player, item.get()));
     }
 
     /**
@@ -116,7 +152,6 @@ public class InteractivePanel implements Listener, Serializable {
 
     public void enter(Player player) {
         CUtils.registerEvents(this);
-
         player.getInventory().clear();
 
         for (InteractiveItem interactiveItem : items) {
@@ -141,6 +176,20 @@ public class InteractivePanel implements Listener, Serializable {
         }
 
         CUtils.unregisterEvents(this);
+
+        listeners.forEach(listener -> listener.onExit(player));
+    }
+
+    public void addListener(InteractiveListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(InteractiveListener listener) {
+        listeners.remove(listener);
+    }
+
+    private boolean isNotSamePlayer(Player entity) {
+        return !this.player.equals(entity.getUniqueId());
     }
 
 }

@@ -107,4 +107,8 @@ public class CUtils {
         Bukkit.getScheduler().runTask(Core.getInstance(), runnable);
     }
 
+    public static void runAsync(Runnable runnable) {
+        Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), runnable);
+    }
+
 }

@@ -27,16 +27,13 @@ public class StaffToolsInv extends AbstractInventoryProvider {
                 (click) -> mode.muteChat(player));
 
         items[1] = ClickableItem.of(new ItemBuilder(Material.TRIPWIRE_HOOK).setDisplayName("#c0c23a « #31d4c3 Fake Chest #c0c23a »").build(),
-                (click) -> {
-                });
+                (click) -> mode.createChest(player));
 
-        items[2] = ClickableItem.of(new ItemBuilder(Material.FEATHER).setDisplayName("#c0c23a « #31d4c3 Spectator Mode #c0c23a »").build(),
-                (click) -> {
-                });
+        items[2] = ClickableItem.of(new ItemBuilder(Material.FEATHER).setDisplayName("#c0c23a « #31d4c3 Switch Mode #c0c23a »").build(),
+                (click) -> mode.switchMode(player));
 
         items[3] = ClickableItem.of(new ItemBuilder(Material.TURTLE_EGG).setDisplayName("#c0c23a « #31d4c3 Night Vision #c0c23a »").build(),
-                (click) -> {
-                });
+                (click) -> mode.switchVision(player));
 
         contents.set(1, 1, items[0]);
         contents.set(1, 3, items[1]);

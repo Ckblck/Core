@@ -1,9 +1,9 @@
 package com.oldust.core.staff.mode.command;
 
 import com.oldust.core.inherited.commands.InheritedCommand;
+import com.oldust.core.interactive.panels.InteractivePanel;
 import com.oldust.core.staff.StaffPlugin;
 import com.oldust.core.staff.mode.StaffMode;
-import com.oldust.core.utils.interactive.InteractivePanel;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
