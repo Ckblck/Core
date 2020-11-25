@@ -1,9 +1,8 @@
 package com.oldust.core.staff.mode.command;
 
 import com.oldust.core.inherited.commands.InheritedCommand;
-import com.oldust.core.interactive.panels.InteractivePanel;
 import com.oldust.core.staff.StaffPlugin;
-import com.oldust.core.staff.mode.StaffMode;
+import com.oldust.core.staff.mode.StaffModeManager;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
@@ -25,15 +24,12 @@ public class ModeCommand extends InheritedCommand<StaffPlugin> {
 
             Player player = (Player) sender;
             WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
+            StaffModeManager modeManager = getPlugin().getStaffModeManager();
 
             if (database.contains(PlayerDatabaseKeys.STAFF_MODE)) {
-                InteractivePanel panel = database.getValue(PlayerDatabaseKeys.STAFF_MODE).asClass(InteractivePanel.class);
-                panel.exit(player);
-
-                database.remove(PlayerDatabaseKeys.STAFF_MODE);
-                PlayerManager.getInstance().update(database);
+                modeManager.exitStaffMode(player, database);
             } else {
-                new StaffMode(player, database);
+                modeManager.setStaffMode(player, database);
             }
 
         };

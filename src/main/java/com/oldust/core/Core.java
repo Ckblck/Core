@@ -17,8 +17,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.concurrent.TimeUnit;
-
 @Getter
 public class Core extends JavaPlugin {
     @Getter
@@ -56,7 +54,7 @@ public class Core extends JavaPlugin {
         InheritedPluginsManager.onEnable();
 
         long diff = System.currentTimeMillis() - start;
-        CUtils.inform("Core", "Core iniciado en " + TimeUnit.MILLISECONDS.toSeconds(diff) + "seg.");
+        CUtils.inform("Core", "Core iniciado en " + diff / 1000 + "seg.");
     }
 
     @Override

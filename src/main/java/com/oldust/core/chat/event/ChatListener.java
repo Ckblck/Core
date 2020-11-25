@@ -10,7 +10,6 @@ import com.oldust.sync.wrappers.ServerDatabaseKeys;
 import com.oldust.sync.wrappers.defaults.OldustServer;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -45,7 +44,7 @@ public class ChatListener implements Listener {
                     + "%s";
 
             e.setFormat(format);
-            Bukkit.broadcastMessage(CUtils.color(e.getMessage())); // TODO Remove
+            // Bukkit.broadcastMessage(CUtils.color(e.getMessage())); // TODO Remove
         }, () -> player.kickPlayer(Lang.DB_DISAPPEARED));
 
     }

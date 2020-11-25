@@ -84,7 +84,7 @@ public class CUtils {
     }
 
     public static void registerEvents(Listener listener) {
-        Core.getInstance().getServer().getPluginManager().registerEvents(listener, Core.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(listener, Core.getInstance());
     }
 
     public static void unregisterEvents(Listener listener) {

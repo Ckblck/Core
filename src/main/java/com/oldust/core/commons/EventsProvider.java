@@ -1,6 +1,7 @@
 package com.oldust.core.commons;
 
 import com.oldust.core.utils.CUtils;
+import com.oldust.core.utils.Lang;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.entity.Player;
@@ -12,10 +13,10 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Un ListenerProvider es aquel
@@ -30,31 +31,36 @@ import java.util.Set;
 
 @SuppressWarnings("unchecked")
 public class EventsProvider implements Listener {
-    private final Map<Class<? extends Event>, Set<Operation>> operations = new HashMap<>();
+    private final Map<Class<? extends Event>, Queue<Operation>> operations = new ConcurrentHashMap<>();
 
     {
-        operations.putIfAbsent(PlayerJoinEvent.class, new HashSet<>());
-        operations.putIfAbsent(PlayerQuitEvent.class, new HashSet<>());
+        operations.putIfAbsent(PlayerJoinEvent.class, new ConcurrentLinkedQueue<>());
+        operations.putIfAbsent(PlayerQuitEvent.class, new ConcurrentLinkedQueue<>());
     }
 
     public EventsProvider() {
         CUtils.registerEvents(this);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(PlayerJoinEvent e) {
         handle(e);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onQuit(PlayerQuitEvent e) {
         handle(e);
     }
 
     private void handle(Event e, Player player) {
         Class<? extends Event> clazz = e.getClass();
-
         WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
+
+        if (database == null) {
+            player.kickPlayer(Lang.DB_DISAPPEARED);
+
+            return;
+        }
 
         for (Operation<Event> operation : operations.get(clazz)) {
             operation.getConsumer().accept(e, database);

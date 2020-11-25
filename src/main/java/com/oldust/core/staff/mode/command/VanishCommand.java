@@ -1,8 +1,8 @@
-package com.oldust.core.staff.vanish.command;
+package com.oldust.core.staff.mode.command;
 
 import com.oldust.core.inherited.commands.InheritedCommand;
 import com.oldust.core.staff.StaffPlugin;
-import com.oldust.core.staff.vanish.VanishHandler;
+import com.oldust.core.staff.mode.StaffModeManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -21,9 +21,9 @@ public class VanishCommand extends InheritedCommand<StaffPlugin> {
             if (isNotPlayer(sender)) return;
 
             StaffPlugin plugin = getPlugin();
-            VanishHandler vanishHandler = plugin.getVanishHandler();
+            StaffModeManager staffModeManager = plugin.getStaffModeManager();
 
-            vanishHandler.switchState((Player) sender);
+            staffModeManager.switchState((Player) sender);
         };
     }
 

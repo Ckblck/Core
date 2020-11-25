@@ -119,7 +119,7 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
         InteractivePanel interactivePanel = new InteractivePanel(player);
 
         interactivePanel.add(0, TELEPORT_MODEL, (click) -> {
-            Location center = player.getLocation().getBlock().getLocation().clone().add(0.5, 0, 0.5);
+            Location center = player.getLocation().clone();
             model.setCenter(center);
         });
 

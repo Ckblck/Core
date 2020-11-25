@@ -6,6 +6,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import javax.sql.rowset.CachedRowSet;
@@ -142,9 +143,13 @@ public class MySQLManager {
 
     private void validateAddress() {
         try {
-            String ip = Core.getInstance().getServer().getIp();
+            Server server = Core.getInstance().getServer();
+
+            String ip = server.getIp();
             String address = (ip.isEmpty()) ? InetAddress.getLocalHost().getHostAddress() : ip;
-            CachedRowSet set = query("SELECT name FROM dustservers.servers WHERE address = ?;", address);
+            int port = server.getPort();
+
+            CachedRowSet set = query("SELECT name FROM dustservers.servers WHERE address = ? AND port = ?;", address, port);
 
             try {
                 if (set.next()) {

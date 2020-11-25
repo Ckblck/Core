@@ -4,16 +4,16 @@ import com.oldust.core.inherited.plugins.InheritedPlugin;
 import com.oldust.core.inherited.plugins.Plugin;
 import com.oldust.core.staff.chest.FakeChestsManager;
 import com.oldust.core.staff.dispatch.DispatchCommand;
+import com.oldust.core.staff.mode.StaffModeManager;
 import com.oldust.core.staff.mode.command.ModeCommand;
-import com.oldust.core.staff.vanish.VanishHandler;
-import com.oldust.core.staff.vanish.command.VanishCommand;
+import com.oldust.core.staff.mode.command.VanishCommand;
 import lombok.Getter;
 
 @Getter
 @InheritedPlugin(name = "Staff")
 public class StaffPlugin extends Plugin {
     private FakeChestsManager fakeChestsManager;
-    private VanishHandler vanishHandler;
+    private StaffModeManager staffModeManager;
 
     @Override
     public void onEnable() {
@@ -22,7 +22,7 @@ public class StaffPlugin extends Plugin {
         new VanishCommand(this);
 
         fakeChestsManager = new FakeChestsManager();
-        vanishHandler = new VanishHandler();
+        staffModeManager = new StaffModeManager();
     }
 
     @Override

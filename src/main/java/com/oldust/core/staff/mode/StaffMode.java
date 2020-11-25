@@ -20,21 +20,15 @@ import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.io.Serializable;
 import java.util.UUID;
 
-public class StaffMode implements Serializable, Listener {
-    private static final long serialVersionUID = 453634506934853L;
-    private static final transient TextComponent RETURN_COMPONENT = new EasyTextComponent()
+public class StaffMode implements Serializable {
+    private static final TextComponent RETURN_COMPONENT = new EasyTextComponent()
             .setText("&6« &eExit Spectator &6»")
             .runCommand(new InteractiveComponent((pl) -> pl.setGameMode(GameMode.SURVIVAL)).create())
             .showText("&6« &r&lCLICK &6»\n&8&m&l           \n\n&7In order to switch back your gamemode.\n&7You can also click the &9'Tools' &7item.")
@@ -46,33 +40,16 @@ public class StaffMode implements Serializable, Listener {
     private final boolean previousAllowFlight;
     private final boolean previousFlying;
 
-    public StaffMode(Player player, WrappedPlayerDatabase database) {
+    protected StaffMode(StaffModeManager manager, Player player, WrappedPlayerDatabase database) {
         this.player = player.getUniqueId();
         this.previousGamemode = player.getGameMode();
         this.previousAllowFlight = player.getAllowFlight();
         this.previousFlying = player.isFlying();
 
-        init(player, database);
+        init(manager, player, database);
     }
 
-    @EventHandler
-    public void onBreak(BlockBreakEvent e) {
-        Player player = e.getPlayer();
-
-        if (isSamePlayer(player)) {
-            e.setCancelled(true);
-            CUtils.msg(player, Lang.ERROR_COLOR + "You can't break any block while in Staff Mode!");
-        }
-    }
-
-    @EventHandler
-    public void onHit(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player && isSamePlayer(e.getEntity())) {
-            e.setCancelled(true);
-        }
-    }
-
-    private void init(Player staff, WrappedPlayerDatabase database) {
+    public void init(StaffModeManager manager, Player staff, WrappedPlayerDatabase database) {
         InteractivePanel panel = new InteractivePanel(staff);
 
         panel.add(0, ModeItems.STAFF_TOOLS, (click) -> new StaffToolsInv(Bukkit.getPlayer(this.player), this).open());
@@ -82,7 +59,7 @@ public class StaffMode implements Serializable, Listener {
         panel.add(4, ModeItems.STICK_ANTI_KB, (click) -> {
         });
 
-        panel.add(8, ModeItems.EXIT, (click) -> exit(Bukkit.getPlayer(this.player), database));
+        panel.add(8, ModeItems.EXIT, (click) -> manager.exitStaffMode(Bukkit.getPlayer(this.player), PlayerManager.getInstance().getDatabase(player)));
 
         panel.addListener(new InteractiveListener() {
             @Override
@@ -91,33 +68,32 @@ public class StaffMode implements Serializable, Listener {
             }
         });
 
-        staff.setGameMode(GameMode.SURVIVAL);
-        staff.setAllowFlight(true);
-        staff.setFlying(true);
+        Bukkit.getScheduler().runTaskLater(Core.getInstance(), () -> {
+            staff.setGameMode(GameMode.CREATIVE);
+            staff.setAllowFlight(true);
+            staff.setFlying(true);
+        }, 10);
 
         panel.enter(staff);
-        vanish(staff);
 
-        database.put(PlayerDatabaseKeys.STAFF_MODE, panel);
+        database.put(PlayerDatabaseKeys.STAFF_MODE, this);
         PlayerManager.getInstance().saveDatabase(database);
-        CUtils.registerEvents(this);
+
+        vanish(staff);
     }
 
-    public void exit(Player staff, WrappedPlayerDatabase database) {
-        InteractivePanel panel = database.getValue(PlayerDatabaseKeys.STAFF_MODE).asClass(InteractivePanel.class);
-        panel.exit(staff);
-
+    protected void exit(Player staff, WrappedPlayerDatabase database) {
         staff.removePotionEffect(PotionEffectType.NIGHT_VISION);
-        unvanish(staff);
+        staff.getInventory().clear();
+
+        database.remove(PlayerDatabaseKeys.STAFF_MODE);
+        PlayerManager.getInstance().update(database);
 
         staff.setGameMode(previousGamemode);
         staff.setAllowFlight(previousAllowFlight);
         staff.setFlying(previousFlying);
 
-        database.remove(PlayerDatabaseKeys.STAFF_MODE);
-        PlayerManager.getInstance().update(database);
-
-        CUtils.unregisterEvents(this);
+        unvanish(staff);
     }
 
     public void muteChat(Player staff) {
@@ -169,16 +145,12 @@ public class StaffMode implements Serializable, Listener {
 
     public void vanish(Player staff) {
         StaffPlugin plugin = InheritedPluginsManager.getPlugin(StaffPlugin.class);
-        plugin.getVanishHandler().vanish(staff);
+        plugin.getStaffModeManager().vanish(staff);
     }
 
     public void unvanish(Player staff) {
         StaffPlugin plugin = InheritedPluginsManager.getPlugin(StaffPlugin.class);
-        plugin.getVanishHandler().unvanish(staff);
-    }
-
-    private boolean isSamePlayer(Entity entity) {
-        return entity.getUniqueId().equals(this.player);
+        plugin.getStaffModeManager().unvanish(staff);
     }
 
 }
