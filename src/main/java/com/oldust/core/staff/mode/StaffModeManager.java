@@ -28,7 +28,7 @@ import java.util.*;
  * lo relacionado a Staff Mode y vanish.
  * <p>
  * El Staff Mode es guardado en la base del datos
- * del jugador durante lo tenga activado.
+ * del jugador mientras lo tenga activado.
  * Si el jugador cambia de servidor, se borrará localmente
  * en el mapa {@link #staffs}. De esta forma podemos mantener una instancia
  * de {@link StaffMode} en su {@link WrappedPlayerDatabase}.

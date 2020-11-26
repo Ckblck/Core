@@ -30,7 +30,7 @@ import java.util.UUID;
 public class StaffMode implements Serializable {
     private static final TextComponent RETURN_COMPONENT = new EasyTextComponent()
             .setText("&6« &eExit Spectator &6»")
-            .runCommand(new InteractiveComponent((pl) -> pl.setGameMode(GameMode.SURVIVAL)).create())
+            .runCommand(new InteractiveComponent((pl) -> pl.setGameMode(GameMode.CREATIVE)).create())
             .showText("&6« &r&lCLICK &6»\n&8&m&l           \n\n&7In order to switch back your gamemode.\n&7You can also click the &9'Tools' &7item.")
             .getComponent();
 
@@ -110,7 +110,7 @@ public class StaffMode implements Serializable {
     }
 
     public void switchMode(Player staff) {
-        GameMode gameMode = (staff.getGameMode() == GameMode.SPECTATOR) ? GameMode.SURVIVAL : GameMode.SPECTATOR;
+        GameMode gameMode = (staff.getGameMode() == GameMode.SPECTATOR) ? GameMode.CREATIVE : GameMode.SPECTATOR;
         staff.setGameMode(gameMode);
 
         staff.spigot().sendMessage(RETURN_COMPONENT);
