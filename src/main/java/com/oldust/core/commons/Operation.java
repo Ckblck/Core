@@ -1,6 +1,6 @@
 package com.oldust.core.commons;
 
-import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
+import com.oldust.sync.wrappers.defaults.ImmutableWrappedPlayerDatabase;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.Event;
@@ -17,5 +17,5 @@ import java.util.function.BiConsumer;
 @Getter
 @RequiredArgsConstructor
 public class Operation<T extends Event> {
-    private final BiConsumer<T, WrappedPlayerDatabase> consumer;
+    private final BiConsumer<T, ImmutableWrappedPlayerDatabase> consumer;
 }

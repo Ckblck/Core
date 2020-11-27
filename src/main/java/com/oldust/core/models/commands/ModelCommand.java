@@ -6,6 +6,7 @@ import com.oldust.core.models.file.FileLoader;
 import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
+import com.oldust.core.utils.lambda.TriConsumer;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.io.FilenameUtils;
 import org.bukkit.Location;
@@ -20,7 +21,6 @@ import javax.annotation.Nullable;
 import java.nio.file.NoSuchFileException;
 import java.util.List;
 import java.util.Set;
-import java.util.function.BiConsumer;
 
 public class ModelCommand extends InheritedCommand<ModelPlugin> {
     private static final FileLoader LOADER = new FileLoader();
@@ -30,8 +30,8 @@ public class ModelCommand extends InheritedCommand<ModelPlugin> {
     }
 
     @Override
-    public BiConsumer<CommandSender, String[]> onCommand() {
-        return (sender, args) -> {
+    public TriConsumer<CommandSender, String, String[]> onCommand() {
+        return (sender, label, args) -> {
             if (isNotPlayer(sender)) return;
             if (isNotAboveOrEqual(sender, PlayerRank.ADMIN)) return;
 

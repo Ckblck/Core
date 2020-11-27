@@ -4,6 +4,7 @@ import com.oldust.core.actions.ActionsReceiver;
 import com.oldust.core.chat.ChatHandler;
 import com.oldust.core.commons.EventsProvider;
 import com.oldust.core.inherited.plugins.InheritedPluginsManager;
+import com.oldust.core.interactive.panels.InteractivePanelManager;
 import com.oldust.core.models.ModelPlugin;
 import com.oldust.core.mysql.MySQLManager;
 import com.oldust.core.ranks.permission.PermissionsManager;
@@ -45,6 +46,10 @@ public class Core extends JavaPlugin {
         serverManager = new ServerManager();
         inventoryManager = new InventoryManager(this);
         inventoryManager.init();
+
+        new InteractivePanelManager();
+
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
         InheritedPluginsManager.loadInheritedPlugin(ModelPlugin.class);
         InheritedPluginsManager.loadInheritedPlugin(ChatHandler.class);

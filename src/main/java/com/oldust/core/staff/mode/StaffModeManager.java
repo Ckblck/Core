@@ -163,7 +163,7 @@ public class StaffModeManager implements Listener {
                     .forEach(vanishedPl -> player.hidePlayer(Core.getInstance(), vanishedPl));
 
             if (staffMode) {
-                setStaffMode(player, db);
+                setStaffMode(player);
             }
 
         }));
@@ -172,6 +172,10 @@ public class StaffModeManager implements Listener {
             deleteStaffModeLocally(quit.getPlayer()); // Borramos localmente, no de Redis.
         }));
 
+    }
+
+    private void setStaffMode(Player player) {
+        setStaffMode(player, PlayerManager.getInstance().getDatabase(player.getUniqueId()));
     }
 
     public void switchState(Player player) {

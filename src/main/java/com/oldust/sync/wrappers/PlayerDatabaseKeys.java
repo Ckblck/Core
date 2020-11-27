@@ -4,5 +4,6 @@ public enum PlayerDatabaseKeys {
     RANK,
     PERSONAL_PERMISSIONS,
     STAFF_MODE,
+    STAFF_CHAT,
     VANISH
 }

@@ -2,6 +2,7 @@ package com.oldust.sync.wrappers.defaults;
 
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
 import com.oldust.sync.wrappers.Savable;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
@@ -10,6 +11,7 @@ import java.util.UUID;
 public class WrappedPlayerDatabase extends Savable<PlayerDatabaseKeys> {
     private static final long serialVersionUID = 2950836897235238L;
 
+    @Getter
     private final UUID playerUUID;
 
     @Override

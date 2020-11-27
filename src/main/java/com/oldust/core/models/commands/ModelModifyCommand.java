@@ -2,11 +2,13 @@ package com.oldust.core.models.commands;
 
 import com.oldust.core.inherited.commands.InheritedCommand;
 import com.oldust.core.interactive.panels.InteractivePanel;
+import com.oldust.core.interactive.panels.InteractivePanelManager;
 import com.oldust.core.models.ModelPlugin;
 import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.ItemBuilder;
 import com.oldust.core.utils.Lang;
+import com.oldust.core.utils.lambda.TriConsumer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -20,7 +22,6 @@ import uk.lewdev.standmodels.events.custom.ModelInteractEvent;
 import uk.lewdev.standmodels.model.Model;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 
 public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements Listener {
     private static final ItemStack TELEPORT_MODEL = new ItemBuilder(Material.ENDER_PEARL)
@@ -48,8 +49,8 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
     }
 
     @Override
-    public BiConsumer<CommandSender, String[]> onCommand() {
-        return (sender, args) -> {
+    public TriConsumer<CommandSender, String, String[]> onCommand() {
+        return (sender, label, args) -> {
             if (isNotPlayer(sender)) return;
             if (isNotAboveOrEqual(sender, PlayerRank.ADMIN)) return;
 
@@ -83,7 +84,7 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
                     CUtils.msg(sender, Lang.ERROR_COLOR + "You are not modifying any models!");
                 } else {
                     InteractivePanel panel = playersModifying.remove(uuid);
-                    if (panel != null) panel.exit((Player) sender);
+                    if (panel != null) InteractivePanelManager.getInstance().exitPanel((Player) sender);
 
                     CUtils.msg(sender, Lang.SUCCESS_COLOR + "Exited from the modification panel.");
                 }
@@ -116,6 +117,7 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
     }
 
     public InteractivePanel createPanel(Player player, Model model) {
+        InteractivePanelManager manager = InteractivePanelManager.getInstance();
         InteractivePanel interactivePanel = new InteractivePanel(player);
 
         interactivePanel.add(0, TELEPORT_MODEL, (click) -> {
@@ -135,15 +137,15 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
         interactivePanel.add(7, REMOVE, (click) -> {
             getPlugin().getStandModelLib().getModelManager().removeModel(model);
             playersModifying.remove(player.getUniqueId());
-            interactivePanel.exit(player);
+            manager.exitPanel(player);
         });
 
         interactivePanel.add(8, EXIT, (click) -> {
             playersModifying.remove(player.getUniqueId());
-            interactivePanel.exit(player);
+            manager.exitPanel(player);
         });
 
-        interactivePanel.enter(player);
+        manager.setPanel(player, interactivePanel);
 
         return interactivePanel;
     }

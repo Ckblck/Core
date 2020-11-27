@@ -7,11 +7,11 @@ import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.staff.StaffPlugin;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
+import com.oldust.core.utils.lambda.TriConsumer;
 import com.oldust.sync.JedisManager;
 import org.bukkit.command.CommandSender;
 
 import java.util.Arrays;
-import java.util.function.BiConsumer;
 
 public class DispatchCommand extends InheritedCommand<StaffPlugin> {
 
@@ -20,8 +20,8 @@ public class DispatchCommand extends InheritedCommand<StaffPlugin> {
     }
 
     @Override
-    public BiConsumer<CommandSender, String[]> onCommand() {
-        return ((sender, args) -> {
+    public TriConsumer<CommandSender, String, String[]> onCommand() {
+        return (sender, label, args) -> {
             if (isNotAboveOrEqual(sender, PlayerRank.ADMIN)) return;
 
             if (args.length == 0) {
@@ -48,7 +48,7 @@ public class DispatchCommand extends InheritedCommand<StaffPlugin> {
 
             new DispatchCommandAction(sender.getName(), serverName, command).push(JedisManager.getInstance().getPool());
             CUtils.msg(sender, Lang.SUCCESS_COLOR + "Comando propagado correctamente.");
-        });
+        };
     }
 
 }

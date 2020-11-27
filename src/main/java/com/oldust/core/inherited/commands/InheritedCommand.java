@@ -5,6 +5,7 @@ import com.oldust.core.inherited.plugins.Plugin;
 import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
+import com.oldust.core.utils.lambda.TriConsumer;
 import lombok.Getter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -13,30 +14,29 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 public abstract class InheritedCommand<T extends Plugin> extends Command {
-    private final BiConsumer<CommandSender, String[]> commandConsumer;
+    private final TriConsumer<CommandSender, String, String[]> commandConsumer;
     @Getter
     private final T plugin;
 
     public InheritedCommand(T plugin, String name, @Nullable List<String> aliases) {
         super(name);
 
-        Core core = Core.getInstance();
-        core.getServer().getCommandMap().register(plugin.getName(), this);
-
         this.commandConsumer = onCommand();
         this.plugin = plugin;
 
         if (aliases != null)
             setAliases(aliases);
+
+        Core core = Core.getInstance();
+        core.getServer().getCommandMap().register(plugin.getName(), this);
     }
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         try {
-            commandConsumer.accept(sender, args);
+            commandConsumer.accept(sender, label, args);
         } catch (Throwable t) {
             CUtils.msg(sender, Lang.ERROR_COLOR + "An error occurred while executing the command. " + t.getMessage());
             t.printStackTrace();
@@ -47,7 +47,7 @@ public abstract class InheritedCommand<T extends Plugin> extends Command {
         return true;
     }
 
-    public abstract BiConsumer<CommandSender, String[]> onCommand();
+    public abstract TriConsumer<CommandSender, String, String[]> onCommand();
 
     public boolean isNotPlayer(CommandSender sender) {
         boolean notPlayer = !(sender instanceof Player);
@@ -67,6 +67,10 @@ public abstract class InheritedCommand<T extends Plugin> extends Command {
         }
 
         return notAboveOrEqual;
+    }
+
+    public boolean isNotStaff(CommandSender sender) {
+        return !PlayerRank.getPlayerRank(sender).isStaff();
     }
 
 }

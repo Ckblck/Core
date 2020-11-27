@@ -6,11 +6,12 @@ import com.oldust.core.actions.ActionsReceiver;
 import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.PlayerUtils;
-import com.oldust.core.utils.SerializablePredicate;
+import com.oldust.core.utils.lambda.SerializablePredicate;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -19,13 +20,22 @@ public class DispatchMessageAction extends Action<DispatchMessageAction> {
     private final Channel channel;
     private final SerializablePredicate<PlayerRank> rankRequirement;
     private final String message;
+    private final Sound sound;
+    private final float volume, pitch;
 
-    public DispatchMessageAction(Channel channel, SerializablePredicate<PlayerRank> rankRequirement, String message) {
+    public DispatchMessageAction(Channel channel, SerializablePredicate<PlayerRank> rankRequirement, String message, Sound sound, float volume, float pitch) {
         super(ActionsReceiver.PREFIX);
 
         this.channel = channel;
         this.rankRequirement = rankRequirement;
         this.message = message;
+        this.sound = sound;
+        this.volume = volume;
+        this.pitch = pitch;
+    }
+
+    public DispatchMessageAction(Channel channel, SerializablePredicate<PlayerRank> rankRequirement, String message) {
+        this(channel, rankRequirement, message, null, -1, -1);
     }
 
     @Override
@@ -42,6 +52,10 @@ public class DispatchMessageAction extends Action<DispatchMessageAction> {
             boolean applies = rankRequirement.test(playerRank);
 
             if (applies) {
+                if (sound != null) {
+                    player.playSound(player.getLocation(), sound, volume, pitch);
+                }
+
                 CUtils.msg(player, message);
             }
         }

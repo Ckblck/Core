@@ -7,6 +7,7 @@ import com.oldust.core.interactive.components.creator.EasyTextComponent;
 import com.oldust.core.interactive.panels.InteractiveItem;
 import com.oldust.core.interactive.panels.InteractiveListener;
 import com.oldust.core.interactive.panels.InteractivePanel;
+import com.oldust.core.interactive.panels.InteractivePanelManager;
 import com.oldust.core.staff.StaffPlugin;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
@@ -74,7 +75,7 @@ public class StaffMode implements Serializable {
             staff.setFlying(true);
         }, 10);
 
-        panel.enter(staff);
+        InteractivePanelManager.getInstance().setPanel(staff, panel);
 
         database.put(PlayerDatabaseKeys.STAFF_MODE, this);
         PlayerManager.getInstance().saveDatabase(database);
@@ -85,6 +86,8 @@ public class StaffMode implements Serializable {
     protected void exit(Player staff, WrappedPlayerDatabase database) {
         staff.removePotionEffect(PotionEffectType.NIGHT_VISION);
         staff.getInventory().clear();
+
+        InteractivePanelManager.getInstance().exitPanel(staff);
 
         database.remove(PlayerDatabaseKeys.STAFF_MODE);
         PlayerManager.getInstance().update(database);

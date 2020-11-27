@@ -3,6 +3,7 @@ package com.oldust.core.commons;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
 import com.oldust.sync.PlayerManager;
+import com.oldust.sync.wrappers.defaults.ImmutableWrappedPlayerDatabase;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -63,7 +64,7 @@ public class EventsProvider implements Listener {
         }
 
         for (Operation<Event> operation : operations.get(clazz)) {
-            operation.getConsumer().accept(e, database);
+            operation.getConsumer().accept(e, new ImmutableWrappedPlayerDatabase(database));
         }
     }
 

@@ -2,7 +2,8 @@ package com.oldust.core.staff.chest;
 
 import com.oldust.core.actions.types.DispatchMessageAction;
 import com.oldust.core.ranks.PlayerRank;
-import com.oldust.core.utils.SerializablePredicate;
+import com.oldust.core.utils.Lang;
+import com.oldust.core.utils.lambda.SerializablePredicate;
 import com.oldust.sync.JedisManager;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
@@ -29,7 +30,7 @@ public class FakeChest {
         block.setType(Material.AIR);
         block.setBlockData(blockData);
 
-        String message = "#696969 (#f5c000 ALERT#696969) #a19e6d &m &r#a19e6d»#f5c000 "
+        String message = "#696969 (#f5c000 ALERT#696969) " + Lang.ARROW + "#f5c000 "
                 + player.getName()
                 + " has opened a fake chest.";
 

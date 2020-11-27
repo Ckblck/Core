@@ -1,4 +1,4 @@
-package com.oldust.core.utils;
+package com.oldust.core.utils.lambda;
 
 import java.io.Serializable;
 import java.util.function.Predicate;
