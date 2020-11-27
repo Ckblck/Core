@@ -1,5 +1,6 @@
 package com.oldust.core.staff.chest;
 
+import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.utils.CUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -48,7 +49,13 @@ public class FakeChestsManager implements Listener {
 
         if (block.getType() == Material.CHEST && fakeChests.containsKey(location)) {
             FakeChest fakeChest = fakeChests.get(location);
-            fakeChest.alert(player);
+            boolean staff = PlayerRank.getPlayerRank(player).isStaff();
+
+            if (staff) {
+                fakeChest.remove(player);
+            } else {
+                fakeChest.alert(player);
+            }
 
             fakeChests.remove(location);
         }
