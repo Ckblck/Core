@@ -38,11 +38,13 @@ public class Core extends JavaPlugin {
 
         new JedisManager();
         new MySQLManager();
+
+        eventsProvider = new EventsProvider();
+
         new PlayerManager();
         new ActionsReceiver();
         new PermissionsManager();
 
-        eventsProvider = new EventsProvider();
         serverManager = new ServerManager();
         inventoryManager = new InventoryManager(this);
         inventoryManager.init();

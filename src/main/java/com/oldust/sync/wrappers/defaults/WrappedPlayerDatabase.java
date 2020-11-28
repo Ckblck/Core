@@ -4,15 +4,18 @@ import com.oldust.sync.wrappers.PlayerDatabaseKeys;
 import com.oldust.sync.wrappers.Savable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.util.UUID;
 
+@Getter
 @RequiredArgsConstructor
 public class WrappedPlayerDatabase extends Savable<PlayerDatabaseKeys> {
     private static final long serialVersionUID = 2950836897235238L;
 
-    @Getter
     private final UUID playerUUID;
+    @Setter
+    private String bungeeServer;
 
     @Override
     public String getId() {

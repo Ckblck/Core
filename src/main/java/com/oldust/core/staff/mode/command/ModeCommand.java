@@ -10,10 +10,12 @@ import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+
 public class ModeCommand extends InheritedCommand<StaffPlugin> {
 
     public ModeCommand(StaffPlugin plugin) {
-        super(plugin, "v", null);
+        super(plugin, "v", Arrays.asList("staffmode", "sm", "stmode"));
     }
 
     @Override

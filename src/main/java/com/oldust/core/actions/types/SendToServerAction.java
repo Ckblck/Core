@@ -3,15 +3,14 @@ package com.oldust.core.actions.types;
 import com.oldust.core.actions.Action;
 import com.oldust.core.actions.ActionsReceiver;
 import com.oldust.core.utils.PlayerUtils;
-import com.oldust.sync.wrappers.defaults.OldustServer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class SendToServerAction extends Action<SendToServerAction> {
     private final String player;
-    private final OldustServer server;
+    private final String server;
 
-    public SendToServerAction(String player, OldustServer server) {
+    public SendToServerAction(String player, String server) {
         super(ActionsReceiver.PREFIX);
 
         this.player = player;
@@ -23,7 +22,7 @@ public class SendToServerAction extends Action<SendToServerAction> {
         Player player = Bukkit.getPlayer(this.player);
 
         if (player != null) {
-            PlayerUtils.sendToServer(player, server.getId());
+            PlayerUtils.sendToServer(player, server);
         }
 
     }
