@@ -3,6 +3,7 @@ package com.oldust.core.staff.commands;
 import com.oldust.core.Core;
 import com.oldust.core.actions.types.SendToServerAction;
 import com.oldust.core.inherited.commands.InheritedCommand;
+import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.staff.StaffPlugin;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
@@ -29,6 +30,8 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
+            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
+
             if (args.length == 0) {
                 CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
 
@@ -36,7 +39,7 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
             }
 
             boolean tpHere = (label.equalsIgnoreCase("tphere"));
-            boolean coordinates = !tpHere && args.length >= 3;
+            boolean coordinates = !tpHere && args.length >= 3 && !NumberUtils.isNumber(args[0]);
 
             if (tpHere) {
                 if (isNotPlayer(sender)) return;

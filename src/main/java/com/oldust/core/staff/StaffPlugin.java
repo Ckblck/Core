@@ -3,6 +3,8 @@ package com.oldust.core.staff;
 import com.oldust.core.inherited.plugins.InheritedPlugin;
 import com.oldust.core.inherited.plugins.Plugin;
 import com.oldust.core.staff.chest.FakeChestsManager;
+import com.oldust.core.staff.commands.FindCommand;
+import com.oldust.core.staff.commands.SendCommand;
 import com.oldust.core.staff.commands.StaffChatCommand;
 import com.oldust.core.staff.commands.TeleportCommand;
 import com.oldust.core.staff.dispatch.DispatchCommand;
@@ -24,6 +26,8 @@ public class StaffPlugin extends Plugin {
         new VanishCommand(this);
         new StaffChatCommand(this);
         new TeleportCommand(this);
+        new FindCommand(this);
+        new SendCommand(this);
 
         fakeChestsManager = new FakeChestsManager();
         staffModeManager = new StaffModeManager();

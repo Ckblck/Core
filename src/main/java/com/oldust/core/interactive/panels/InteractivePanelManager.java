@@ -80,7 +80,7 @@ public class InteractivePanelManager implements Listener {
     private void onInteract(PlayerInteractEvent e) {
         Player player = e.getPlayer();
 
-        if (hasNotPanel(player) || e.getItem() == null) return;
+        if (e.getItem() == null || hasNotPanel(player)) return;
 
         InteractivePanel panel = panels.get(player.getUniqueId());
         List<InteractiveItem> items = panel.getItems();

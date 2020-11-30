@@ -11,10 +11,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
@@ -28,6 +29,7 @@ import java.util.function.Function;
 public class MySQLManager {
     private static HikariDataSource pool;
     private final File credentialsFile = new File(Core.getInstance().getDataFolder(), "db_credentials.yml");
+    private boolean fallback = false;
 
     public MySQLManager() {
         if (!credentialsFile.exists())
@@ -142,39 +144,61 @@ public class MySQLManager {
     }
 
     private void validateAddress() {
-        try {
-            Server server = Core.getInstance().getServer();
+        Server server = Core.getInstance().getServer();
 
-            String ip = server.getIp();
-            String address = (ip.isEmpty()) ? InetAddress.getLocalHost().getHostAddress() : ip;
-            int port = server.getPort();
+        String address = getPublicIp("http://checkip.amazonaws.com");
+        int port = server.getPort();
 
-            CachedRowSet set = query("SELECT name FROM dustservers.servers WHERE address = ? AND port = ?;", address, port);
-
-            try {
-                if (set.next()) {
-                    Core.getInstance().setServerName(set.getString("name"));
-                } else {
-                    CUtils.logConsole("--------------------------------------------------------------------------------------");
-                    CUtils.logConsole("Este servidor no está registrado en la base de datos de Oldust.");
-                    CUtils.logConsole("--------------------------------------------------------------------------------------");
-
-                    Bukkit.shutdown();
-                }
-            } catch (SQLException e) {
-                CUtils.logConsole("--------------------------------------------------------------------------------------");
-                CUtils.logConsole("Hubo un error al obtener el nombre del servidor. No se pudo validar.");
-                CUtils.logConsole("--------------------------------------------------------------------------------------");
-
-                Bukkit.shutdown();
-            }
-        } catch (UnknownHostException e) {
+        if (address == null) {
             CUtils.logConsole("--------------------------------------------------------------------------------------");
-            CUtils.logConsole("Hubo un error al obtener la dirección IP local. No se pudo validar.");
+            CUtils.logConsole("No ha sido posible obtener la dirección pública de la máquina.");
             CUtils.logConsole("--------------------------------------------------------------------------------------");
 
             Bukkit.shutdown();
         }
+
+        CachedRowSet set = query("SELECT name FROM dustservers.servers WHERE address = ? AND port = ?;", address, port);
+
+        try {
+            if (set.next()) {
+                Core.getInstance().setServerName(set.getString("name"));
+
+                return;
+            }
+
+            CUtils.logConsole("--------------------------------------------------------------------------------------");
+            CUtils.logConsole("Este servidor no está registrado en la base de datos de Oldust.");
+            CUtils.logConsole("--------------------------------------------------------------------------------------");
+
+            Bukkit.shutdown();
+        } catch (SQLException e) {
+            CUtils.logConsole("--------------------------------------------------------------------------------------");
+            CUtils.logConsole("Hubo un error al obtener el nombre del servidor. No se pudo validar.");
+            CUtils.logConsole("--------------------------------------------------------------------------------------");
+
+            Bukkit.shutdown();
+        }
+
+    }
+
+    private String getPublicIp(String url) {
+        if (fallback) {
+            return null;
+        }
+
+        try (InputStreamReader reader = new InputStreamReader(new URL(url).openStream());
+             BufferedReader in = new BufferedReader(reader)) {
+
+            return in.readLine();
+        } catch (IOException e) {
+            fallback = true;
+
+            e.printStackTrace();
+            CUtils.inform("DB", "Ha ocurrido un error al realizar la conexión para obtener la dirección IP pública. Reintentando con método fallback...");
+
+            return getPublicIp("https://ipv4.icanhazip.com/");
+        }
+
     }
 
 }
