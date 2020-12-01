@@ -12,6 +12,11 @@ import com.oldust.sync.wrappers.ServerDatabaseKeys;
 import com.oldust.sync.wrappers.defaults.OldustServer;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.hover.content.Text;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -22,11 +27,12 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import java.util.Optional;
 
 public class ChatListener implements Listener {
-    private static final String STAFF_CHAT_FORMAT = CUtils.color("#329ea8 &m&l∕∕&r #80918a %s #fcba03 » &r%s");
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
         Player player = e.getPlayer();
+        String playerName = player.getName();
+        String msg = e.getMessage();
 
         if (chatMuted() && !PlayerRank.getPlayerRank(player).isStaff()) {
             e.setCancelled(true);
@@ -41,9 +47,18 @@ public class ChatListener implements Listener {
         if (staffChat) {
             e.setCancelled(true);
 
-            String message = String.format(STAFF_CHAT_FORMAT, player.getName(), e.getMessage());
+            BaseComponent[] base = new ComponentBuilder("∕∕")
+                    .color(ChatColor.of("#329ea8"))
+                    .strikethrough(true).bold(true)
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(database.getBungeeServer())))
+                    .append(" ").reset()
+                    .append(playerName).color(ChatColor.of("#80918a"))
+                    .append(" » ").color(ChatColor.of("#fcba03"))
+                    .append(msg).reset().create();
 
-            new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, PlayerRank::isStaff, message, Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 0.5F, 1F)
+            String serialized = ComponentSerializer.toString(base);
+
+            new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, PlayerRank::isStaff, true, serialized, Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 0.5F, 1F)
                     .push(JedisManager.getInstance().getPool());
 
             return;
@@ -62,7 +77,7 @@ public class ChatListener implements Listener {
                     + "%s";
 
             e.setFormat(format);
-            Bukkit.broadcastMessage(CUtils.color(e.getMessage())); // TODO Remove
+            Bukkit.broadcastMessage(CUtils.color(msg)); // TODO Remove
         }, () -> player.kickPlayer(Lang.DB_DISAPPEARED));
 
     }

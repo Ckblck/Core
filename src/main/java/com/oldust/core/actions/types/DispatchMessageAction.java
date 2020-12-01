@@ -11,6 +11,8 @@ import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import lombok.RequiredArgsConstructor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -19,23 +21,41 @@ import java.util.Collection;
 public class DispatchMessageAction extends Action<DispatchMessageAction> {
     private final Channel channel;
     private final SerializablePredicate<PlayerRank> rankRequirement;
+    private final boolean usesTextComponent;
     private final String message;
     private final Sound sound;
     private final float volume, pitch;
 
-    public DispatchMessageAction(Channel channel, SerializablePredicate<PlayerRank> rankRequirement, String message, Sound sound, float volume, float pitch) {
+    /**
+     * Construye un mensaje que se envía al servidor local o globalmente.
+     *
+     * @param channel           canal, el cual especifica a qué servidor se enviará el mensaje
+     * @param rankRequirement   predicado que permite funcionalmente decidir a qué rangos se enviará el mensaje
+     * @param usesTextComponent true si message proviene de {@link ComponentSerializer#toString(BaseComponent...)}
+     * @param message           mensaje común, como por ej: '#fffff &nHola', o producto de {@link ComponentSerializer#toString(BaseComponent...)}
+     * @param sound             sonido el cual mandar al momento del mensaje
+     * @param volume            volumen
+     * @param pitch             pitch
+     */
+
+    public DispatchMessageAction(Channel channel, SerializablePredicate<PlayerRank> rankRequirement, boolean usesTextComponent, String message, Sound sound, float volume, float pitch) {
         super(ActionsReceiver.PREFIX);
 
         this.channel = channel;
         this.rankRequirement = rankRequirement;
+        this.usesTextComponent = usesTextComponent;
         this.message = message;
         this.sound = sound;
         this.volume = volume;
         this.pitch = pitch;
     }
 
+    public DispatchMessageAction(Channel channel, SerializablePredicate<PlayerRank> rankRequirement, boolean usesTextComponent, String message) {
+        this(channel, rankRequirement, usesTextComponent, message, null, -1, -1);
+    }
+
     public DispatchMessageAction(Channel channel, SerializablePredicate<PlayerRank> rankRequirement, String message) {
-        this(channel, rankRequirement, message, null, -1, -1);
+        this(channel, rankRequirement, false, message, null, -1, -1);
     }
 
     @Override
@@ -56,7 +76,18 @@ public class DispatchMessageAction extends Action<DispatchMessageAction> {
                     player.playSound(player.getLocation(), sound, volume, pitch);
                 }
 
-                CUtils.msg(player, message);
+                if (usesTextComponent) {
+                    try {
+                        BaseComponent[] components = ComponentSerializer.parse(message);
+
+                        player.spigot().sendMessage(components);
+                    } catch (Exception e) {
+                        CUtils.inform("Action", "Attempt to send a global message marked as containing TextComponent while it does not.");
+                    }
+                } else {
+                    CUtils.msg(player, message);
+                }
+
             }
         }
 

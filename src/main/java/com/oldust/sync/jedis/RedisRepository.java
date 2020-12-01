@@ -92,6 +92,8 @@ public class RedisRepository<T extends Savable<?>> {
             String keyName = getKeyName(key);
             String serialize = jedis.get(keyName);
 
+            if (serialize == null) return null;
+
             return Base64Serializer.deserialize(serialize);
         }
     }
