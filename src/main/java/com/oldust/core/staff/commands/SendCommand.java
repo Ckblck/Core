@@ -104,7 +104,7 @@ public class SendCommand extends InheritedCommand<StaffPlugin> {
                 PlayerUtils.sendToServer(player, server);
             }
 
-            CUtils.msg(sender, Lang.SUCCESS_COLOR_ALT + "Successfully sent  " + players.size() + " players to server " + server + ".");
+            CUtils.msg(sender, Lang.SUCCESS_COLOR_ALT + "Successfully sent " + players.size() + " players to server " + server + ".");
         });
 
     }

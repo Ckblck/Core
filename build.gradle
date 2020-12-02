@@ -48,6 +48,7 @@ dependencies {
 
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.16'
 
+    compileOnly fileTree(dir: 'libraries', include: 'craftbukkit-1.16.4.jar')
     compile fileTree(dir: 'libraries', include: 'StandModelLib.jar')
 }
 

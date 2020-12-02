@@ -24,7 +24,7 @@ public class CUtils {
 
     public static void warnSyncCall() {
         if (Bukkit.isPrimaryThread()) {
-            inform("SERVER", Lang.ERROR_COLOR + "WARNING! A call from the Main thread was made when expecting Async usage.");
+            inform("SERVER", Lang.ERROR_COLOR + "WARNING! A call from the Main thread was made, when expected Async usage.");
         }
     }
 

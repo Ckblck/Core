@@ -34,7 +34,7 @@ public class Core extends JavaPlugin {
         instance = this;
 
         long start = System.currentTimeMillis();
-        CUtils.inform("Core", "Inicializando core...");
+        CUtils.inform("Core", "Initializing core...");
 
         new JedisManager();
         new MySQLManager();
@@ -61,7 +61,7 @@ public class Core extends JavaPlugin {
         InheritedPluginsManager.onEnable();
 
         long diff = System.currentTimeMillis() - start;
-        CUtils.inform("Core", "Core iniciado en " + diff / 1000 + "seg.");
+        CUtils.inform("Core", "Core initiated in " + ((double) diff / 1000) + " seg.");
     }
 
     @Override

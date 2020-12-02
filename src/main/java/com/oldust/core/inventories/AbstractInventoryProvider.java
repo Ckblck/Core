@@ -37,7 +37,11 @@ public abstract class AbstractInventoryProvider implements InventoryProvider {
     protected abstract SmartInventory buildInventory();
 
     public void open() {
-        buildInventory().open(player);
+        build().open(player);
+    }
+
+    public SmartInventory build() {
+        return buildInventory();
     }
 
 }

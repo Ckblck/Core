@@ -82,7 +82,7 @@ public class DispatchMessageAction extends Action<DispatchMessageAction> {
 
                         player.spigot().sendMessage(components);
                     } catch (Exception e) {
-                        CUtils.inform("Action", "Attempt to send a global message marked as containing TextComponent while it does not.");
+                        CUtils.inform("Action", "Not JSON encoded message was sent, 'usesTextComponent' should be false then.");
                     }
                 } else {
                     CUtils.msg(player, message);
