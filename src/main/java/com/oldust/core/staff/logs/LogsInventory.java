@@ -4,6 +4,7 @@ import com.oldust.core.Core;
 import com.oldust.core.inventories.AbstractInventoryProvider;
 import com.oldust.core.mysql.MySQLManager;
 import com.oldust.core.utils.CUtils;
+import com.oldust.core.utils.GeoIPUtils;
 import com.oldust.core.utils.ItemBuilder;
 import com.oldust.core.utils.Lang;
 import com.oldust.core.utils.advancement.FakeAdvancement;
@@ -13,7 +14,9 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import net.md_5.bungee.api.ChatColor;
+import net.minecraft.server.v1_16_R3.Advancement;
 import net.minecraft.server.v1_16_R3.AdvancementFrameType;
+import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
@@ -22,12 +25,21 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import javax.sql.rowset.CachedRowSet;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class LogsInventory extends AbstractInventoryProvider {
     private static final ClickableItem EMPTY = ClickableItem.empty(new ItemStack(Material.AIR));
+    private static final ItemStack NAVIGATOR = new ItemBuilder(Material.ARROW)
+            .setDisplayName("#fcba03 Navigator")
+            .setLore(Arrays.asList(
+                    " ",
+                    "#a6a6a6 (->) right click",
+                    "#a6a6a6 (<-) left click",
+                    "")
+            ).build();
 
     private static final String ITEM_NAME = ChatColor.of("#fcba03") + "Log";
     private static final String INV_NAME = "Logs (%d)";
@@ -54,19 +66,6 @@ public class LogsInventory extends AbstractInventoryProvider {
         this.search = search;
         this.page = 0;
 
-        CUtils.runSync(() -> {
-            FakeAdvancement adv = FakeAdvancement.builder()
-                    .key(new NamespacedKey("oldustcore", "sub/folder"))
-                    .title("Test")
-                    .item("heart_of_the_sea")
-                    .description("Test")
-                    .frame(AdvancementFrameType.GOAL)
-                    .announceToChat(false)
-                    .build();
-
-            adv.show(player, true);
-        });
-
         CompletableFuture.supplyAsync(this::build)
                 .thenAccept(inv -> CUtils.runSync(() -> inv.open(player)));
     }
@@ -90,7 +89,57 @@ public class LogsInventory extends AbstractInventoryProvider {
                     ).build();
 
             items[i] = ClickableItem.of(item, (click) -> {
+                FakeAdvancement adv = FakeAdvancement.builder()
+                        .key(new NamespacedKey("oldust-" + RandomStringUtils.randomAlphanumeric(3).toLowerCase(), "geo/ip"))
+                        .title(ChatColor.GREEN + ("Sending response..."))
+                        .item("comparator")
+                        .description("Response-Sending")
+                        .frame(AdvancementFrameType.TASK)
+                        .announceToChat(false)
+                        .build();
+
+                Advancement advancement = adv.show(player, false, false);
+
+                CompletableFuture<GeoIPUtils.GeoResponse> future = CompletableFuture.supplyAsync(() -> {
+                    GeoIPUtils.GeoResponse response = null;
+
+                    try {
+                        response = GeoIPUtils.gatherIpInfo(log.getIp());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        CUtils.msg(player, Lang.ERROR_COLOR + "An error occurred while sending the response to the Geo-IP API. An error stack trace was printed in the console.");
+                    }
+
+                    return response;
+                });
+
+                future.thenApply((response) -> {
+                    adv.unshow(player, advancement);
+                    adv.remove();
+
+                    return response;
+                }).thenApply(response -> {
+                    if (response == null) {
+                        future.cancel(true);
+                    }
+
+                    return response;
+                }).thenAccept(geoResponse -> CUtils.runSync(() -> {
+                    FakeAdvancement respAdv = FakeAdvancement.builder()
+                            .key(new NamespacedKey("oldust-" + RandomStringUtils.randomAlphanumeric(3).toLowerCase(), "geo/ip"))
+                            .title(ChatColor.GOLD + ("#a6a6a6City: &f" + geoResponse.getCity() +
+                                    "\n#a6a6a6Region: &f" + geoResponse.getRegionName() +
+                                    "\n#a6a6a6Country: &f" + geoResponse.getCountryName()))
+                            .item("heart_of_the_sea")
+                            .description("Geo-IP")
+                            .frame(AdvancementFrameType.TASK)
+                            .announceToChat(false)
+                            .build();
+
+                    respAdv.show(player, true, true);
+                }));
             });
+
         }
 
         pagination.setItems(items);
@@ -98,7 +147,7 @@ public class LogsInventory extends AbstractInventoryProvider {
 
         contents.fillBorders(EMPTY);
 
-        contents.set(5, 8, ClickableItem.of(new ItemStack(Material.ARROW),
+        contents.set(5, 8, ClickableItem.of(NAVIGATOR,
                 (click) -> handleClick(pagination, click)));
 
         SlotIterator iterator = contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 1);

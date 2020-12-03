@@ -44,6 +44,7 @@ public class Core extends JavaPlugin {
         new PlayerManager();
         new ActionsReceiver();
         new PermissionsManager();
+        // new Interceptor(); <- Packet Interceptor ->
 
         serverManager = new ServerManager();
         inventoryManager = new InventoryManager(this);

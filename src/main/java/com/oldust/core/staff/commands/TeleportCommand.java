@@ -131,8 +131,10 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
                         return;
                     }
 
-                    new SendToServerAction(who, targetServer.get()).push(JedisManager.getInstance().getPool());
-                    CUtils.msg(sender, Lang.SUCCESS_COLOR + who + " has been successfully teleported to the server " + targetServer + ".");
+                    String svName = targetServer.get();
+                    new SendToServerAction(who, svName).push(JedisManager.getInstance().getPool());
+
+                    CUtils.msg(sender, Lang.SUCCESS_COLOR + who + " has been successfully teleported to the server " + svName + ".");
                 });
             }
 
@@ -144,21 +146,21 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
             Player player = (Player) sender;
             String target = args[0];
 
-            doTeleport(player, target);
-        }
+            Player targetPlayer = Bukkit.getPlayer(target);
 
-    }
+            if (targetPlayer != null) {
+                player.teleport(targetPlayer);
 
-    private void doTeleport(Player sender, String targetName) {
-        CUtils.runAsync(() -> {
-            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(sender.getUniqueId());
-            String playerServer = database.getBungeeServer();
+                CUtils.msg(sender, Lang.SUCCESS_COLOR + target + " was successfully teleported to you.");
 
-            Player target = Bukkit.getPlayer(targetName);
+                return;
+            }
 
-            if (target == null) {
-                Optional<String> targetServer = Core.getInstance().getServerManager().getPlayerServer(targetName);
-                boolean present = targetServer.isPresent();
+            CUtils.runAsync(() -> {
+                WrappedPlayerDatabase senderDb = PlayerManager.getInstance().getDatabase(player.getUniqueId());
+                Optional<String> targetSv = Core.getInstance().getServerManager().getPlayerServer(target);
+
+                boolean present = targetSv.isPresent();
 
                 if (!present) {
                     CUtils.msg(sender, Lang.PLAYER_OFFLINE);
@@ -166,14 +168,40 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
                     return;
                 }
 
-                new SendToServerAction(targetName, playerServer).push(JedisManager.getInstance().getPool());
+                new SendToServerAction(target, senderDb.getBungeeServer()).push(JedisManager.getInstance().getPool());
 
-                CUtils.runSync(() -> Bukkit.getPlayer(targetName).teleport(sender.getLocation()));
-            } else {
-                CUtils.runSync(() -> target.teleport(sender.getLocation()));
+                CUtils.msg(sender, Lang.SUCCESS_COLOR + target + " was successfully sent to your server.");
+            });
+
+        }
+
+    }
+
+    private void doTeleport(Player sender, String targetName) {
+        Player target = Bukkit.getPlayer(targetName);
+
+        if (target != null) {
+            CUtils.runSync(() -> target.teleport(sender));
+
+            return;
+        }
+
+        CUtils.runAsync(() -> {
+            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(sender.getUniqueId());
+            String playerServer = database.getBungeeServer();
+
+            Optional<String> targetServer = Core.getInstance().getServerManager().getPlayerServer(targetName);
+            boolean present = targetServer.isPresent();
+
+            if (!present) {
+                CUtils.msg(sender, Lang.PLAYER_OFFLINE);
+
+                return;
             }
 
-            CUtils.msg(sender, Lang.SUCCESS_COLOR + targetName + " was successfully teleported to you.");
+            new SendToServerAction(targetName, playerServer).push(JedisManager.getInstance().getPool());
+
+            CUtils.msg(sender, Lang.SUCCESS_COLOR + targetName + " was successfully sent to your server.");
         });
     }
 

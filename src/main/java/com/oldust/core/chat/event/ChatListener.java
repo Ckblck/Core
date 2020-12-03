@@ -17,7 +17,6 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import net.md_5.bungee.chat.ComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,14 +46,14 @@ public class ChatListener implements Listener {
         if (staffChat) {
             e.setCancelled(true);
 
-            BaseComponent[] base = new ComponentBuilder("∕∕")
+            BaseComponent[] base = new ComponentBuilder("[SC]")
                     .color(ChatColor.of("#329ea8"))
-                    .strikethrough(true).bold(true)
+                    .italic(true)
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(database.getBungeeServer())))
                     .append(" ").reset()
                     .append(playerName).color(ChatColor.of("#80918a"))
                     .append(" » ").color(ChatColor.of("#fcba03"))
-                    .append(msg).reset().create();
+                    .append(CUtils.color(msg)).reset().create();
 
             String serialized = ComponentSerializer.toString(base);
 
@@ -74,10 +73,9 @@ public class ChatListener implements Listener {
                     + ChatColor.of("#fcba03")
                     + " » "
                     + ChatColor.RESET
-                    + "%s";
+                    + (rank.isEqualOrHigher(PlayerRank.ADMIN) ? CUtils.color("%s") : "%s");
 
             e.setFormat(format);
-            Bukkit.broadcastMessage(CUtils.color(msg)); // TODO Remove
         }, () -> player.kickPlayer(Lang.DB_DISAPPEARED));
 
     }

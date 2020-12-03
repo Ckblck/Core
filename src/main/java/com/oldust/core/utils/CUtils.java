@@ -1,6 +1,7 @@
 package com.oldust.core.utils;
 
 import com.oldust.core.Core;
+import lombok.experimental.UtilityClass;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -16,14 +17,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@UtilityClass
 public class CUtils {
-    private static final Pattern COLOR_PATTERN = Pattern.compile("#[a-fA-F0-9]{6}( )?");
+    private final Pattern COLOR_PATTERN = Pattern.compile("#[a-fA-F0-9]{6}( )?");
 
-    private CUtils() {
-    }
-
-    public static void warnSyncCall() {
+    public void warnSyncCall() {
         if (Bukkit.isPrimaryThread()) {
+            Thread.dumpStack();
+
             inform("SERVER", Lang.ERROR_COLOR + "WARNING! A call from the Main thread was made, when expected Async usage.");
         }
     }
@@ -33,7 +34,7 @@ public class CUtils {
      * de un string. Ejemplo: 1w, 1m (minute), 1M (month)
      */
 
-    public static TemporalAmount parseLiteralTime(String duration) {
+    public TemporalAmount parseLiteralTime(String duration) {
         if (Character.isUpperCase(duration.charAt(duration.length() - 1))) {
             return Period.parse("P" + duration);
         } else {
@@ -41,11 +42,11 @@ public class CUtils {
         }
     }
 
-    public static void logConsole(String message) {
+    public void logConsole(String message) {
         Core.getInstance().getServer().getConsoleSender().sendMessage(color(message));
     }
 
-    public static void inform(String prefix, String message) {
+    public void inform(String prefix, String message) {
         Core.getInstance().getServer().getConsoleSender().sendMessage(ChatColor.BLUE
                 + "[" + prefix + "]"
                 + ChatColor.DARK_GRAY
@@ -53,7 +54,7 @@ public class CUtils {
                 + message);
     }
 
-    public static void msg(CommandSender sender, String message) {
+    public void msg(CommandSender sender, String message) {
         sender.sendMessage(color(message));
     }
 
@@ -64,7 +65,7 @@ public class CUtils {
      * Este método quitará el último espacio EN CASO que lo tenga.
      */
 
-    public static String color(String text) {
+    public String color(String text) {
         Matcher matcher = COLOR_PATTERN.matcher(text);
 
         while (matcher.find()) {
@@ -83,31 +84,31 @@ public class CUtils {
         return ChatColor.translateAlternateColorCodes('&', text);
     }
 
-    public static void registerEvents(Listener listener) {
+    public void registerEvents(Listener listener) {
         Bukkit.getServer().getPluginManager().registerEvents(listener, Core.getInstance());
     }
 
-    public static void unregisterEvents(Listener listener) {
+    public void unregisterEvents(Listener listener) {
         HandlerList.unregisterAll(listener);
     }
 
-    public static List<String> colorizeList(List<String> list) {
+    public List<String> colorizeList(List<String> list) {
         return list.stream()
                 .map(line -> line = color(line))
                 .collect(Collectors.toList());
     }
 
-    public static String[] colorizeArray(String[] array) {
+    public String[] colorizeArray(String[] array) {
         return Arrays.stream(array)
                 .map(CUtils::color)
                 .toArray(String[]::new);
     }
 
-    public static void runSync(Runnable runnable) {
+    public void runSync(Runnable runnable) {
         Bukkit.getScheduler().runTask(Core.getInstance(), runnable);
     }
 
-    public static void runAsync(Runnable runnable) {
+    public void runAsync(Runnable runnable) {
         Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), runnable);
     }
 

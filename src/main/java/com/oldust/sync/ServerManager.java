@@ -87,7 +87,7 @@ public class ServerManager {
         Set<OldustServer> svs = serverRepository.fetchElements(servers);
 
         return svs.stream()
-                .filter(sv -> sv.getPlayersConnected().contains(player))
+                .filter(sv -> sv.getPlayersConnected().stream().anyMatch(pl -> pl.equalsIgnoreCase(player)))
                 .map(OldustServer::getServerName)
                 .findAny();
     }
