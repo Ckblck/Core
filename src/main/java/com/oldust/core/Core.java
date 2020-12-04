@@ -7,6 +7,7 @@ import com.oldust.core.inherited.plugins.InheritedPluginsManager;
 import com.oldust.core.interactive.panels.InteractivePanelManager;
 import com.oldust.core.models.ModelPlugin;
 import com.oldust.core.mysql.MySQLManager;
+import com.oldust.core.pool.ThreadPool;
 import com.oldust.core.ranks.permission.PermissionsManager;
 import com.oldust.core.staff.StaffPlugin;
 import com.oldust.core.utils.CUtils;
@@ -36,15 +37,16 @@ public class Core extends JavaPlugin {
         long start = System.currentTimeMillis();
         CUtils.inform("Core", "Initializing core...");
 
+        new ThreadPool();
         new JedisManager();
-        new MySQLManager();
+        new MySQLManager().validateAddress();
 
         eventsProvider = new EventsProvider();
 
         new PlayerManager();
         new ActionsReceiver();
         new PermissionsManager();
-        // new Interceptor(); <- Packet Interceptor ->
+        // new Interceptor(); <- Packet Interceptor -> (DEBUG Only)
 
         serverManager = new ServerManager();
         inventoryManager = new InventoryManager(this);

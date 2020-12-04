@@ -1,26 +1,26 @@
 package com.oldust.core.mysql;
 
 import com.oldust.core.Core;
+import com.oldust.core.pool.ThreadPool;
 import com.oldust.core.utils.CUtils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.yaml.snakeyaml.Yaml;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -28,23 +28,30 @@ import java.util.function.Function;
 
 public class MySQLManager {
     private static HikariDataSource pool;
-    private final File credentialsFile = new File(Core.getInstance().getDataFolder(), "db_credentials.yml");
+
+    private final File credentialsFile;
     private boolean fallback = false;
 
     public MySQLManager() {
+        this(new File(Core.getInstance().getDataFolder(), "db_credentials.yml"));
+    }
+
+    public MySQLManager(File credentialsFile) {
+        this.credentialsFile = credentialsFile;
+
         if (!credentialsFile.exists())
             createFile();
 
-        try {
-            HikariConfig config = new HikariConfig();
-            YamlConfiguration yamlConfig = new YamlConfiguration();
+        HikariConfig config = new HikariConfig();
+        Yaml yaml = new Yaml();
 
-            yamlConfig.load(credentialsFile);
+        try (FileInputStream inputStream = new FileInputStream(credentialsFile)) {
+            Map<String, Object> map = yaml.load(inputStream);
 
-            String hostName = yamlConfig.getString("host-name");
-            String password = yamlConfig.getString("password");
-            String username = yamlConfig.getString("username");
-            int port = yamlConfig.getInt("port");
+            String hostName = (String) map.get("host-name");
+            String password = (String) map.get("password");
+            String username = (String) map.get("username");
+            int port = (int) map.get("port");
 
             config.setJdbcUrl("jdbc:mysql://" + hostName + ":" + port + "/?autoReconnect=true&allowMultiQueries=true&characterEncoding=utf-8&serverTimezone=UTC&useSSL=false");
             config.setDriverClassName("com.mysql.jdbc.Driver");
@@ -54,13 +61,10 @@ public class MySQLManager {
             config.addDataSourceProperty("cachePrepStmts", true);
 
             pool = new HikariDataSource(config);
-
-            validateAddress();
         } catch (Exception e) {
-            CUtils.inform("DB", "No ha sido posible iniciar la conexión a la base de datos.");
             e.printStackTrace();
 
-            Bukkit.shutdown();
+            System.exit(1);
         }
     }
 
@@ -78,12 +82,12 @@ public class MySQLManager {
      */
 
     public static void queryAsync(String statement, CompletableFuture<CachedRowSet> future, Object... placeholders) {
-        Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), () -> future.complete(query(statement, placeholders)));
+        ThreadPool.getInstance().execute(() -> future.complete(query(statement, placeholders)));
     }
 
     public static CachedRowSet query(String statement, Object... placeholders) {
-        try (Connection conn = pool.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(statement);
+        try (Connection conn = pool.getConnection();
+             PreparedStatement ps = conn.prepareStatement(statement)) {
 
             for (int i = 0; i < placeholders.length; i++) {
                 ps.setObject(i + 1, placeholders[i]);
@@ -104,28 +108,58 @@ public class MySQLManager {
         return Optional.ofNullable(query(statement, placeholders));
     }
 
-    public static void updateThrowable(String statement, Object... placeholders) throws SQLException {
-        try (Connection conn = pool.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(statement);
+    /**
+     * Genera una update y devuelve un {@link CachedRowSet}
+     * conteniendo en el index 1 la ID autoincrementada
+     * insertada al dar el update.
+     * {@code CachedRowSet#getInt(1)} o {@code CachedRowSet#getLong(1)} (si la ID es long)
+     */
+
+    public static CachedRowSet updateWithGeneratedKeys(String statement, Object... placeholders) {
+        try (Connection conn = pool.getConnection();
+             PreparedStatement ps = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
 
             for (int i = 0; i < placeholders.length; i++) {
                 ps.setObject(i + 1, placeholders[i]);
             }
 
             ps.executeUpdate();
+
+            CachedRowSet cachedRowSet = RowSetProvider.newFactory().createCachedRowSet();
+            cachedRowSet.populate(ps.getGeneratedKeys());
+
+            return cachedRowSet;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static int updateThrowable(String statement, Object... placeholders) throws SQLException {
+        try (Connection conn = pool.getConnection();
+             PreparedStatement ps = conn.prepareStatement(statement)) {
+
+            for (int i = 0; i < placeholders.length; i++) {
+                ps.setObject(i + 1, placeholders[i]);
+            }
+
+            return ps.executeUpdate();
         }
     }
 
     public static void updateAsync(String statement, Object... placeholders) {
-        Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), () -> update(statement, placeholders));
+        ThreadPool.getInstance().execute(() -> update(statement, placeholders));
     }
 
-    public static void update(String statement, Object... placeholders) {
+    public static int update(String statement, Object... placeholders) {
         try {
-            updateThrowable(statement, placeholders);
+            return updateThrowable(statement, placeholders);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return -1;
     }
 
     private void createFile() {
@@ -135,15 +169,15 @@ public class MySQLManager {
             FileUtils.copyInputStreamToFile(Objects.requireNonNull(Core.getInstance().getResource("db_credentials.yml")), credentialsFile);
             Files.copy(file.toPath(), credentialsFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-            CUtils.inform("DB", "Se ha creado el archivo de credenciales para la base de datos por primera vez. Rellénalo y reinicia el servidor.");
+            System.out.println("Se ha creado el archivo de credenciales para la base de datos por primera vez. Rellénalo y reinicia el servidor.");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        Bukkit.shutdown();
+        System.exit(0);
     }
 
-    private void validateAddress() {
+    public void validateAddress() {
         Server server = Core.getInstance().getServer();
 
         String address = getPublicIp("http://checkip.amazonaws.com");
@@ -194,7 +228,6 @@ public class MySQLManager {
             fallback = true;
 
             e.printStackTrace();
-            CUtils.inform("DB", "Ha ocurrido un error al realizar la conexión para obtener la dirección IP pública. Reintentando con método fallback...");
 
             return getPublicIp("https://ipv4.icanhazip.com/");
         }

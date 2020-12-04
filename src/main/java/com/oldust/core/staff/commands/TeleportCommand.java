@@ -151,8 +151,6 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
             if (targetPlayer != null) {
                 player.teleport(targetPlayer);
 
-                CUtils.msg(sender, Lang.SUCCESS_COLOR + target + " was successfully teleported to you.");
-
                 return;
             }
 

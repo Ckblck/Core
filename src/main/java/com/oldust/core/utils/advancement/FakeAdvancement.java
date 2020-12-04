@@ -10,7 +10,6 @@ import com.comphenix.protocol.injector.GamePhase;
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.google.common.io.Files;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.oldust.core.Core;
@@ -28,6 +27,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -96,7 +96,7 @@ public class FakeAdvancement implements PacketListener {
                 if (remove) remove();
             }, 50);
         } else if (remove) {
-            remove(); // TODO: Delete folders as well
+            remove();
         }
 
         return advancement;
@@ -105,6 +105,25 @@ public class FakeAdvancement implements PacketListener {
     public void remove() {
         CraftMagicNumbers.INSTANCE.removeAdvancement(key);
         ProtocolLibrary.getProtocolManager().removePacketListener(this);
+
+        File file = new File(getBukkitDataPackFolder() + File.separator + "data", key.getNamespace());
+
+        CUtils.runAsync(() -> {
+            try {
+                Files.walk(file.toPath())
+                        .sorted(Comparator.reverseOrder())
+                        .forEach(path -> {
+                            try {
+                                Files.delete(path);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
     }
 
     public void unshow(Player player, Advancement advancement) {
@@ -170,7 +189,7 @@ public class FakeAdvancement implements PacketListener {
             file.getParentFile().mkdirs();
 
             try {
-                Files.write(advancement, file, Charsets.UTF_8);
+                com.google.common.io.Files.write(advancement, file, Charsets.UTF_8);
             } catch (IOException ex) {
                 Bukkit.getLogger().log(Level.SEVERE, "Error saving advancement " + key, ex);
             }

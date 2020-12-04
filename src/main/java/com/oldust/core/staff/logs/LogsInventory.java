@@ -14,7 +14,6 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import net.md_5.bungee.api.ChatColor;
-import net.minecraft.server.v1_16_R3.Advancement;
 import net.minecraft.server.v1_16_R3.AdvancementFrameType;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Material;
@@ -36,8 +35,8 @@ public class LogsInventory extends AbstractInventoryProvider {
             .setDisplayName("#fcba03 Navigator")
             .setLore(Arrays.asList(
                     " ",
-                    "#a6a6a6 (->) right click",
-                    "#a6a6a6 (<-) left click",
+                    "#a6a6a6 (#fcba03 ->#a6a6a6) &fRight click",
+                    "#a6a6a6 (#fcba03 <-#a6a6a6) &fReft click",
                     "")
             ).build();
 
@@ -89,17 +88,6 @@ public class LogsInventory extends AbstractInventoryProvider {
                     ).build();
 
             items[i] = ClickableItem.of(item, (click) -> {
-                FakeAdvancement adv = FakeAdvancement.builder()
-                        .key(new NamespacedKey("oldust-" + RandomStringUtils.randomAlphanumeric(3).toLowerCase(), "geo/ip"))
-                        .title(ChatColor.GREEN + ("Sending response..."))
-                        .item("comparator")
-                        .description("Response-Sending")
-                        .frame(AdvancementFrameType.TASK)
-                        .announceToChat(false)
-                        .build();
-
-                Advancement advancement = adv.show(player, false, false);
-
                 CompletableFuture<GeoIPUtils.GeoResponse> future = CompletableFuture.supplyAsync(() -> {
                     GeoIPUtils.GeoResponse response = null;
 
@@ -113,12 +101,7 @@ public class LogsInventory extends AbstractInventoryProvider {
                     return response;
                 });
 
-                future.thenApply((response) -> {
-                    adv.unshow(player, advancement);
-                    adv.remove();
-
-                    return response;
-                }).thenApply(response -> {
+                future.thenApply(response -> {
                     if (response == null) {
                         future.cancel(true);
                     }

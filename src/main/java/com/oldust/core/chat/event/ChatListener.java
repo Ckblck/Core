@@ -73,9 +73,9 @@ public class ChatListener implements Listener {
                     + ChatColor.of("#fcba03")
                     + " » "
                     + ChatColor.RESET
-                    + (rank.isEqualOrHigher(PlayerRank.ADMIN) ? CUtils.color("%s") : "%s");
+                    + "%s";
 
-            e.setFormat(format);
+            e.setFormat((rank.isEqualOrHigher(PlayerRank.ADMIN)) ? CUtils.color(format) : format);
         }, () -> player.kickPlayer(Lang.DB_DISAPPEARED));
 
     }

@@ -22,11 +22,14 @@ public class CUtils {
     private final Pattern COLOR_PATTERN = Pattern.compile("#[a-fA-F0-9]{6}( )?");
 
     public void warnSyncCall() {
-        if (Bukkit.isPrimaryThread()) {
-            Thread.dumpStack();
+        try {
+            if (Bukkit.isPrimaryThread()) {
+                Thread.dumpStack();
 
-            inform("SERVER", Lang.ERROR_COLOR + "WARNING! A call from the Main thread was made, when expected Async usage.");
-        }
+                inform("SERVER", Lang.ERROR_COLOR + "WARNING! A call from the Main thread was made, when expected Async usage.");
+            }
+        } catch (NullPointerException ignored) {
+        } // BungeeCord usage.
     }
 
     /**
@@ -35,11 +38,16 @@ public class CUtils {
      */
 
     public TemporalAmount parseLiteralTime(String duration) {
-        if (Character.isUpperCase(duration.charAt(duration.length() - 1))) {
+        char lastChar = duration.charAt(duration.length() - 1);
+
+        if (lastChar == 'w') {
+            return Period.parse("P" + duration.toUpperCase());
+        } else if (Character.isUpperCase(lastChar)) {
             return Period.parse("P" + duration);
         } else {
             return Duration.parse("PT" + duration);
         }
+
     }
 
     public void logConsole(String message) {

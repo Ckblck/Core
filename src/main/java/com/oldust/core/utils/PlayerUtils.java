@@ -4,6 +4,7 @@ import com.oldust.core.Core;
 import com.oldust.core.mysql.MySQLManager;
 import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.ranks.RankWithExpiration;
+import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -15,21 +16,21 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
 
+@UtilityClass
 public class PlayerUtils {
 
-    private PlayerUtils() {
-    }
-
-    public static Collection<? extends Player> getPlayers() {
+    public Collection<? extends Player> getPlayers() {
         return Bukkit.getOnlinePlayers();
     }
 
-    public static boolean isConnected(UUID uuid) {
+    public boolean isConnected(UUID uuid) {
         return getPlayers().stream()
                 .anyMatch(player -> player.getUniqueId().equals(uuid));
     }
 
-    public static UUID getUUIDByName(String playerName) {
+    public UUID getUUIDByName(String playerName) {
+        CUtils.warnSyncCall();
+
         CachedRowSet query = MySQLManager.query("SELECT uuid FROM dustplayers.data WHERE nickname = ?;", playerName);
         UUID uuid = null;
 
@@ -54,7 +55,7 @@ public class PlayerUtils {
      * @return lista ordenada de rangos con / sin expiración de un jugador
      */
 
-    public static List<RankWithExpiration> getRanks(String uuid) {
+    public List<RankWithExpiration> getRanks(String uuid) {
         CachedRowSet query = MySQLManager.query("SELECT * FROM dustplayers.rangos WHERE uuid = ?;", uuid);
         List<RankWithExpiration> playerRanks = new ArrayList<>();
 
@@ -74,7 +75,7 @@ public class PlayerUtils {
         return playerRanks;
     }
 
-    public static void sendToServer(Player player, String server) {
+    public void sendToServer(Player player, String server) {
         try (ByteArrayOutputStream b = new ByteArrayOutputStream();
              DataOutputStream out = new DataOutputStream(b)) {
 
