@@ -5,5 +5,6 @@ public enum PlayerDatabaseKeys {
     PERSONAL_PERMISSIONS,
     STAFF_MODE,
     STAFF_CHAT,
-    VANISH
+    VANISH,
+    PLAYER_IP_ADDRESS
 }

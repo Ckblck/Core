@@ -4,6 +4,9 @@ import com.oldust.core.Core;
 import com.oldust.core.mysql.MySQLManager;
 import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.ranks.RankWithExpiration;
+import com.oldust.sync.PlayerManager;
+import com.oldust.sync.wrappers.PlayerDatabaseKeys;
+import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -26,6 +29,35 @@ public class PlayerUtils {
     public boolean isConnected(UUID uuid) {
         return getPlayers().stream()
                 .anyMatch(player -> player.getUniqueId().equals(uuid));
+    }
+
+    public String getIPAddress(UUID uuid) {
+        CUtils.warnSyncCall();
+
+        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(uuid);
+
+        if (database != null) {
+            return database.getValue(PlayerDatabaseKeys.PLAYER_IP_ADDRESS).asString();
+        }
+
+        return getIPAddressDB(uuid);
+    }
+
+    public String getIPAddressDB(UUID uuid) {
+        CUtils.warnSyncCall();
+
+        CachedRowSet set = MySQLManager.query("SELECT INET_NTOA(ip) AS ip FROM dustplayers.data WHERE uuid = ?;",
+                uuid.toString());
+
+        try {
+            if (set.next()) {
+                return set.getString("ip");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public UUID getUUIDByName(String playerName) {

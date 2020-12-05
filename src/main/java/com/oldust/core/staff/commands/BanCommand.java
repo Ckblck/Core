@@ -9,6 +9,7 @@ import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
 import com.oldust.core.utils.PlayerUtils;
 import com.oldust.core.utils.lambda.TriConsumer;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
 import java.time.format.DateTimeParseException;
@@ -55,7 +56,22 @@ public class BanCommand extends InheritedCommand<StaffPlugin> {
 
             String reason = String.join(" ", reasonRanged);
             Punishable handler = PunishmentType.BAN.getHandler();
+            boolean banIp = false;
+
+            if (StringUtils.endsWithIgnoreCase(reason, "-ip")) {
+                reason = StringUtils.removeEnd(reason, "-ip");
+                banIp = true;
+            }
+
+            if (StringUtils.isWhitespace(reason)) {
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason"));
+
+                return;
+            }
+
             TemporalAmount finalDuration = duration;
+            String finalReason = reason;
+            boolean finalBanIp = banIp;
 
             CUtils.runAsync(() -> {
                 UUID uuid = PlayerUtils.getUUIDByName(punishedName);
@@ -67,7 +83,7 @@ public class BanCommand extends InheritedCommand<StaffPlugin> {
                     return;
                 }
 
-                handler.punish(senderName, punishedName, finalDuration, reason);
+                handler.punish(senderName, punishedName, finalDuration, finalReason, finalBanIp);
             });
 
         };

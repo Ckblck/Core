@@ -10,7 +10,7 @@ import java.util.UUID;
 @Getter
 @RequiredArgsConstructor
 public class Punishment {
-    private final int banId;
+    private final int punishmentId;
     private final PunishmentType type;
     private final UUID punishedUuid;
     private final String punisherName;
@@ -18,4 +18,6 @@ public class Punishment {
     private final Timestamp date;
     @Nullable
     private final Timestamp expiration;
+    @Nullable
+    private final String ip;
 }

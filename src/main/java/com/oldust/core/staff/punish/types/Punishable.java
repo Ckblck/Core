@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface Punishable {
 
-    void punish(String punisherName, String punishedName, TemporalAmount duration, String reason);
+    boolean punish(String punisherName, String punishedName, TemporalAmount duration, String reason, boolean banIp);
 
     boolean removePunishment(String punishedName);
 

@@ -41,10 +41,12 @@ public class BanPunishment implements Punishable {
      * @param punishedName nombre del jugador a sancionar
      * @param duration     duración de la sanción, nulo para indicar permanencia
      * @param reason       razón de la sanción
+     * @param banIp        true si la sanción es de IP
+     * @return siempre true
      */
 
     @Override
-    public void punish(String punisherName, String punishedName, @Nullable TemporalAmount duration, String reason) {
+    public boolean punish(String punisherName, String punishedName, @Nullable TemporalAmount duration, String reason, boolean banIp) {
         CUtils.warnSyncCall();
 
         UUID punishedUuid = PlayerUtils.getUUIDByName(punishedName);
@@ -55,8 +57,10 @@ public class BanPunishment implements Punishable {
                 ? null
                 : Timestamp.valueOf(currentTimestamp.toLocalDateTime().plus(duration));
 
-        CachedRowSet generatedKey = MySQLManager.updateWithGeneratedKeys("INSERT INTO dustbans.current_bans (uuid, reason, banned_by, ban_date, expiration) VALUES (?, ?, ?, ?, ?);",
-                punishedUuid.toString(), reason, punisherName, currentTimestamp, expiration);
+        String ipAddress = (banIp) ? PlayerUtils.getIPAddress(punishedUuid) : null;
+
+        CachedRowSet generatedKey = MySQLManager.updateWithGeneratedKeys("INSERT INTO dustbans.current_bans (uuid, reason, banned_by, ban_date, expiration, ip) VALUES (?, ?, ?, ?, ?, INET_ATON(?));",
+                punishedUuid.toString(), reason, punisherName, currentTimestamp, expiration, ipAddress);
 
         int id = -1;
 
@@ -69,12 +73,13 @@ public class BanPunishment implements Punishable {
         }
 
         if (PlayerUtils.isConnected(punishedUuid)) {
-            Punishment punishment = new Punishment(id, TYPE, punishedUuid, punisherName, reason, currentTimestamp, expiration);
+            Punishment punishment = new Punishment(id, TYPE, punishedUuid, punisherName, reason, currentTimestamp, expiration, ipAddress);
             reason = getPunishmentMessage(punishment);
 
             new KickPlayerAction(punishedName, reason).push(JedisManager.getInstance().getPool());
         }
 
+        return true;
     }
 
     /**
@@ -111,7 +116,7 @@ public class BanPunishment implements Punishable {
     public void registerFinishedBan(ExpiredBan ban) {
         CUtils.warnSyncCall();
 
-        int id = ban.getBanId();
+        int id = ban.getPunishmentId();
         UUID uuid = ban.getPunishedUuid();
         String reason = ban.getReason();
         String punisherName = ban.getPunisherName();
@@ -131,11 +136,13 @@ public class BanPunishment implements Punishable {
         return currentPunishment(punishedUuid).isPresent();
     }
 
-    @Override
-    public Optional<Punishment> currentPunishment(UUID punishedUuid) {
+    public Optional<Punishment> currentPunishment(UUID punishedUuid, String ipAddress) {
         CUtils.warnSyncCall();
 
-        CachedRowSet set = MySQLManager.query("SELECT * FROM dustbans.current_bans WHERE uuid = ?;", punishedUuid.toString());
+        CachedRowSet set = MySQLManager.query("SELECT id, reason, banned_by, ban_date, expiration," +
+                " INET_NTOA(ip) AS ip" +
+                " FROM dustbans.current_bans WHERE uuid = ? OR ip = INET_ATON(?);", punishedUuid.toString(), ipAddress
+        );
 
         try {
             if (set.next()) {
@@ -145,7 +152,9 @@ public class BanPunishment implements Punishable {
                 Timestamp banDate = set.getTimestamp("ban_date");
                 Timestamp expiration = set.getTimestamp("expiration");
 
-                Punishment punishment = new Punishment(id, TYPE, punishedUuid, punisherName, reason, banDate, expiration);
+                Punishment punishment = new Punishment(id, TYPE, punishedUuid, punisherName,
+                        reason, banDate, expiration, ipAddress
+                );
 
                 return Optional.of(punishment);
             }
@@ -157,11 +166,18 @@ public class BanPunishment implements Punishable {
     }
 
     @Override
+    public Optional<Punishment> currentPunishment(UUID punishedUuid) {
+        String address = PlayerUtils.getIPAddress(punishedUuid);
+
+        return currentPunishment(punishedUuid, address);
+    }
+
+    @Override
     public String getPunishmentMessage(Punishment punishment) {
         String reason = punishment.getReason();
         String punisherName = punishment.getPunisherName();
         Timestamp expiration = punishment.getExpiration();
-        int id = punishment.getBanId();
+        int id = punishment.getPunishmentId();
         String expires;
 
         if (expiration == null) {
@@ -200,7 +216,7 @@ public class BanPunishment implements Punishable {
                 String unbannedBy = set.getString("unbanned_by");
                 Timestamp unbannedAt = set.getTimestamp("unbanned_at");
 
-                ExpiredBan expiredBan = new ExpiredBan(id, uuid, punisherName, reason, date, expiration, unbannedBy, unbannedAt);
+                ExpiredBan expiredBan = new ExpiredBan(id, uuid, punisherName, reason, date, expiration, null, unbannedBy, unbannedAt);
 
                 expiredBans.add(expiredBan);
             }
@@ -217,9 +233,9 @@ public class BanPunishment implements Punishable {
         private final Timestamp unbannedAt;
 
         public ExpiredBan(Punishment punishment, @Nullable String unbannedBy, @Nullable Timestamp unbannedAt) {
-            super(punishment.getBanId(), BanPunishment.TYPE, punishment.getPunishedUuid(),
-                    punishment.getPunisherName(), punishment.getReason(),
-                    punishment.getDate(), punishment.getExpiration());
+            super(punishment.getPunishmentId(), BanPunishment.TYPE, punishment.getPunishedUuid(),
+                    punishment.getPunisherName(), punishment.getReason(), punishment.getDate(),
+                    punishment.getExpiration(), punishment.getIp());
 
             this.unbannedBy = unbannedBy;
             this.unbannedAt = unbannedAt;
@@ -227,8 +243,8 @@ public class BanPunishment implements Punishable {
 
         public ExpiredBan(int banId, UUID punishedUuid, String punisherName,
                           String reason, Timestamp date, @Nullable Timestamp expiration,
-                          @Nullable String unbannedBy, @Nullable Timestamp unbannedAt) {
-            super(banId, TYPE, punishedUuid, punisherName, reason, date, expiration);
+                          @Nullable String ipAddress, @Nullable String unbannedBy, @Nullable Timestamp unbannedAt) {
+            super(banId, TYPE, punishedUuid, punisherName, reason, date, expiration, ipAddress);
 
             this.unbannedBy = unbannedBy;
             this.unbannedAt = unbannedAt;
