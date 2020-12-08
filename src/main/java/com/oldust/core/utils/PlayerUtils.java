@@ -26,7 +26,7 @@ public class PlayerUtils {
         return Bukkit.getOnlinePlayers();
     }
 
-    public boolean isConnected(UUID uuid) {
+    public boolean isLocallyConnected(UUID uuid) {
         return getPlayers().stream()
                 .anyMatch(player -> player.getUniqueId().equals(uuid));
     }

@@ -33,7 +33,7 @@ public class PlayerPermissionChangeAction extends Action<PlayerPermissionChangeA
 
     @Override
     protected void execute() {
-        if (!PlayerUtils.isConnected(player)) return;
+        if (!PlayerUtils.isLocallyConnected(player)) return;
 
         WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
         Map<String, Boolean> permissions = database.getValue(PlayerDatabaseKeys.PERSONAL_PERMISSIONS).asMap(String.class, Boolean.class);

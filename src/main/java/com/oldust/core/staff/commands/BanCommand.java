@@ -75,6 +75,13 @@ public class BanCommand extends InheritedCommand<StaffPlugin> {
 
             CUtils.runAsync(() -> {
                 UUID uuid = PlayerUtils.getUUIDByName(punishedName);
+
+                if (uuid == null) {
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.");
+
+                    return;
+                }
+
                 boolean alreadyPunished = handler.hasActivePunishment(uuid);
 
                 if (alreadyPunished) {

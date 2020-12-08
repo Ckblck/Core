@@ -1,5 +1,6 @@
 package com.oldust.sync.jedis;
 
+import com.oldust.core.utils.CUtils;
 import com.oldust.sync.serializer.Base64Serializer;
 import com.oldust.sync.wrappers.Savable;
 import redis.clients.jedis.Jedis;
@@ -54,6 +55,8 @@ public class RedisRepository<T extends Savable<?>> {
      */
 
     public Set<T> fetchElements(Collection<String> keys) {
+        CUtils.warnSyncCall();
+
         Set<T> elements = new HashSet<>();
 
         try (Jedis jedis = pool.getResource()) {
@@ -61,13 +64,17 @@ public class RedisRepository<T extends Savable<?>> {
             List<Response<String>> responses = new ArrayList<>();
 
             for (String key : keys) {
-                responses.add(pipeline.get(getKeyName(key)));
+                String keyName = getKeyName(key);
+                responses.add(pipeline.get(keyName));
             }
 
             pipeline.sync();
 
             for (Response<String> response : responses) {
                 String serializedData = response.get();
+
+                if (serializedData == null) continue;
+
                 T element = Base64Serializer.deserialize(serializedData);
 
                 elements.add(element);

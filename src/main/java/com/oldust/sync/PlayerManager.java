@@ -36,4 +36,8 @@ public class PlayerManager {
         playerRepository.update(database);
     }
 
+    public boolean contains(UUID uuid) {
+        return playerRepository.exists(uuid.toString());
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.oldust.core.ranks;
 
+import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.PlayerUtils;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
@@ -46,6 +47,8 @@ public enum PlayerRank {
     }
 
     public static PlayerRank getPlayerRank(String playerName) {
+        CUtils.warnSyncCall();
+
         Player player = Bukkit.getPlayer(playerName);
 
         if (player != null) {

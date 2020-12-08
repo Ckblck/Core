@@ -1,5 +1,6 @@
 package com.oldust.core.staff.commands;
 
+import com.oldust.core.actions.types.DispatchMessageAction;
 import com.oldust.core.inherited.commands.InheritedCommand;
 import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.staff.StaffPlugin;
@@ -10,6 +11,8 @@ import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
 import com.oldust.core.utils.PlayerUtils;
 import com.oldust.core.utils.lambda.TriConsumer;
+import com.oldust.sync.JedisManager;
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 
 import java.sql.Timestamp;
@@ -17,6 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class UnbanCommand extends InheritedCommand<StaffPlugin> {
+    private static final String STAFF_ALERT_MESSAGE = CUtils.color("#ff443b[!] #80918a #fcba03 %s#80918a has unbanned #fcba03%s#80918a.");
 
     public UnbanCommand(StaffPlugin plugin) {
         super(plugin, "unban", null);
@@ -39,7 +43,15 @@ public class UnbanCommand extends InheritedCommand<StaffPlugin> {
 
             CUtils.runAsync(() -> {
                 UUID uuid = PlayerUtils.getUUIDByName(punished);
-                Optional<Punishment> punishment = handler.currentPunishment(uuid);
+                Optional<Punishment> punishment;
+
+                if (uuid == null) {
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.");
+
+                    return;
+                }
+
+                punishment = handler.currentPunishment(uuid);
 
                 if (punishment.isEmpty()) {
                     CUtils.msg(sender, Lang.ERROR_COLOR + "The specified player is not banned!");
@@ -57,11 +69,14 @@ public class UnbanCommand extends InheritedCommand<StaffPlugin> {
                 }
 
                 Timestamp currentDate = new Timestamp(System.currentTimeMillis());
-                BanPunishment.ExpiredBan expiredBan = new BanPunishment.ExpiredBan(currentPunishment, senderName, currentDate);
+                Punishment.ExpiredPunishment expiredBan = new Punishment.ExpiredPunishment(currentPunishment, senderName, currentDate);
 
                 handler.registerFinishedBan(expiredBan);
 
-                CUtils.msg(sender, Lang.SUCCESS_COLOR + "The player " + punished + " has been unbanned.");
+                String staffMessage = String.format(STAFF_ALERT_MESSAGE, senderName, punished);
+
+                new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, PlayerRank::isStaff, false, staffMessage, Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 0.5F, 1F)
+                        .push(JedisManager.getInstance().getPool());
             });
 
         };

@@ -26,7 +26,7 @@ public class RankUpdateAction extends Action<RankUpdateAction> {
 
     @Override
     protected void execute() {
-        if (!PlayerUtils.isConnected(player)) return;
+        if (!PlayerUtils.isLocallyConnected(player)) return;
 
         PlayerManager manager = PlayerManager.getInstance();
         WrappedPlayerDatabase database = manager.getDatabase(player);

@@ -29,6 +29,8 @@ public class StaffPlugin extends Plugin {
         new BanCommand(this);
         new UnbanCommand(this);
         new KickCommand(this);
+        new MuteCommand(this);
+        new UnmuteCommand(this);
 
         fakeChestsManager = new FakeChestsManager();
         staffModeManager = new StaffModeManager();

@@ -1,13 +1,18 @@
 package com.oldust.core.staff.punish.types;
 
+import com.oldust.core.Core;
+import com.oldust.core.actions.types.DispatchMessageAction;
 import com.oldust.core.actions.types.KickPlayerAction;
 import com.oldust.core.mysql.MySQLManager;
+import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.staff.punish.Punishment;
 import com.oldust.core.staff.punish.PunishmentType;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
 import com.oldust.sync.JedisManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,6 +25,7 @@ import java.util.UUID;
 
 public class KickPunishment implements Punishable {
     private static final PunishmentType TYPE = PunishmentType.KICK;
+    private static final String STAFF_ALERT_MESSAGE = CUtils.color("#ff443b[!] #80918a #fcba03 %s#80918a has kicked #fcba03%s#80918a due to: %s.");
     private static final String MESSAGE_STRUCTURE = CUtils.color(
             Lang.ERROR_COLOR +
                     "You have been kicked!" + "\n\n" +
@@ -63,8 +69,16 @@ public class KickPunishment implements Punishable {
             throwables.printStackTrace();
         }
 
-        Punishment punishment = new Punishment(id, TYPE, uuid, punisherName, reason, null, null, null);
-        new KickPlayerAction(punishedName, getPunishmentMessage(punishment))
+        if (Core.getInstance().getServerManager().isPlayerOnline(punishedName)) {
+            Punishment punishment = new Punishment(id, TYPE, uuid, punisherName, reason, null, null, null);
+
+            new KickPlayerAction(punishedName, getPunishmentMessage(punishment))
+                    .push(JedisManager.getInstance().getPool());
+        }
+
+        String staffMessage = String.format(STAFF_ALERT_MESSAGE, punisherName, punishedName, ChatColor.stripColor(reason));
+
+        new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, PlayerRank::isStaff, false, staffMessage, Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 0.5F, 1F)
                 .push(JedisManager.getInstance().getPool());
 
         return true;

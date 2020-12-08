@@ -6,5 +6,6 @@ public enum PlayerDatabaseKeys {
     STAFF_MODE,
     STAFF_CHAT,
     VANISH,
-    PLAYER_IP_ADDRESS
+    PLAYER_IP_ADDRESS,
+    MUTE_DURATION
 }

@@ -40,7 +40,7 @@ public class CUtils {
     public TemporalAmount parseLiteralTime(String duration) {
         char lastChar = duration.charAt(duration.length() - 1);
 
-        if (lastChar == 'w') {
+        if (lastChar == 'w' || lastChar == 'd') {
             return Period.parse("P" + duration.toUpperCase());
         } else if (Character.isUpperCase(lastChar)) {
             return Period.parse("P" + duration);

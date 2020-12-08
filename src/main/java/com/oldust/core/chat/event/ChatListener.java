@@ -3,11 +3,14 @@ package com.oldust.core.chat.event;
 import com.oldust.core.Core;
 import com.oldust.core.actions.types.DispatchMessageAction;
 import com.oldust.core.ranks.PlayerRank;
+import com.oldust.core.staff.punish.Punishment;
+import com.oldust.core.staff.punish.PunishmentType;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
 import com.oldust.sync.JedisManager;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
+import com.oldust.sync.wrappers.Savable;
 import com.oldust.sync.wrappers.ServerDatabaseKeys;
 import com.oldust.sync.wrappers.defaults.OldustServer;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
@@ -17,12 +20,14 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import net.md_5.bungee.chat.ComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 
 public class ChatListener implements Listener {
@@ -63,6 +68,28 @@ public class ChatListener implements Listener {
             return;
         }
 
+        Optional<Savable.WrappedValue> muted = database.getValueOptional(PlayerDatabaseKeys.MUTE_DURATION);
+
+        if (muted.isPresent()) {
+            Punishment punishment = muted.get().asClass(Punishment.class);
+            Timestamp expires = punishment.getExpiration();
+
+            assert expires != null;
+
+            if (expires.before(new Timestamp(System.currentTimeMillis()))) {
+                database.remove(PlayerDatabaseKeys.MUTE_DURATION);
+                PlayerManager.getInstance().update(database);
+            } else {
+                String message = PunishmentType.MUTE.getHandler().getPunishmentMessage(punishment);
+                CUtils.msg(player, message);
+
+                e.setCancelled(true);
+
+                return;
+            }
+
+        }
+
         Optional<WrappedPlayerDatabase.WrappedValue> optRank = database.getValueOptional(PlayerDatabaseKeys.RANK);
 
         optRank.ifPresentOrElse(playerRank -> {
@@ -75,7 +102,9 @@ public class ChatListener implements Listener {
                     + ChatColor.RESET
                     + "%s";
 
-            e.setFormat((rank.isEqualOrHigher(PlayerRank.ADMIN)) ? CUtils.color(format) : format);
+            e.setFormat(format);
+
+            Bukkit.broadcastMessage(CUtils.color(e.getMessage()));
         }, () -> player.kickPlayer(Lang.DB_DISAPPEARED));
 
     }
