@@ -73,19 +73,19 @@ public class GamemodeCommand extends InheritedCommand<StaffPlugin> {
             case "gmc":
                 if (isNotAboveOrEqual(sender, senderRank, PlayerRank.ADMIN)) return;
 
-                player.setGameMode(GameMode.CREATIVE);
+                CUtils.runSync(() -> player.setGameMode(GameMode.CREATIVE));
 
                 break;
             case "gms":
-                player.setGameMode(GameMode.SURVIVAL);
+                CUtils.runSync(() -> player.setGameMode(GameMode.SURVIVAL));
 
                 break;
             case "gma":
-                player.setGameMode(GameMode.ADVENTURE);
+                CUtils.runSync(() -> player.setGameMode(GameMode.ADVENTURE));
 
                 break;
             case "gmsp":
-                player.setGameMode(GameMode.SPECTATOR);
+                CUtils.runSync(() -> player.setGameMode(GameMode.SPECTATOR));
 
                 break;
             default:
@@ -128,7 +128,8 @@ public class GamemodeCommand extends InheritedCommand<StaffPlugin> {
                     return;
                 }
 
-                player.setGameMode(gameMode);
+                GameMode finalGameMode = gameMode;
+                CUtils.runSync(() -> player.setGameMode(finalGameMode));
 
                 break;
 

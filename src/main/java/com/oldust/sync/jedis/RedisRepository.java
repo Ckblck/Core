@@ -1,5 +1,6 @@
 package com.oldust.sync.jedis;
 
+import com.oldust.core.Core;
 import com.oldust.core.utils.CUtils;
 import com.oldust.sync.serializer.Base64Serializer;
 import com.oldust.sync.wrappers.Savable;
@@ -31,7 +32,9 @@ public class RedisRepository<T extends Savable<?>> {
     }
 
     public void removeFromList(String list, T element) {
-        CUtils.warnSyncCall();
+        if (Core.getInstance().isEnabled()) {
+            CUtils.warnSyncCall();
+        }
 
         try (Jedis jedis = pool.getResource()) {
             String keyName = getKeyName(list);
@@ -116,7 +119,9 @@ public class RedisRepository<T extends Savable<?>> {
     }
 
     public void remove(String key) {
-        CUtils.warnSyncCall();
+        if (Core.getInstance().isEnabled()) {
+            CUtils.warnSyncCall();
+        }
 
         try (Jedis jedis = pool.getResource()) {
             String keyName = getKeyName(key);
