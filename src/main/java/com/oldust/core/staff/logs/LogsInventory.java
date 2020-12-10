@@ -30,17 +30,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class LogsInventory extends AbstractInventoryProvider {
-    private static final ClickableItem EMPTY = ClickableItem.empty(new ItemStack(Material.AIR));
-    private static final ItemStack NAVIGATOR = new ItemBuilder(Material.ARROW)
-            .setDisplayName("#fcba03 Navigator")
-            .setLore(Arrays.asList(
-                    " ",
-                    "#a6a6a6 (#fcba03 ->#a6a6a6) &fRight click",
-                    "#a6a6a6 (#fcba03 <-#a6a6a6) &fReft click",
-                    "")
-            ).build();
-
-    private static final String ITEM_NAME = ChatColor.of("#fcba03") + "Log";
+    private static final String ITEM_NAME = "#fcba03 Log";
     private static final String INV_NAME = "Logs (%d)";
     private static final int LIMIT = 28;
 
@@ -49,7 +39,7 @@ public class LogsInventory extends AbstractInventoryProvider {
     private int page;
     private boolean loading;
 
-    public LogsInventory(Player player, UUID search, List<PlayerLog> logs, int page) {
+    private LogsInventory(Player player, UUID search, List<PlayerLog> logs, int page) {
         super(player);
 
         this.search = search;

@@ -1,5 +1,6 @@
 package com.oldust.core.staff.punish.types;
 
+import com.google.common.base.Preconditions;
 import com.oldust.core.Core;
 import com.oldust.core.actions.types.DispatchMessageAction;
 import com.oldust.core.actions.types.KickPlayerAction;
@@ -9,6 +10,7 @@ import com.oldust.core.staff.punish.Punishment;
 import com.oldust.core.staff.punish.PunishmentType;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
+import com.oldust.core.utils.PlayerUtils;
 import com.oldust.sync.JedisManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,11 +22,12 @@ import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.temporal.TemporalAmount;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class KickPunishment implements Punishable {
-    private static final PunishmentType TYPE = PunishmentType.KICK;
+public class KickPunishment implements Punishable<Punishment> {
     private static final String STAFF_ALERT_MESSAGE = CUtils.color("#ff443b[!] #80918a #fcba03 %s#80918a has kicked #fcba03%s#80918a due to: %s.");
     private static final String MESSAGE_STRUCTURE = CUtils.color(
             Lang.ERROR_COLOR +
@@ -70,7 +73,7 @@ public class KickPunishment implements Punishable {
         }
 
         if (Core.getInstance().getServerManager().isPlayerOnline(punishedName)) {
-            Punishment punishment = new Punishment(id, TYPE, uuid, punisherName, reason, null, null, null);
+            Punishment punishment = new Punishment(id, PunishmentType.KICK, uuid, punisherName, reason, null, null, null);
 
             new KickPlayerAction(punishedName, getPunishmentMessage(punishment))
                     .push(JedisManager.getInstance().getPool());
@@ -106,6 +109,38 @@ public class KickPunishment implements Punishable {
         int punishmentId = punishment.getPunishmentId();
 
         return String.format(MESSAGE_STRUCTURE, reason, punisher, punishmentId);
+    }
+
+    @Override
+    public List<Punishment> fetchPunishments(String punishedName) {
+        CUtils.warnSyncCall();
+
+        UUID uuid = PlayerUtils.getUUIDByName(punishedName);
+
+        Preconditions.checkNotNull(uuid);
+
+        List<Punishment> kicks = new ArrayList<>();
+        CachedRowSet set = MySQLManager.query("SELECT id, kicked_by, reason, date FROM dustbans.kicks WHERE uuid = ? ORDER BY date DESC;", uuid.toString());
+
+        try {
+            while (set.next()) {
+                int id = set.getInt("id");
+                String punisherName = set.getString("kicked_by");
+                String reason = set.getString("reason");
+                Timestamp date = set.getTimestamp("date");
+
+                Punishment kick = new Punishment(
+                        id, PunishmentType.KICK, uuid, punisherName,
+                        reason, date, null, null
+                );
+
+                kicks.add(kick);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return kicks; // TODO Offset for pagination? GUI?
     }
 
 }

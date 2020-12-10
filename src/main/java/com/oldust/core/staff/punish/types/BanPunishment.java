@@ -19,13 +19,13 @@ import org.jetbrains.annotations.Nullable;
 import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.temporal.TemporalAmount;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
-public class BanPunishment implements Punishable {
-    private static final PunishmentType TYPE = PunishmentType.BAN;
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEEE, dd MMMM yyyy hh:mm a", Locale.ENGLISH);
+public class BanPunishment implements Punishable<Punishment.ExpiredPunishment> {
     private static final String STAFF_ALERT_MESSAGE = CUtils.color("#ff443b[!] #80918a #fcba03 %s#80918a has banned #fcba03%s#80918a due to: %s.");
     private static final String MESSAGE_STRUCTURE = CUtils.color(
             Lang.ERROR_COLOR +
@@ -81,7 +81,7 @@ public class BanPunishment implements Punishable {
         }
 
         if (Core.getInstance().getServerManager().isPlayerOnline(punishedName)) {
-            Punishment punishment = new Punishment(id, TYPE, punishedUuid, punisherName, reason, currentTimestamp, expiration, ipAddress);
+            Punishment punishment = new Punishment(id, PunishmentType.BAN, punishedUuid, punisherName, reason, currentTimestamp, expiration, ipAddress);
             reason = getPunishmentMessage(punishment);
 
             new KickPlayerAction(punishedName, reason)
@@ -170,7 +170,7 @@ public class BanPunishment implements Punishable {
                 Timestamp banDate = set.getTimestamp("ban_date");
                 Timestamp expiration = set.getTimestamp("expiration");
 
-                Punishment punishment = new Punishment(id, TYPE, punishedUuid, punisherName,
+                Punishment punishment = new Punishment(id, PunishmentType.BAN, punishedUuid, punisherName,
                         reason, banDate, expiration, ipAddress
                 );
 
@@ -198,15 +198,8 @@ public class BanPunishment implements Punishable {
     public String getPunishmentMessage(Punishment punishment) {
         String reason = punishment.getReason();
         String punisherName = punishment.getPunisherName();
-        Timestamp expiration = punishment.getExpiration();
         int id = punishment.getPunishmentId();
-        String expires;
-
-        if (expiration == null) {
-            expires = Lang.ERROR_COLOR + "never";
-        } else {
-            expires = DATE_FORMAT.format(expiration);
-        }
+        String expires = punishment.formatExpiration();
 
         return String.format(MESSAGE_STRUCTURE, reason, punisherName, expires, id);
     }
@@ -220,7 +213,8 @@ public class BanPunishment implements Punishable {
      * @return lista de sanciones que el jugador ha tenido
      */
 
-    public List<Punishment.ExpiredPunishment> fetchExpiredBans(String playerName) {
+    @Override
+    public List<Punishment.ExpiredPunishment> fetchPunishments(String playerName) {
         CUtils.warnSyncCall();
 
         UUID uuid = PlayerUtils.getUUIDByName(playerName);
@@ -241,7 +235,7 @@ public class BanPunishment implements Punishable {
                 Timestamp unbannedAt = set.getTimestamp("unbanned_at");
 
                 Punishment.ExpiredPunishment expiredBan = new Punishment.ExpiredPunishment(
-                        id, TYPE, uuid, punisherName,
+                        id, PunishmentType.BAN, uuid, punisherName,
                         reason, date, expiration, null,
                         unbannedBy, unbannedAt
                 );

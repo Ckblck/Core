@@ -1,4 +1,4 @@
-package com.oldust.core.staff.dispatch;
+package com.oldust.core.staff.commands;
 
 import com.oldust.core.Core;
 import com.oldust.core.actions.types.DispatchCommandAction;
@@ -41,13 +41,13 @@ public class DispatchCommand extends InheritedCommand<StaffPlugin> {
             boolean validServer = serverName.equals("*") || Core.getInstance().getServerManager().contains(serverName);
 
             if (!validServer) {
-                CUtils.msg(sender, Lang.ERROR_COLOR + "El servidor proporcionado es inválido o no está encendido.");
+                CUtils.msg(sender, Lang.ERROR_COLOR + "The specified server is either invalid or not connected.");
 
                 return;
             }
 
             new DispatchCommandAction(sender.getName(), serverName, command).push(JedisManager.getInstance().getPool());
-            CUtils.msg(sender, Lang.SUCCESS_COLOR + "Comando propagado correctamente.");
+            CUtils.msg(sender, Lang.SUCCESS_COLOR + "Command correctly propagated.");
         };
     }
 

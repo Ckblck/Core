@@ -4,7 +4,6 @@ import com.oldust.core.inherited.plugins.InheritedPlugin;
 import com.oldust.core.inherited.plugins.Plugin;
 import com.oldust.core.staff.chest.FakeChestsManager;
 import com.oldust.core.staff.commands.*;
-import com.oldust.core.staff.dispatch.DispatchCommand;
 import com.oldust.core.staff.mode.StaffModeManager;
 import com.oldust.core.staff.mode.command.ModeCommand;
 import com.oldust.core.staff.mode.command.VanishCommand;
@@ -31,6 +30,7 @@ public class StaffPlugin extends Plugin {
         new KickCommand(this);
         new MuteCommand(this);
         new UnmuteCommand(this);
+        new PlayerDataCommand(this);
 
         fakeChestsManager = new FakeChestsManager();
         staffModeManager = new StaffModeManager();

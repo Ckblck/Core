@@ -40,6 +40,12 @@ public class KickCommand extends InheritedCommand<StaffPlugin> {
             String player = args[0];
             String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
+            if (reason.length() > 34) {
+                CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.");
+
+                return;
+            }
+
             CUtils.runAsync(() -> {
                 boolean success = HANDLER.punish(senderName, player, null, reason, false);
 

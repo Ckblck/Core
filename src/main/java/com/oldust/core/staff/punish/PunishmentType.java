@@ -12,5 +12,5 @@ import lombok.RequiredArgsConstructor;
 public enum PunishmentType {
     BAN(new BanPunishment()), KICK(new KickPunishment()), MUTE(new MutePunishment());
 
-    private final Punishable handler;
+    private final Punishable<?> handler;
 }

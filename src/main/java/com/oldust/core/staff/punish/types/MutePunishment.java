@@ -25,8 +25,7 @@ import java.text.SimpleDateFormat;
 import java.time.temporal.TemporalAmount;
 import java.util.*;
 
-public class MutePunishment implements Punishable {
-    private static final PunishmentType TYPE = PunishmentType.MUTE;
+public class MutePunishment implements Punishable<Punishment.ExpiredPunishment> {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEEE, dd MMMM yyyy hh:mm a", Locale.ENGLISH);
     private static final String STAFF_ALERT_MESSAGE = CUtils.color("#ff443b[!] #80918a #fcba03 %s#80918a has muted #fcba03%s #80918adue to: %s.");
     private static final String MESSAGE = Lang.ERROR_COLOR
@@ -101,7 +100,7 @@ public class MutePunishment implements Punishable {
         }
 
         if (Core.getInstance().getServerManager().isPlayerOnline(punishedName)) {
-            Punishment punishment = new Punishment(id, TYPE, punishedUuid, punisherName, reason, now, expires, null);
+            Punishment punishment = new Punishment(id, PunishmentType.MUTE, punishedUuid, punisherName, reason, now, expires, null);
             PlayerManager playerManager = PlayerManager.getInstance();
             WrappedPlayerDatabase db = playerManager.getDatabase(punishedUuid);
 
@@ -204,7 +203,7 @@ public class MutePunishment implements Punishable {
                 String reason = set.getString("reason");
                 String mutedBy = set.getString("muted_by");
 
-                Punishment punishment = new Punishment(id, TYPE, punishedUuid, mutedBy, reason, date, expiration, null);
+                Punishment punishment = new Punishment(id, PunishmentType.MUTE, punishedUuid, mutedBy, reason, date, expiration, null);
 
                 return Optional.of(punishment);
             }
@@ -231,19 +230,20 @@ public class MutePunishment implements Punishable {
      * de los silencios que están MARCADOS como expirados en la tabla 'dustbans.expired_mutes'.
      * Este método NO obtendrá los silencios que están listas para que expiren.
      *
-     * @param playerName nombre del jugador
+     * @param punishedName nombre del jugador
      * @return lista de silencios que el jugador ha tenido
      */
 
-    public List<Punishment.ExpiredPunishment> fetchExpiredMutes(String playerName) {
+    @Override
+    public List<Punishment.ExpiredPunishment> fetchPunishments(String punishedName) {
         CUtils.warnSyncCall();
 
-        UUID uuid = PlayerUtils.getUUIDByName(playerName);
+        UUID uuid = PlayerUtils.getUUIDByName(punishedName);
 
         Preconditions.checkNotNull(uuid);
 
-        List<Punishment.ExpiredPunishment> expiredBans = new ArrayList<>();
-        CachedRowSet set = MySQLManager.query("SELECT * FROM dustbans.expired_mutes WHERE uuid = ? ORDER BY ban_date DESC;", uuid.toString());
+        List<Punishment.ExpiredPunishment> expiredMutes = new ArrayList<>();
+        CachedRowSet set = MySQLManager.query("SELECT * FROM dustbans.expired_mutes WHERE uuid = ? ORDER BY mute_date DESC;", uuid.toString());
 
         try {
             while (set.next()) {
@@ -252,22 +252,22 @@ public class MutePunishment implements Punishable {
                 String reason = set.getString("reason");
                 Timestamp date = set.getTimestamp("mute_date");
                 Timestamp expiration = set.getTimestamp("expiration");
-                String unbannedBy = set.getString("unmuted_by");
-                Timestamp unbannedAt = set.getTimestamp("unmuted_at");
+                String unmutedBy = set.getString("unmuted_by");
+                Timestamp unmutedAt = set.getTimestamp("unmuted_at");
 
-                Punishment.ExpiredPunishment expiredBan = new Punishment.ExpiredPunishment(
-                        id, TYPE, uuid, punisherName,
+                Punishment.ExpiredPunishment expiredMute = new Punishment.ExpiredPunishment(
+                        id, PunishmentType.MUTE, uuid, punisherName,
                         reason, date, expiration, null,
-                        unbannedBy, unbannedAt
+                        unmutedBy, unmutedAt
                 );
 
-                expiredBans.add(expiredBan);
+                expiredMutes.add(expiredMute);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return expiredBans; // TODO Offset for pagination? GUI?
+        return expiredMutes; // TODO Offset for pagination? GUI?
     }
 
 }

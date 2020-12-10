@@ -55,12 +55,18 @@ public class BanCommand extends InheritedCommand<StaffPlugin> {
                     : Arrays.copyOfRange(args, 2, args.length);
 
             String reason = String.join(" ", reasonRanged);
-            Punishable handler = PunishmentType.BAN.getHandler();
+            Punishable<?> handler = PunishmentType.BAN.getHandler();
             boolean banIp = false;
 
             if (StringUtils.endsWithIgnoreCase(reason, "-ip")) {
                 reason = StringUtils.removeEnd(reason, "-ip");
                 banIp = true;
+            }
+
+            if (reason.length() > 34) {
+                CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.");
+
+                return;
             }
 
             if (StringUtils.isWhitespace(reason)) {

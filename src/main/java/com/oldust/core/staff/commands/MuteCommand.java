@@ -59,6 +59,12 @@ public class MuteCommand extends InheritedCommand<StaffPlugin> {
             String name = args[0];
             String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
 
+            if (reason.length() > 34) {
+                CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.");
+
+                return;
+            }
+
             CUtils.runAsync(() -> {
                 UUID uuid = PlayerUtils.getUUIDByName(name);
 

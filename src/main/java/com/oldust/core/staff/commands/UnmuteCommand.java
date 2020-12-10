@@ -14,6 +14,7 @@ import com.oldust.core.utils.lambda.TriConsumer;
 import com.oldust.sync.JedisManager;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.sql.Timestamp;
 import java.util.Optional;
@@ -66,6 +67,10 @@ public class UnmuteCommand extends InheritedCommand<StaffPlugin> {
 
                 new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, PlayerRank::isStaff, false, staffMessage, Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 0.5F, 1F)
                         .push(JedisManager.getInstance().getPool());
+
+                if (!(sender instanceof Player)) {
+                    CUtils.msg(sender, Lang.SUCCESS_COLOR + "The player " + name + " is no longer muted.");
+                }
 
             });
 
