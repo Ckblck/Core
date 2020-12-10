@@ -62,7 +62,11 @@ public class ChatListener implements Listener {
 
             String serialized = ComponentSerializer.toString(base);
 
-            new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, PlayerRank::isStaff, true, serialized, Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 0.5F, 1F)
+            new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, db -> {
+                PlayerRank rank = db.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
+
+                return rank.isStaff();
+            }, true, serialized, Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 0.5F, 1F)
                     .push(JedisManager.getInstance().getPool());
 
             return;

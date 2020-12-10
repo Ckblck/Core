@@ -39,7 +39,7 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
             }
 
             boolean tpHere = (label.equalsIgnoreCase("tphere"));
-            boolean coordinates = !tpHere && args.length >= 3 && !NumberUtils.isNumber(args[0]);
+            boolean coordinates = !tpHere && args.length >= 3 && NumberUtils.isNumber(args[0]);
 
             if (tpHere) {
                 if (isNotPlayer(sender)) return;
@@ -48,7 +48,7 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
             } else if (coordinates) {
                 if (isNotPlayer(sender)) return;
 
-                tpCoordinates(sender, args);
+                tpCoordinates(sender, args); // TODO: Not working
             } else {
                 parseTp(sender, args);
             }
@@ -58,7 +58,15 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
 
     private void tpCoordinates(CommandSender sender, String[] args) {
         Player player = ((Player) sender);
-        boolean valid = (NumberUtils.isNumber(args[0]) && NumberUtils.isNumber(args[1]) && NumberUtils.isNumber(args[2]));
+        Location playerLocation = player.getLocation();
+
+        boolean noXDifference = args[0].equals("~");
+        boolean noYDifference = args[1].equals("~");
+        boolean noZDifference = args[2].equals("~");
+
+        boolean valid = (noXDifference || NumberUtils.isNumber(args[0]))
+                && (noYDifference || NumberUtils.isNumber(args[1]))
+                && (noZDifference || NumberUtils.isNumber(args[2]));
 
         if (!valid) {
             CUtils.msg(sender, Lang.ERROR_COLOR + "Wrong syntax! Example: /tp 0 40 50");
@@ -69,13 +77,18 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
         boolean hasPitch = args.length >= 4 && NumberUtils.isNumber(args[3]);
         boolean hasYaw = args.length >= 5 && NumberUtils.isNumber(args[4]);
 
-        double x = Double.parseDouble(args[0]);
-        double y = Double.parseDouble(args[1]);
-        double z = Double.parseDouble(args[2]);
-        float pitch = (hasPitch) ? Float.parseFloat(args[3]) : player.getLocation().getPitch();
-        float yaw = (hasYaw) ? Float.parseFloat(args[3]) : player.getLocation().getYaw();
+        double x = noXDifference ? playerLocation.getX() : Double.parseDouble(args[0]);
+        double y = noYDifference ? playerLocation.getY() : Double.parseDouble(args[1]);
+        double z = noZDifference ? playerLocation.getZ() : Double.parseDouble(args[2]);
 
-        Location location = new Location(player.getWorld(), x, y, z, pitch, yaw);
+        float pitch = (hasPitch)
+                ? ((args[3].equals("~")) ? playerLocation.getPitch() : Float.parseFloat(args[3]))
+                : playerLocation.getPitch();
+        float yaw = (hasYaw)
+                ? ((args[4].equals("~")) ? playerLocation.getYaw() : Float.parseFloat(args[4]))
+                : playerLocation.getYaw();
+
+        Location location = new Location(player.getWorld(), x, y, z, yaw, pitch);
         player.teleport(location);
     }
 
@@ -155,7 +168,6 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
             }
 
             CUtils.runAsync(() -> {
-                WrappedPlayerDatabase senderDb = PlayerManager.getInstance().getDatabase(player.getUniqueId());
                 Optional<String> targetSv = Core.getInstance().getServerManager().getPlayerServer(target);
 
                 boolean present = targetSv.isPresent();
@@ -166,9 +178,10 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
                     return;
                 }
 
-                new SendToServerAction(target, senderDb.getBungeeServer()).push(JedisManager.getInstance().getPool());
+                new SendToServerAction(player.getName(), targetSv.get())
+                        .push(JedisManager.getInstance().getPool());
 
-                CUtils.msg(sender, Lang.SUCCESS_COLOR + target + " was successfully sent to your server.");
+                CUtils.msg(player, Lang.SUCCESS_COLOR + "You have been teleported to " + target + "'s server.");
             });
 
         }

@@ -12,6 +12,7 @@ import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
 import com.oldust.core.utils.PlayerUtils;
 import com.oldust.sync.JedisManager;
+import com.oldust.sync.wrappers.PlayerDatabaseKeys;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.Nullable;
@@ -90,7 +91,11 @@ public class BanPunishment implements Punishable<Punishment.ExpiredPunishment> {
 
         String staffMessage = String.format(STAFF_ALERT_MESSAGE, punisherName, punishedName, ChatColor.stripColor(reason));
 
-        new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, PlayerRank::isStaff, false, staffMessage, Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 0.5F, 1F)
+        new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, db -> {
+            PlayerRank rank = db.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
+
+            return rank.isStaff();
+        }, false, staffMessage, Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 0.5F, 1F)
                 .push(JedisManager.getInstance().getPool());
 
         return true;

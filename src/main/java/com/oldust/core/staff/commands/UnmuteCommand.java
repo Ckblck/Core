@@ -12,6 +12,7 @@ import com.oldust.core.utils.Lang;
 import com.oldust.core.utils.PlayerUtils;
 import com.oldust.core.utils.lambda.TriConsumer;
 import com.oldust.sync.JedisManager;
+import com.oldust.sync.wrappers.PlayerDatabaseKeys;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -65,7 +66,11 @@ public class UnmuteCommand extends InheritedCommand<StaffPlugin> {
 
                 String staffMessage = String.format(STAFF_ALERT_MESSAGE, sender.getName(), name);
 
-                new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, PlayerRank::isStaff, false, staffMessage, Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 0.5F, 1F)
+                new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, db -> {
+                    PlayerRank rank = db.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
+
+                    return rank.isStaff();
+                }, false, staffMessage, Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 0.5F, 1F)
                         .push(JedisManager.getInstance().getPool());
 
                 if (!(sender instanceof Player)) {

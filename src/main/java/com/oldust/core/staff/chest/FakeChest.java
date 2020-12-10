@@ -6,6 +6,8 @@ import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
 import com.oldust.core.utils.lambda.SerializablePredicate;
 import com.oldust.sync.JedisManager;
+import com.oldust.sync.wrappers.PlayerDatabaseKeys;
+import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,6 +17,12 @@ import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
 public class FakeChest {
+    private static final SerializablePredicate<WrappedPlayerDatabase> PREDICATE = (db) -> {
+        PlayerRank rank = db.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
+
+        return rank.isEqualOrHigher(PlayerRank.MOD);
+    };
+
     private final Location chestLocation;
     private BlockData blockData;
 
@@ -39,9 +47,7 @@ public class FakeChest {
                 + player.getName()
                 + " has opened a fake chest.";
 
-        SerializablePredicate<PlayerRank> predicate = (rank) -> rank.isEqualOrHigher(PlayerRank.MOD);
-
-        new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, predicate, message).push(JedisManager.getInstance().getPool());
+        new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, PREDICATE, message).push(JedisManager.getInstance().getPool());
     }
 
 }
