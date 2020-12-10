@@ -1,8 +1,8 @@
 package com.oldust.core.ranks.permission;
 
 import com.oldust.core.Core;
-import com.oldust.core.commons.EventsProvider;
-import com.oldust.core.commons.Operation;
+import com.oldust.core.commons.internal.EventsProvider;
+import com.oldust.core.commons.internal.Operation;
 import com.oldust.core.inherited.plugins.InheritedPlugin;
 import com.oldust.core.inherited.plugins.Plugin;
 import com.oldust.core.mysql.MySQLManager;

@@ -2,7 +2,8 @@ package com.oldust.core;
 
 import com.oldust.core.actions.ActionsReceiver;
 import com.oldust.core.chat.ChatHandler;
-import com.oldust.core.commons.EventsProvider;
+import com.oldust.core.commons.CommonsPlugin;
+import com.oldust.core.commons.internal.EventsProvider;
 import com.oldust.core.inherited.plugins.InheritedPluginsManager;
 import com.oldust.core.interactive.panels.InteractivePanelManager;
 import com.oldust.core.models.ModelPlugin;
@@ -60,6 +61,7 @@ public class Core extends JavaPlugin {
         InheritedPluginsManager.loadInheritedPlugin(ChatHandler.class);
         InheritedPluginsManager.loadInheritedPlugin(PermissionsManager.class);
         InheritedPluginsManager.loadInheritedPlugin(StaffPlugin.class);
+        InheritedPluginsManager.loadInheritedPlugin(CommonsPlugin.class);
 
         InheritedPluginsManager.onEnable();
 

@@ -1,7 +1,7 @@
 package com.oldust.core.staff.logs;
 
 import com.oldust.core.Core;
-import com.oldust.core.inventories.AbstractInventoryProvider;
+import com.oldust.core.commons.internal.inventories.AbstractInventoryProvider;
 import com.oldust.core.mysql.MySQLManager;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.GeoIPUtils;

@@ -1,5 +1,8 @@
 package com.oldust.core.models.commands;
 
+import com.oldust.core.Core;
+import com.oldust.core.commons.internal.EventsProvider;
+import com.oldust.core.commons.internal.Operation;
 import com.oldust.core.inherited.commands.InheritedCommand;
 import com.oldust.core.interactive.panels.InteractivePanel;
 import com.oldust.core.interactive.panels.InteractivePanelManager;
@@ -44,6 +47,11 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
 
     public ModelModifyCommand(ModelPlugin plugin, String name, @Nullable List<String> aliases) {
         super(plugin, name, aliases);
+
+        EventsProvider provider = Core.getInstance().getEventsProvider();
+
+        provider.newOperation(PlayerQuitEvent.class, new Operation<PlayerQuitEvent>((event, db)
+                -> playersModifying.remove(event.getPlayer().getUniqueId())));
 
         CUtils.registerEvents(this);
     }
@@ -109,11 +117,6 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
 
         InteractivePanel panel = createPanel(player, model);
         playersModifying.replace(uuid, panel);
-    }
-
-    @EventHandler
-    public void onQuit(PlayerQuitEvent e) {
-        playersModifying.remove(e.getPlayer().getUniqueId());
     }
 
     public InteractivePanel createPanel(Player player, Model model) {

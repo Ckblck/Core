@@ -65,6 +65,19 @@ public class PlayerUtils {
     }
 
     /**
+     * Comprobar si un jugador está conectado
+     * en el servidor en cuestión.
+     *
+     * @param nickname nombre del jugador
+     * @return true si está conectado en el servidor local (NO Network-Wide).
+     */
+
+    public boolean isLocallyConnected(String nickname) {
+        return getPlayers().stream()
+                .anyMatch(player -> player.getName().equalsIgnoreCase(nickname));
+    }
+
+    /**
      * Obtiene el nombre de un jugador a partir de una IP.
      *
      * @param ipAddress IP pública del jugador

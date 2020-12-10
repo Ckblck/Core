@@ -10,8 +10,8 @@ import uk.lewdev.standmodels.StandModelLib;
 
 import java.util.Collections;
 
-@InheritedPlugin(name = "Models")
 @Getter
+@InheritedPlugin(name = "Models")
 public class ModelPlugin extends Plugin {
     private StandModelLib standModelLib;
     private ModelModifyCommand modelModifyCommand;
@@ -20,7 +20,7 @@ public class ModelPlugin extends Plugin {
     public void onEnable() {
         standModelLib = new StandModelLib(Core.getInstance());
         new ModelCommand(this, "model", null);
-        modelModifyCommand = new ModelModifyCommand(this, "modelmodify", Collections.singletonList("mmodify"));
+        modelModifyCommand = new ModelModifyCommand(this, "mmodify", Collections.singletonList("modelmodify"));
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.oldust.core.staff.playerdata;
 
 import com.google.common.base.Preconditions;
 import com.oldust.core.Core;
-import com.oldust.core.inventories.AbstractInventoryProvider;
+import com.oldust.core.commons.internal.inventories.AbstractInventoryProvider;
 import com.oldust.core.staff.punish.Punishment;
 import com.oldust.core.staff.punish.PunishmentType;
 import com.oldust.core.staff.punish.types.BanPunishment;

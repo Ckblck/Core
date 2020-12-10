@@ -1,7 +1,7 @@
 package com.oldust.core.staff.mode;
 
 import com.oldust.core.Core;
-import com.oldust.core.inventories.AbstractInventoryProvider;
+import com.oldust.core.commons.internal.inventories.AbstractInventoryProvider;
 import com.oldust.core.utils.ItemBuilder;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;

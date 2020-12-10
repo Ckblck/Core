@@ -1,4 +1,4 @@
-package com.oldust.core.commons;
+package com.oldust.core.commons.internal;
 
 import com.oldust.sync.wrappers.defaults.ImmutableWrappedPlayerDatabase;
 import lombok.Getter;

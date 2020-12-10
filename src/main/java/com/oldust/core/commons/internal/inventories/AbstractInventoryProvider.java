@@ -1,4 +1,4 @@
-package com.oldust.core.inventories;
+package com.oldust.core.commons.internal.inventories;
 
 import com.oldust.core.utils.ItemBuilder;
 import fr.minuskube.inv.ClickableItem;

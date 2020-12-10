@@ -1,8 +1,8 @@
 package com.oldust.core.staff.mode;
 
 import com.oldust.core.Core;
-import com.oldust.core.commons.EventsProvider;
-import com.oldust.core.commons.Operation;
+import com.oldust.core.commons.internal.EventsProvider;
+import com.oldust.core.commons.internal.Operation;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
 import com.oldust.core.utils.PlayerUtils;

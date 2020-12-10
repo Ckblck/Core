@@ -5,14 +5,16 @@ import com.oldust.sync.wrappers.Savable;
 import com.oldust.sync.wrappers.ServerDatabaseKeys;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Getter
 public class OldustServer extends Savable<ServerDatabaseKeys> {
     private static final long serialVersionUID = 645603945648576L;
 
-    private final List<String> playersConnected = new ArrayList<>();
+    // Key = Nickname, Value = UUID
+    private final Map<String, UUID> playersConnected = new HashMap<>();
     private final String serverName;
 
     public OldustServer() {

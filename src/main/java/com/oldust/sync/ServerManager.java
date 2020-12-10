@@ -1,19 +1,18 @@
 package com.oldust.sync;
 
 import com.oldust.core.Core;
-import com.oldust.core.commons.EventsProvider;
-import com.oldust.core.commons.Operation;
+import com.oldust.core.commons.internal.EventsProvider;
+import com.oldust.core.commons.internal.Operation;
 import com.oldust.core.utils.CUtils;
 import com.oldust.sync.jedis.RedisRepository;
 import com.oldust.sync.wrappers.defaults.OldustServer;
 import lombok.Getter;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import redis.clients.jedis.JedisPool;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Manager que contiene a todos los servidores
@@ -40,17 +39,22 @@ public class ServerManager {
         serverRepository.pushToList(SERVER_LIST_NAME, currentServer);
 
         EventsProvider provider = Core.getInstance().getEventsProvider();
-        List<String> playersConnected = currentServer.getPlayersConnected();
 
         provider.newOperation(PlayerJoinEvent.class, new Operation<PlayerJoinEvent>((pl, db)
                 -> {
-            playersConnected.add(pl.getPlayer().getName());
+            Map<String, UUID> playersConnected = currentServer.getPlayersConnected();
+            Player player = pl.getPlayer();
+
+            playersConnected.put(player.getName(), player.getUniqueId());
             updateCurrent();
         }));
 
         provider.newOperation(PlayerQuitEvent.class, new Operation<PlayerQuitEvent>((pl, db)
                 -> {
-            playersConnected.remove(pl.getPlayer().getName());
+            Map<String, UUID> playersConnected = currentServer.getPlayersConnected();
+            Player player = pl.getPlayer();
+
+            playersConnected.remove(player.getName());
             updateCurrent();
         }));
     }
@@ -87,7 +91,9 @@ public class ServerManager {
         Set<OldustServer> svs = serverRepository.fetchElements(servers);
 
         return svs.stream()
-                .filter(sv -> sv.getPlayersConnected().stream().anyMatch(pl -> pl.equalsIgnoreCase(player)))
+                .filter(sv -> sv.getPlayersConnected().keySet()
+                        .stream()
+                        .anyMatch(pl -> pl.equalsIgnoreCase(player)))
                 .map(OldustServer::getServerName)
                 .findAny();
     }

@@ -1,4 +1,4 @@
-package com.oldust.core.commons;
+package com.oldust.core.commons.internal;
 
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.Lang;
