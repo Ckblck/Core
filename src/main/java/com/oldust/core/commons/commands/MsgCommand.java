@@ -87,11 +87,17 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
 
                 if (locallyConnected) {
                     Player targetPlayer = Bukkit.getPlayer(target);
-
-                    PlayerRank targetRank = PlayerRank.getPlayerRank(targetPlayer);
-
                     assert targetPlayer != null;
 
+                    WrappedPlayerDatabase targetDatabase = playerManager.getDatabase(targetPlayer);
+
+                    if (targetDatabase.contains(PlayerDatabaseKeys.NO_MPS)) {
+                        CUtils.msg(player, Lang.ERROR_COLOR + "That player cannot receive private messages.");
+
+                        return;
+                    }
+
+                    PlayerRank targetRank = targetDatabase.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
                     String finalMessage = buildFormat(player, targetPlayer.getName(), playerRank, targetRank);
 
                     player.sendMessage(finalMessage + message);
@@ -112,9 +118,15 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
                             .orElseThrow(); // Capitalizamos su nombre de acuerdo como lo tiene.
 
                     UUID targetUuid = playersConnected.get(capitalizedName); // Obtenemos su UUID para obtener desde su database su rango.
+                    WrappedPlayerDatabase targetDatabase = playerManager.getDatabase(targetUuid);
 
-                    PlayerRank targetRank = playerManager
-                            .getDatabase(targetUuid)
+                    if (targetDatabase.contains(PlayerDatabaseKeys.NO_MPS)) {
+                        CUtils.msg(player, Lang.ERROR_COLOR + "That player cannot receive private messages.");
+
+                        return;
+                    }
+
+                    PlayerRank targetRank = targetDatabase
                             .getValue(PlayerDatabaseKeys.RANK)
                             .asClass(PlayerRank.class);
 

@@ -31,6 +31,8 @@ public class StaffPlugin extends Plugin {
         new MuteCommand(this);
         new UnmuteCommand(this);
         new PlayerDataCommand(this);
+        new NoMpsCommand(this);
+        new GamemodeCommand(this);
 
         fakeChestsManager = new FakeChestsManager();
         staffModeManager = new StaffModeManager();

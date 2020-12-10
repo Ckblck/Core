@@ -36,7 +36,7 @@ public class Core extends JavaPlugin {
         instance = this;
 
         long start = System.currentTimeMillis();
-        CUtils.inform("CORE", "Initializing core...");
+        CUtils.inform("Core", "Initializing core...");
 
         new ThreadPool();
         new JedisManager();
@@ -66,7 +66,7 @@ public class Core extends JavaPlugin {
         InheritedPluginsManager.onEnable();
 
         long diff = System.currentTimeMillis() - start;
-        CUtils.inform("CORE", "Initiated in " + ((double) diff / 1000) + " seg.");
+        CUtils.inform("Core", "Initiated in " + ((double) diff / 1000) + " seg.");
     }
 
     @Override

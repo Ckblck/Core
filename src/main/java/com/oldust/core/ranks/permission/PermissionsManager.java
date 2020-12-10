@@ -59,7 +59,7 @@ public class PermissionsManager extends Plugin {
                 e.printStackTrace();
             }
         }).exceptionally(ex -> {
-            CUtils.inform("PERMISSIONS", Lang.ERROR_COLOR + "An error occurred while loading the permissions from the database.");
+            CUtils.inform("Permissions", Lang.ERROR_COLOR + "An error occurred while loading the permissions from the database.");
             ex.printStackTrace();
 
             return null;

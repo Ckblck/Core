@@ -7,5 +7,6 @@ public enum PlayerDatabaseKeys {
     STAFF_CHAT,
     VANISH,
     PLAYER_IP_ADDRESS,
-    MUTE_DURATION
+    MUTE_DURATION,
+    NO_MPS
 }

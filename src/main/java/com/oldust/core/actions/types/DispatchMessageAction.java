@@ -89,7 +89,7 @@ public class DispatchMessageAction extends Action<DispatchMessageAction> {
 
                         player.spigot().sendMessage(components);
                     } catch (Exception e) {
-                        CUtils.inform("ACTION", "Not JSON encoded message was sent, 'usesTextComponent' should be false then.");
+                        CUtils.inform("Action", "Not JSON encoded message was sent, 'usesTextComponent' should be false then.");
                     }
                 } else {
                     CUtils.msg(player, message);

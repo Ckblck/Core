@@ -3,6 +3,7 @@ package com.oldust.sync;
 import com.oldust.sync.jedis.RedisRepository;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import lombok.Getter;
+import org.bukkit.entity.Player;
 import redis.clients.jedis.JedisPool;
 
 import java.util.UUID;
@@ -26,6 +27,10 @@ public class PlayerManager {
 
     public WrappedPlayerDatabase getDatabase(UUID uuid) {
         return playerRepository.get(uuid.toString());
+    }
+
+    public WrappedPlayerDatabase getDatabase(Player player) {
+        return getDatabase(player.getUniqueId());
     }
 
     public void remove(UUID uuid) { // Ejecutado en OldustBungee

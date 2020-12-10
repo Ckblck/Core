@@ -26,7 +26,7 @@ public class CUtils {
             if (Bukkit.isPrimaryThread()) {
                 Thread.dumpStack();
 
-                inform("SERVER", Lang.ERROR_COLOR + "WARNING! A call from the Main thread was made, when expected Async usage.");
+                inform("Server", Lang.ERROR_COLOR + "WARNING! A call from the Main thread was made, when expected Async usage.");
             }
         } catch (NullPointerException ignored) {
         } // BungeeCord usage.
