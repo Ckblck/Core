@@ -53,14 +53,18 @@ public class StaffMode implements Serializable {
     public void init(StaffModeManager manager, Player staff, WrappedPlayerDatabase database) {
         InteractivePanel panel = new InteractivePanel(staff);
 
-        panel.add(0, ModeItems.STAFF_TOOLS, (click) -> new StaffToolsInv(Bukkit.getPlayer(this.player), this).open());
+        panel.add(0, ModeItems.STAFF_TOOLS, (click) -> new StaffToolsInv(Bukkit.getPlayer(player), this).open());
 
-        panel.add(1, ModeItems.RANDOM_TELEPORT, (click) -> randomTeleport(Bukkit.getPlayer(this.player)));
+        panel.add(1, ModeItems.RANDOM_TELEPORT, (click) -> randomTeleport(Bukkit.getPlayer(player)));
 
         panel.add(4, ModeItems.STICK_ANTI_KB, (click) -> {
         });
 
-        panel.add(8, ModeItems.EXIT, (click) -> manager.exitStaffMode(Bukkit.getPlayer(this.player), PlayerManager.getInstance().getDatabase(player)));
+        panel.add(8, ModeItems.EXIT, (click) -> CUtils.runAsync(() -> {
+            Player player = Bukkit.getPlayer(this.player);
+
+            manager.exitStaffMode(player, PlayerManager.getInstance().getDatabase(player));
+        }));
 
         panel.addListener(new InteractiveListener() {
             @Override
@@ -73,30 +77,36 @@ public class StaffMode implements Serializable {
             staff.setGameMode(GameMode.CREATIVE);
             staff.setAllowFlight(true);
             staff.setFlying(true);
-        }, 10);
+        }, 5);
 
         InteractivePanelManager.getInstance().setPanel(staff, panel);
 
-        database.put(PlayerDatabaseKeys.STAFF_MODE, this);
-        PlayerManager.getInstance().saveDatabase(database);
+        CUtils.runAsync(() -> {
+            database.put(PlayerDatabaseKeys.STAFF_MODE, this);
+
+            PlayerManager.getInstance().saveDatabase(database);
+        });
 
         vanish(staff);
     }
 
     protected void exit(Player staff, WrappedPlayerDatabase database) {
-        staff.removePotionEffect(PotionEffectType.NIGHT_VISION);
-        staff.getInventory().clear();
-
-        InteractivePanelManager.getInstance().exitPanel(staff);
-
         database.remove(PlayerDatabaseKeys.STAFF_MODE);
+
         PlayerManager.getInstance().update(database);
 
-        staff.setGameMode(previousGamemode);
-        staff.setAllowFlight(previousAllowFlight);
-        staff.setFlying(previousFlying);
+        CUtils.runSync(() -> {
+            staff.removePotionEffect(PotionEffectType.NIGHT_VISION);
+            staff.getInventory().clear();
 
-        unvanish(staff);
+            InteractivePanelManager.getInstance().exitPanel(staff);
+
+            staff.setGameMode(previousGamemode);
+            staff.setAllowFlight(previousAllowFlight);
+            staff.setFlying(previousFlying);
+
+            unvanish(staff);
+        });
     }
 
     public void muteChat(Player staff) {
@@ -106,8 +116,10 @@ public class StaffMode implements Serializable {
         boolean muted = server.getValue(ServerDatabaseKeys.MUTED).asBoolean();
         String message = (muted) ? "unmuted" : "muted";
 
-        server.put(ServerDatabaseKeys.MUTED, !muted);
-        serverManager.update(server);
+        CUtils.runAsync(() -> {
+            server.put(ServerDatabaseKeys.MUTED, !muted);
+            serverManager.update(server);
+        });
 
         CUtils.msg(staff, Lang.SUCCESS_COLOR + "The chat has been " + message + ".");
     }
@@ -148,11 +160,13 @@ public class StaffMode implements Serializable {
 
     public void vanish(Player staff) {
         StaffPlugin plugin = InheritedPluginsManager.getPlugin(StaffPlugin.class);
+
         plugin.getStaffModeManager().vanish(staff);
     }
 
     public void unvanish(Player staff) {
         StaffPlugin plugin = InheritedPluginsManager.getPlugin(StaffPlugin.class);
+
         plugin.getStaffModeManager().unvanish(staff);
     }
 

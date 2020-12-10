@@ -61,17 +61,19 @@ public class StaffModeManager implements Listener {
     }
 
     public void setStaffMode(Player player, WrappedPlayerDatabase database) {
-        boolean staffMode = database.contains(PlayerDatabaseKeys.STAFF_MODE);
-        StaffMode mode;
+        CUtils.runAsync(() -> {
+            boolean staffMode = database.contains(PlayerDatabaseKeys.STAFF_MODE);
+            StaffMode mode;
 
-        if (staffMode) { // Cambió de server, tiene la instancia guardada en su DB.
-            mode = database.getValue(PlayerDatabaseKeys.STAFF_MODE).asClass(StaffMode.class);
-            mode.init(this, player, database);
-        } else {
-            mode = new StaffMode(this, player, database);
-        }
+            if (staffMode) { // Cambió de server, tiene la instancia guardada en su DB.
+                mode = database.getValue(PlayerDatabaseKeys.STAFF_MODE).asClass(StaffMode.class);
+                mode.init(this, player, database);
+            } else {
+                mode = new StaffMode(this, player, database);
+            }
 
-        staffs.put(player.getUniqueId(), mode);
+            staffs.put(player.getUniqueId(), mode);
+        });
     }
 
     /**
@@ -111,9 +113,12 @@ public class StaffModeManager implements Listener {
 
         vanished.add(player.getUniqueId());
 
-        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
-        database.put(PlayerDatabaseKeys.VANISH, true);
-        PlayerManager.getInstance().update(database);
+        CUtils.runAsync(() -> {
+            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
+            database.put(PlayerDatabaseKeys.VANISH, true);
+
+            PlayerManager.getInstance().update(database);
+        });
 
         new BukkitRunnable() {
             @Override
@@ -139,10 +144,13 @@ public class StaffModeManager implements Listener {
 
         vanished.remove(player.getUniqueId());
 
-        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
-        database.remove(PlayerDatabaseKeys.VANISH);
+        CUtils.runAsync(() -> {
+            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
+            database.remove(PlayerDatabaseKeys.VANISH);
 
-        PlayerManager.getInstance().update(database);
+            PlayerManager.getInstance().update(database);
+        });
+
     }
 
     public void joinEvent() {
@@ -175,7 +183,11 @@ public class StaffModeManager implements Listener {
     }
 
     private void setStaffMode(Player player) {
-        setStaffMode(player, PlayerManager.getInstance().getDatabase(player.getUniqueId()));
+        CUtils.runAsync(() -> {
+            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
+
+            setStaffMode(player, database);
+        });
     }
 
     public void switchState(Player player) {

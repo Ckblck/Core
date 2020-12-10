@@ -57,31 +57,31 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
                 return;
             }
 
-            PlayerManager playerManager = PlayerManager.getInstance();
-            WrappedPlayerDatabase playerDatabase = playerManager.getDatabase(player.getUniqueId());
-            Optional<Savable.WrappedValue> muted = playerDatabase.getValueOptional(PlayerDatabaseKeys.MUTE_DURATION);
+            CUtils.runAsync(() -> {
+                PlayerManager playerManager = PlayerManager.getInstance();
+                WrappedPlayerDatabase playerDatabase = playerManager.getDatabase(player.getUniqueId());
+                Optional<Savable.WrappedValue> muted = playerDatabase.getValueOptional(PlayerDatabaseKeys.MUTE_DURATION);
 
-            if (muted.isPresent()) {
-                Punishment punishment = muted.get().asClass(Punishment.class);
-                Timestamp expires = punishment.getExpiration();
+                if (muted.isPresent()) {
+                    Punishment punishment = muted.get().asClass(Punishment.class);
+                    Timestamp expires = punishment.getExpiration();
 
-                assert expires != null;
+                    assert expires != null;
 
-                if (expires.before(new Timestamp(System.currentTimeMillis()))) {
-                    playerDatabase.remove(PlayerDatabaseKeys.MUTE_DURATION);
-                    playerManager.update(playerDatabase);
-                } else {
-                    String muteMsg = PunishmentType.MUTE.getHandler().getPunishmentMessage(punishment);
-                    CUtils.msg(player, muteMsg);
+                    if (expires.before(new Timestamp(System.currentTimeMillis()))) {
+                        playerDatabase.remove(PlayerDatabaseKeys.MUTE_DURATION);
+                        playerManager.update(playerDatabase);
+                    } else {
+                        String muteMsg = PunishmentType.MUTE.getHandler().getPunishmentMessage(punishment);
+                        CUtils.msg(player, muteMsg);
 
-                    return;
+                        return;
+                    }
+
                 }
 
-            }
+                ServerManager serverManager = Core.getInstance().getServerManager();
 
-            ServerManager serverManager = Core.getInstance().getServerManager();
-
-            CUtils.runAsync(() -> {
                 PlayerRank playerRank = PlayerRank.getPlayerRank(player);
                 boolean locallyConnected = PlayerUtils.isLocallyConnected(target);
 

@@ -62,6 +62,8 @@ public enum PlayerRank {
     }
 
     public static PlayerRank getPlayerRank(CommandSender sender) {
+        CUtils.warnSyncCall();
+
         if (sender instanceof Player) {
             return getPlayerRank((Player) sender);
         }
@@ -70,7 +72,7 @@ public enum PlayerRank {
     }
 
     private static PlayerRank getPlayerRank(Player sender) {
-        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(sender.getUniqueId());
+        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(sender);
 
         return database.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
     }

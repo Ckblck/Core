@@ -21,6 +21,8 @@ public class RedisRepository<T extends Savable<?>> {
     }
 
     public void pushToList(String list, T element) {
+        CUtils.warnSyncCall();
+
         try (Jedis jedis = pool.getResource()) {
             String keyName = getKeyName(list);
 
@@ -29,6 +31,8 @@ public class RedisRepository<T extends Savable<?>> {
     }
 
     public void removeFromList(String list, T element) {
+        CUtils.warnSyncCall();
+
         try (Jedis jedis = pool.getResource()) {
             String keyName = getKeyName(list);
 
@@ -37,6 +41,8 @@ public class RedisRepository<T extends Savable<?>> {
     }
 
     public List<String> fetchList(String list) {
+        CUtils.warnSyncCall();
+
         try (Jedis jedis = pool.getResource()) {
             String keyName = getKeyName(list);
 
@@ -86,6 +92,8 @@ public class RedisRepository<T extends Savable<?>> {
     }
 
     public void put(T element) {
+        CUtils.warnSyncCall();
+
         try (Jedis jedis = pool.getResource()) {
             String key = getKeyName(element);
             String serialize = Base64Serializer.serialize(element);
@@ -95,6 +103,8 @@ public class RedisRepository<T extends Savable<?>> {
     }
 
     public T get(String key) {
+        CUtils.warnSyncCall();
+
         try (Jedis jedis = pool.getResource()) {
             String keyName = getKeyName(key);
             String serialize = jedis.get(keyName);
@@ -106,6 +116,8 @@ public class RedisRepository<T extends Savable<?>> {
     }
 
     public void remove(String key) {
+        CUtils.warnSyncCall();
+
         try (Jedis jedis = pool.getResource()) {
             String keyName = getKeyName(key);
 
@@ -114,6 +126,8 @@ public class RedisRepository<T extends Savable<?>> {
     }
 
     public void update(T element) {
+        CUtils.warnSyncCall();
+
         try (Jedis jedis = pool.getResource()) {
             String serializedData = Base64Serializer.serialize(element);
             String key = getKeyName(element);
@@ -123,6 +137,8 @@ public class RedisRepository<T extends Savable<?>> {
     }
 
     public boolean exists(String name) {
+        CUtils.warnSyncCall();
+
         try (Jedis jedis = pool.getResource()) {
             return jedis.exists(getKeyName(name));
         }

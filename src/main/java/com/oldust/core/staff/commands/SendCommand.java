@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.concurrent.CompletableFuture;
 
 public class SendCommand extends InheritedCommand<StaffPlugin> {
 
@@ -27,15 +28,20 @@ public class SendCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            if (label.equalsIgnoreCase("send")) {
-                if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
+            CompletableFuture<PlayerRank> future = CompletableFuture
+                    .supplyAsync(() -> PlayerRank.getPlayerRank(sender));
 
-                send(sender, args);
-            } else {
-                if (isNotAboveOrEqual(sender, PlayerRank.ADMIN)) return;
+            future.thenAccept(rank -> {
+                if (label.equalsIgnoreCase("send")) {
+                    if (isNotAboveOrEqual(sender, rank, PlayerRank.MOD)) return;
 
-                sendAll(sender, args);
-            }
+                    send(sender, args);
+                } else {
+                    if (isNotAboveOrEqual(sender, rank, PlayerRank.ADMIN)) return;
+
+                    sendAll(sender, args);
+                }
+            });
 
         };
     }

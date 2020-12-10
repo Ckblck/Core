@@ -81,7 +81,7 @@ public class PermissionsManager extends Plugin {
         eventsProvider.newOperation(PlayerJoinEvent.class, new Operation<PlayerJoinEvent>((join, db) -> {
             Player player = join.getPlayer();
 
-            setupPlayer(player);
+            CUtils.runAsync(() -> setupPlayer(player));
         }));
 
     }

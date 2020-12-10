@@ -71,7 +71,8 @@ public class Core extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        serverManager.remove();
+        CUtils.runAsync(() -> serverManager.remove());
+
         InheritedPluginsManager.onDisable();
     }
 }

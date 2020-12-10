@@ -15,6 +15,7 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAmount;
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class MuteCommand extends InheritedCommand<StaffPlugin> {
     private static final MutePunishment HANDLER = (MutePunishment) PunishmentType.MUTE.getHandler();
@@ -26,46 +27,48 @@ public class MuteCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
+            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.MOD);
 
-            if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+            future.thenAccept(notAbove -> {
+                if (notAbove) return;
 
-                return;
-            }
+                if (args.length == 0) {
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
 
-            if (args.length == 1) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "duration"));
+                    return;
+                }
 
-                return;
-            }
+                if (args.length == 1) {
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "duration"));
 
-            TemporalAmount duration;
+                    return;
+                }
 
-            try {
-                duration = CUtils.parseLiteralTime(args[1]);
-            } catch (DateTimeParseException e) {
-                CUtils.msg(sender, Lang.ERROR_COLOR + "The provided duration is not correct.");
+                TemporalAmount duration;
 
-                return;
-            }
+                try {
+                    duration = CUtils.parseLiteralTime(args[1]);
+                } catch (DateTimeParseException e) {
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "The provided duration is not correct.");
 
-            if (args.length == 2) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason"));
+                    return;
+                }
 
-                return;
-            }
+                if (args.length == 2) {
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason"));
 
-            String name = args[0];
-            String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+                    return;
+                }
 
-            if (reason.length() > 34) {
-                CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.");
+                String name = args[0];
+                String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
 
-                return;
-            }
+                if (reason.length() > 34) {
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.");
 
-            CUtils.runAsync(() -> {
+                    return;
+                }
+
                 UUID uuid = PlayerUtils.getUUIDByName(name);
 
                 if (uuid == null) {

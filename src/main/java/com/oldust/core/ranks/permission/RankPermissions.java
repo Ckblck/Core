@@ -109,7 +109,8 @@ public class RankPermissions {
     public void updatePermission(String permission, boolean enabled) {
         permissions.put(permission, enabled);
 
-        filter().forEach(player -> BukkitCompat.setPermissions(player, Map.of(permission, enabled)));
+        this.filter()
+                .forEach(player -> BukkitCompat.setPermissions(player, Map.of(permission, enabled)));
     }
 
     public void removePermission(String permission) {
@@ -125,13 +126,18 @@ public class RankPermissions {
     }
 
     private void recalculateAll() {
-        filter().forEach(player -> applyToPlayer(player, PlayerManager.getInstance().getDatabase(player.getUniqueId())));
+        PlayerManager playerManager = PlayerManager.getInstance();
+
+        this.filter()
+                .forEach(player -> applyToPlayer(player, playerManager.getDatabase(player.getUniqueId())));
     }
 
     private Collection<Player> filter() {
+        PlayerManager playerManager = PlayerManager.getInstance();
+
         return PlayerUtils.getPlayers().stream()
                 .filter(player -> {
-                    WrappedPlayerDatabase db = PlayerManager.getInstance().getDatabase(player.getUniqueId());
+                    WrappedPlayerDatabase db = playerManager.getDatabase(player.getUniqueId());
                     PlayerRank playerRank = db.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
 
                     return playerRank == rank;

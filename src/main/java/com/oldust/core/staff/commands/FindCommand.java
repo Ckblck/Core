@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class FindCommand extends InheritedCommand<StaffPlugin> {
 
@@ -22,15 +23,17 @@ public class FindCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
+            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.MOD);
 
-            if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+            future.thenAccept(notAbove -> {
+                if (notAbove) return;
 
-                return;
-            }
+                if (args.length == 0) {
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
 
-            CUtils.runAsync(() -> {
+                    return;
+                }
+
                 ServerManager serverManager = Core.getInstance().getServerManager();
                 String player = args[0];
 

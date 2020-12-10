@@ -12,6 +12,7 @@ import com.oldust.sync.JedisManager;
 import org.bukkit.command.CommandSender;
 
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 
 public class DispatchCommand extends InheritedCommand<StaffPlugin> {
 
@@ -22,32 +23,39 @@ public class DispatchCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            if (isNotAboveOrEqual(sender, PlayerRank.ADMIN)) return;
+            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.ADMIN);
 
-            if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "'*' or <server name>"));
+            future.thenAccept(notAbove -> {
+                if (notAbove) return;
 
-                return;
-            }
+                if (args.length == 0) {
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "'*' or <server name>"));
 
-            if (args.length == 1) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "command"));
+                    return;
+                }
 
-                return;
-            }
+                if (args.length == 1) {
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "command"));
 
-            String serverName = args[0];
-            String[] command = Arrays.copyOfRange(args, 1, args.length);
-            boolean validServer = serverName.equals("*") || Core.getInstance().getServerManager().contains(serverName);
+                    return;
+                }
 
-            if (!validServer) {
-                CUtils.msg(sender, Lang.ERROR_COLOR + "The specified server is either invalid or not connected.");
+                String serverName = args[0];
+                String[] command = Arrays.copyOfRange(args, 1, args.length);
+                boolean validServer = serverName.equals("*") || Core.getInstance().getServerManager().contains(serverName);
 
-                return;
-            }
+                if (!validServer) {
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "The specified server is either invalid or not connected.");
 
-            new DispatchCommandAction(sender.getName(), serverName, command).push(JedisManager.getInstance().getPool());
-            CUtils.msg(sender, Lang.SUCCESS_COLOR + "Command correctly propagated.");
+                    return;
+                }
+
+                new DispatchCommandAction(sender.getName(), serverName, command)
+                        .push(JedisManager.getInstance().getPool());
+
+                CUtils.msg(sender, Lang.SUCCESS_COLOR + "Command correctly propagated.");
+            });
+
         };
     }
 

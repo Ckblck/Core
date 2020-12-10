@@ -11,6 +11,7 @@ import com.oldust.core.utils.lambda.TriConsumer;
 import org.bukkit.command.CommandSender;
 
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 
 public class KickCommand extends InheritedCommand<StaffPlugin> {
     private static final KickPunishment HANDLER = (KickPunishment) PunishmentType.KICK.getHandler();
@@ -22,31 +23,33 @@ public class KickCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
+            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.MOD);
 
-            if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+            future.thenAccept(notAbove -> {
+                if (notAbove) return;
 
-                return;
-            }
+                if (args.length == 0) {
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
 
-            if (args.length == 1) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason"));
+                    return;
+                }
 
-                return;
-            }
+                if (args.length == 1) {
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason"));
 
-            String senderName = sender.getName();
-            String player = args[0];
-            String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+                    return;
+                }
 
-            if (reason.length() > 34) {
-                CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.");
+                String senderName = sender.getName();
+                String player = args[0];
+                String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-                return;
-            }
+                if (reason.length() > 34) {
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.");
 
-            CUtils.runAsync(() -> {
+                    return;
+                }
+
                 boolean success = HANDLER.punish(senderName, player, null, reason, false);
 
                 if (!success) {

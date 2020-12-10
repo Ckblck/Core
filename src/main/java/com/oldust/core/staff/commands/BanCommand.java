@@ -16,6 +16,7 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAmount;
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class BanCommand extends InheritedCommand<StaffPlugin> {
 
@@ -26,60 +27,62 @@ public class BanCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
+            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.MOD);
 
-            if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+            future.thenAccept(notAbove -> {
+                if (notAbove) return;
 
-                return;
-            }
+                if (args.length == 0) {
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
 
-            if (args.length == 1) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "duration/reason"));
+                    return;
+                }
 
-                return;
-            }
+                if (args.length == 1) {
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "duration/reason"));
 
-            String senderName = sender.getName();
-            String punishedName = args[0];
-            TemporalAmount duration;
+                    return;
+                }
 
-            try {
-                duration = CUtils.parseLiteralTime(args[1]);
-            } catch (DateTimeParseException ignored) {
-                duration = null; // Permanente
-            }
+                String senderName = sender.getName();
+                String punishedName = args[0];
+                TemporalAmount duration;
 
-            String[] reasonRanged = (duration == null)
-                    ? Arrays.copyOfRange(args, 1, args.length)
-                    : Arrays.copyOfRange(args, 2, args.length);
+                try {
+                    duration = CUtils.parseLiteralTime(args[1]);
+                } catch (DateTimeParseException ignored) {
+                    duration = null; // Permanente
+                }
 
-            String reason = String.join(" ", reasonRanged);
-            Punishable<?> handler = PunishmentType.BAN.getHandler();
-            boolean banIp = false;
+                String[] reasonRanged = (duration == null)
+                        ? Arrays.copyOfRange(args, 1, args.length)
+                        : Arrays.copyOfRange(args, 2, args.length);
 
-            if (StringUtils.endsWithIgnoreCase(reason, "-ip")) {
-                reason = StringUtils.removeEnd(reason, "-ip");
-                banIp = true;
-            }
+                String reason = String.join(" ", reasonRanged);
+                Punishable<?> handler = PunishmentType.BAN.getHandler();
+                boolean banIp = false;
 
-            if (reason.length() > 34) {
-                CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.");
+                if (StringUtils.endsWithIgnoreCase(reason, "-ip")) {
+                    reason = StringUtils.removeEnd(reason, "-ip");
+                    banIp = true;
+                }
 
-                return;
-            }
+                if (reason.length() > 34) {
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.");
 
-            if (StringUtils.isWhitespace(reason)) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason"));
+                    return;
+                }
 
-                return;
-            }
+                if (StringUtils.isWhitespace(reason)) {
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason"));
 
-            TemporalAmount finalDuration = duration;
-            String finalReason = reason;
-            boolean finalBanIp = banIp;
+                    return;
+                }
 
-            CUtils.runAsync(() -> {
+                TemporalAmount finalDuration = duration;
+                String finalReason = reason;
+                boolean finalBanIp = banIp;
+
                 UUID uuid = PlayerUtils.getUUIDByName(punishedName);
 
                 if (uuid == null) {
@@ -97,6 +100,7 @@ public class BanCommand extends InheritedCommand<StaffPlugin> {
                 }
 
                 handler.punish(senderName, punishedName, finalDuration, finalReason, finalBanIp);
+
             });
 
         };

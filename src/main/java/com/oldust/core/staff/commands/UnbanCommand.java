@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import java.sql.Timestamp;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class UnbanCommand extends InheritedCommand<StaffPlugin> {
     private static final String STAFF_ALERT_MESSAGE = CUtils.color("#ff443b[!] #80918a #fcba03 %s#80918a has unbanned #fcba03%s#80918a.");
@@ -31,19 +32,21 @@ public class UnbanCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
+            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.MOD);
 
-            if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+            future.thenAccept(notAbove -> {
+                if (notAbove) return;
 
-                return;
-            }
+                if (args.length == 0) {
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
 
-            String senderName = sender.getName(); // TODO: Custom name for Console
-            String punished = args[0];
-            BanPunishment handler = (BanPunishment) PunishmentType.BAN.getHandler();
+                    return;
+                }
 
-            CUtils.runAsync(() -> {
+                String senderName = sender.getName(); // TODO: Custom name for Console
+                String punished = args[0];
+                BanPunishment handler = (BanPunishment) PunishmentType.BAN.getHandler();
+
                 UUID uuid = PlayerUtils.getUUIDByName(punished);
                 Optional<Punishment> punishment;
 
@@ -85,7 +88,6 @@ public class UnbanCommand extends InheritedCommand<StaffPlugin> {
                 if (!(sender instanceof Player)) {
                     CUtils.msg(sender, Lang.SUCCESS_COLOR + "The player " + punished + " is no longer banned.");
                 }
-
             });
 
         };

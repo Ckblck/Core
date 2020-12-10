@@ -54,18 +54,23 @@ public class EventsProvider implements Listener {
     }
 
     private void handle(Event e, Player player) {
-        Class<? extends Event> clazz = e.getClass();
-        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
+        CUtils.runAsync(() -> {
+            Class<? extends Event> clazz = e.getClass();
+            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
 
-        if (database == null) {
-            player.kickPlayer(Lang.DB_DISAPPEARED);
+            if (database == null) {
+                player.kickPlayer(Lang.DB_DISAPPEARED);
 
-            return;
-        }
+                return;
+            }
 
-        for (Operation<Event> operation : operations.get(clazz)) {
-            operation.getConsumer().accept(e, new ImmutableWrappedPlayerDatabase(database));
-        }
+            CUtils.runSync(() -> {
+                for (Operation<Event> operation : operations.get(clazz)) {
+                    operation.getConsumer().accept(e, new ImmutableWrappedPlayerDatabase(database));
+                }
+            });
+
+        });
     }
 
     private void handle(PlayerEvent e) {

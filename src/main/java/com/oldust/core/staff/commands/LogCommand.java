@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
+import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("UnstableApiUsage")
 public class LogCommand extends InheritedCommand<StaffPlugin> {
@@ -24,19 +25,21 @@ public class LogCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
             if (isNotPlayer(sender)) return;
+            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.MOD);
 
-            if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+            future.thenAccept(notAbove -> {
+                if (notAbove) return;
 
-                return;
-            }
+                if (args.length == 0) {
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
 
-            String target = args[0];
-            boolean isIp = InetAddresses.isInetAddress(target);
+                    return;
+                }
 
-            CUtils.runAsync(() -> {
+                String target = args[0];
+                boolean isIp = InetAddresses.isInetAddress(target);
+
                 String nickname = (isIp)
                         ? PlayerUtils.getPlayerNameByIp(target)
                         : (PlayerUtils.nicknameExistsDB(target) ? target : null);
@@ -48,9 +51,10 @@ public class LogCommand extends InheritedCommand<StaffPlugin> {
                 }
 
                 new LogsInventory(((Player) sender), nickname);
+
+                CUtils.msg(sender, Lang.SUCCESS_COLOR + "Processing...");
             });
 
-            CUtils.msg(sender, Lang.SUCCESS_COLOR + "Processing...");
         };
     }
 

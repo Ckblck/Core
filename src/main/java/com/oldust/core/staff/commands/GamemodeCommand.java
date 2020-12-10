@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class GamemodeCommand extends InheritedCommand<StaffPlugin> {
 
@@ -23,11 +24,33 @@ public class GamemodeCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
+            CompletableFuture<PlayerRank> future = CompletableFuture
+                    .supplyAsync(() -> PlayerRank.getPlayerRank(sender));
 
-            if (!(sender instanceof Player)) {
+            future.thenAccept(rank -> {
+                if (isNotAboveOrEqual(sender, rank, PlayerRank.MOD)) return;
+
+                if (!(sender instanceof Player)) {
+                    if (args.length < 2) {
+                        isNotPlayer(sender);
+                    } else {
+                        Player player = Bukkit.getPlayer(args[1]);
+                        boolean connected = player != null;
+
+                        if (!connected) {
+                            CUtils.msg(sender, Lang.PLAYER_OFFLINE);
+
+                            return;
+                        }
+
+                        setGamemode(sender, rank, player, label, args);
+                    }
+
+                    return;
+                }
+
                 if (args.length < 2) {
-                    isNotPlayer(sender);
+                    setGamemode(sender, rank, ((Player) sender), label, args);
                 } else {
                     Player player = Bukkit.getPlayer(args[1]);
                     boolean connected = player != null;
@@ -38,34 +61,17 @@ public class GamemodeCommand extends InheritedCommand<StaffPlugin> {
                         return;
                     }
 
-                    setGamemode(sender, player, label, args);
+                    setGamemode(sender, rank, player, label, args);
                 }
-
-                return;
-            }
-
-            if (args.length < 2) {
-                setGamemode(sender, ((Player) sender), label, args);
-            } else {
-                Player player = Bukkit.getPlayer(args[1]);
-                boolean connected = player != null;
-
-                if (!connected) {
-                    CUtils.msg(sender, Lang.PLAYER_OFFLINE);
-
-                    return;
-                }
-
-                setGamemode(sender, player, label, args);
-            }
-
+            });
         };
+
     }
 
-    private void setGamemode(CommandSender sender, Player player, String label, String[] args) {
+    private void setGamemode(CommandSender sender, PlayerRank senderRank, Player player, String label, String[] args) {
         switch (label.toLowerCase()) {
             case "gmc":
-                if (isNotAboveOrEqual(sender, PlayerRank.ADMIN)) return;
+                if (isNotAboveOrEqual(sender, senderRank, PlayerRank.ADMIN)) return;
 
                 player.setGameMode(GameMode.CREATIVE);
 
@@ -118,7 +124,9 @@ public class GamemodeCommand extends InheritedCommand<StaffPlugin> {
                     return;
                 }
 
-                if (gameMode == GameMode.CREATIVE && isNotAboveOrEqual(sender, PlayerRank.ADMIN)) return;
+                if (gameMode == GameMode.CREATIVE && isNotAboveOrEqual(sender, senderRank, PlayerRank.ADMIN)) {
+                    return;
+                }
 
                 player.setGameMode(gameMode);
 

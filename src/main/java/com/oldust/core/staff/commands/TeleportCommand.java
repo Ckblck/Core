@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class TeleportCommand extends InheritedCommand<StaffPlugin> {
 
@@ -30,29 +31,32 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
+            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.MOD);
 
-            if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+            future.thenAccept(notAbove -> {
+                if (notAbove) return;
 
-                return;
-            }
+                if (args.length == 0) {
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
 
-            boolean tpHere = (label.equalsIgnoreCase("tphere"));
-            boolean coordinates = !tpHere && args.length >= 3 && NumberUtils.isNumber(args[0]);
+                    return;
+                }
 
-            if (tpHere) {
-                if (isNotPlayer(sender)) return;
+                boolean tpHere = (label.equalsIgnoreCase("tphere"));
+                boolean coordinates = !tpHere && args.length >= 3 && NumberUtils.isNumber(args[0]);
 
-                parseTpHere(((Player) sender), args);
-            } else if (coordinates) {
-                if (isNotPlayer(sender)) return;
+                if (tpHere) {
+                    if (isNotPlayer(sender)) return;
 
-                tpCoordinates(sender, args);
-            } else {
-                parseTp(sender, args);
-            }
+                    parseTpHere(((Player) sender), args);
+                } else if (coordinates) {
+                    if (isNotPlayer(sender)) return;
 
+                    tpCoordinates(sender, args);
+                } else {
+                    parseTp(sender, args);
+                }
+            });
         };
     }
 
@@ -89,7 +93,7 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
                 : playerLocation.getYaw();
 
         Location location = new Location(player.getWorld(), x, y, z, yaw, pitch);
-        player.teleport(location);
+        CUtils.runSync(() -> player.teleport(location));
     }
 
     private void parseTpHere(Player sender, String[] args) {
@@ -120,35 +124,34 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
             Player targetPl = Bukkit.getPlayerExact(target);
 
             if (whoPl != null && targetPl != null) {
-                whoPl.teleport(targetPl.getLocation());
+                CUtils.runSync(() -> whoPl.teleport(targetPl.getLocation()));
+
                 CUtils.msg(sender, Lang.SUCCESS_COLOR + who + " was successfully teleported to " + target + ".");
             } else {
-                CUtils.runAsync(() -> {
-                    Optional<String> targetServer = (targetPl != null)
-                            ? Optional.of(manager.getDatabase(targetPl.getUniqueId()).getBungeeServer())
-                            : svManager.getPlayerServer(target);
+                Optional<String> targetServer = (targetPl != null)
+                        ? Optional.of(manager.getDatabase(targetPl.getUniqueId()).getBungeeServer())
+                        : svManager.getPlayerServer(target);
 
-                    boolean present = targetServer.isPresent();
+                boolean present = targetServer.isPresent();
 
-                    if (!present) {
-                        CUtils.msg(sender, String.format(Lang.SPECIFIC_PLAYER_OFFLINE_FORMATABLE, target));
+                if (!present) {
+                    CUtils.msg(sender, String.format(Lang.SPECIFIC_PLAYER_OFFLINE_FORMATABLE, target));
 
-                        return;
-                    }
+                    return;
+                }
 
-                    boolean whoOnline = svManager.isPlayerOnline(who);
+                boolean whoOnline = svManager.isPlayerOnline(who);
 
-                    if (!whoOnline) {
-                        CUtils.msg(sender, String.format(Lang.SPECIFIC_PLAYER_OFFLINE_FORMATABLE, who));
+                if (!whoOnline) {
+                    CUtils.msg(sender, String.format(Lang.SPECIFIC_PLAYER_OFFLINE_FORMATABLE, who));
 
-                        return;
-                    }
+                    return;
+                }
 
-                    String svName = targetServer.get();
-                    new SendToServerAction(who, svName).push(JedisManager.getInstance().getPool());
+                String svName = targetServer.get();
+                new SendToServerAction(who, svName).push(JedisManager.getInstance().getPool());
 
-                    CUtils.msg(sender, Lang.SUCCESS_COLOR + who + " has been successfully teleported to the server " + svName + ".");
-                });
+                CUtils.msg(sender, Lang.SUCCESS_COLOR + who + " has been successfully teleported to the server " + svName + ".");
             }
 
         } else {
@@ -162,28 +165,24 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
             Player targetPlayer = Bukkit.getPlayer(target);
 
             if (targetPlayer != null) {
-                player.teleport(targetPlayer);
+                CUtils.runSync(() -> player.teleport(targetPlayer));
 
                 return;
             }
 
-            CUtils.runAsync(() -> {
-                Optional<String> targetSv = Core.getInstance().getServerManager().getPlayerServer(target);
+            Optional<String> targetSv = Core.getInstance().getServerManager().getPlayerServer(target);
+            boolean present = targetSv.isPresent();
 
-                boolean present = targetSv.isPresent();
+            if (!present) {
+                CUtils.msg(sender, Lang.PLAYER_OFFLINE);
 
-                if (!present) {
-                    CUtils.msg(sender, Lang.PLAYER_OFFLINE);
+                return;
+            }
 
-                    return;
-                }
+            new SendToServerAction(player.getName(), targetSv.get())
+                    .push(JedisManager.getInstance().getPool());
 
-                new SendToServerAction(player.getName(), targetSv.get())
-                        .push(JedisManager.getInstance().getPool());
-
-                CUtils.msg(player, Lang.SUCCESS_COLOR + "You have been teleported to " + target + "'s server.");
-            });
-
+            CUtils.msg(player, Lang.SUCCESS_COLOR + "You have been teleported to " + target + "'s server.");
         }
 
     }
@@ -197,23 +196,22 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
             return;
         }
 
-        CUtils.runAsync(() -> {
-            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(sender.getUniqueId());
-            String playerServer = database.getBungeeServer();
+        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(sender.getUniqueId());
+        String playerServer = database.getBungeeServer();
 
-            Optional<String> targetServer = Core.getInstance().getServerManager().getPlayerServer(targetName);
-            boolean present = targetServer.isPresent();
+        Optional<String> targetServer = Core.getInstance().getServerManager().getPlayerServer(targetName);
+        boolean present = targetServer.isPresent();
 
-            if (!present) {
-                CUtils.msg(sender, Lang.PLAYER_OFFLINE);
+        if (!present) {
+            CUtils.msg(sender, Lang.PLAYER_OFFLINE);
 
-                return;
-            }
+            return;
+        }
 
-            new SendToServerAction(targetName, playerServer).push(JedisManager.getInstance().getPool());
+        new SendToServerAction(targetName, playerServer)
+                .push(JedisManager.getInstance().getPool());
 
-            CUtils.msg(sender, Lang.SUCCESS_COLOR + targetName + " was successfully sent to your server.");
-        });
+        CUtils.msg(sender, Lang.SUCCESS_COLOR + targetName + " was successfully sent to your server.");
     }
 
 }

@@ -3,6 +3,7 @@ package com.oldust.core.staff.mode.command;
 import com.oldust.core.inherited.commands.InheritedCommand;
 import com.oldust.core.staff.StaffPlugin;
 import com.oldust.core.staff.mode.StaffModeManager;
+import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.lambda.TriConsumer;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
@@ -23,15 +24,17 @@ public class ModeCommand extends InheritedCommand<StaffPlugin> {
         return (sender, label, args) -> {
             if (isNotPlayer(sender)) return;
 
-            Player player = (Player) sender;
-            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
-            StaffModeManager modeManager = getPlugin().getStaffModeManager();
+            CUtils.runAsync(() -> {
+                Player player = (Player) sender;
+                WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
+                StaffModeManager modeManager = getPlugin().getStaffModeManager();
 
-            if (database.contains(PlayerDatabaseKeys.STAFF_MODE)) {
-                modeManager.exitStaffMode(player, database);
-            } else {
-                modeManager.setStaffMode(player, database);
-            }
+                if (database.contains(PlayerDatabaseKeys.STAFF_MODE)) {
+                    modeManager.exitStaffMode(player, database);
+                } else {
+                    modeManager.setStaffMode(player, database);
+                }
+            });
 
         };
     }

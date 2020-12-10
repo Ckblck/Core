@@ -113,11 +113,19 @@ public class CUtils {
     }
 
     public void runSync(Runnable runnable) {
-        Bukkit.getScheduler().runTask(Core.getInstance(), runnable);
+        if (Bukkit.isPrimaryThread()) {
+            runnable.run();
+        } else {
+            Bukkit.getScheduler().runTask(Core.getInstance(), runnable);
+        }
     }
 
     public void runAsync(Runnable runnable) {
-        Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), runnable);
+        if (!Bukkit.isPrimaryThread()) {
+            runnable.run();
+        } else {
+            Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), runnable);
+        }
     }
 
 }

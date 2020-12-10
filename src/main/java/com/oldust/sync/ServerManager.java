@@ -32,11 +32,14 @@ public class ServerManager {
 
     public ServerManager() {
         JedisPool pool = JedisManager.getInstance().getPool();
-        serverRepository = new RedisRepository<>(pool, "sv_repo");
 
+        serverRepository = new RedisRepository<>(pool, "sv_repo");
         currentServer = new OldustServer();
-        serverRepository.put(currentServer);
-        serverRepository.pushToList(SERVER_LIST_NAME, currentServer);
+
+        CUtils.runAsync(() -> {
+            serverRepository.put(currentServer);
+            serverRepository.pushToList(SERVER_LIST_NAME, currentServer);
+        });
 
         EventsProvider provider = Core.getInstance().getEventsProvider();
 
@@ -46,7 +49,8 @@ public class ServerManager {
             Player player = pl.getPlayer();
 
             playersConnected.put(player.getName(), player.getUniqueId());
-            updateCurrent();
+
+            CUtils.runAsync(this::updateCurrent);
         }));
 
         provider.newOperation(PlayerQuitEvent.class, new Operation<PlayerQuitEvent>((pl, db)
@@ -55,7 +59,8 @@ public class ServerManager {
             Player player = pl.getPlayer();
 
             playersConnected.remove(player.getName());
-            updateCurrent();
+
+            CUtils.runAsync(this::updateCurrent);
         }));
     }
 
@@ -85,8 +90,6 @@ public class ServerManager {
     }
 
     public Optional<String> getPlayerServer(String player) {
-        CUtils.warnSyncCall();
-
         List<String> servers = fetchServers();
         Set<OldustServer> svs = serverRepository.fetchElements(servers);
 

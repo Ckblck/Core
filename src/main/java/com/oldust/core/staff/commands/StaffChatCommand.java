@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 
 public class StaffChatCommand extends InheritedCommand<StaffPlugin> {
 
@@ -22,25 +23,36 @@ public class StaffChatCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            if (isNotPlayer(sender) || isNotStaff(sender)) return;
+            if (isNotPlayer(sender)) return;
 
-            Player player = (Player) sender;
-            PlayerManager manager = PlayerManager.getInstance();
+            CompletableFuture<Boolean> future = isNotStaff(sender);
 
-            WrappedPlayerDatabase db = manager.getDatabase(player.getUniqueId());
-            boolean staffChat = db.contains(PlayerDatabaseKeys.STAFF_CHAT);
+            future.thenAccept(notStaff -> {
+                if (notStaff) {
+                    CUtils.msg(sender, Lang.NO_PERMISSIONS);
 
-            if (staffChat) {
-                db.remove(PlayerDatabaseKeys.STAFF_CHAT);
+                    return;
+                }
 
-                CUtils.msg(sender, Lang.SUCCESS_COLOR + "Exited from the Staff chat.");
-            } else {
-                db.put(PlayerDatabaseKeys.STAFF_CHAT, true);
+                Player player = (Player) sender;
+                PlayerManager manager = PlayerManager.getInstance();
 
-                CUtils.msg(sender, Lang.SUCCESS_COLOR + "Entered Staff chat.");
-            }
+                WrappedPlayerDatabase db = manager.getDatabase(player.getUniqueId());
+                boolean staffChat = db.contains(PlayerDatabaseKeys.STAFF_CHAT);
 
-            manager.update(db);
+                if (staffChat) {
+                    db.remove(PlayerDatabaseKeys.STAFF_CHAT);
+
+                    CUtils.msg(sender, Lang.SUCCESS_COLOR + "Exited from the Staff chat.");
+                } else {
+                    db.put(PlayerDatabaseKeys.STAFF_CHAT, true);
+
+                    CUtils.msg(sender, Lang.SUCCESS_COLOR + "Entered Staff chat.");
+                }
+
+                manager.update(db);
+            });
+
         };
     }
 
