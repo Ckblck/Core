@@ -48,7 +48,7 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
             } else if (coordinates) {
                 if (isNotPlayer(sender)) return;
 
-                tpCoordinates(sender, args); // TODO: Not working
+                tpCoordinates(sender, args);
             } else {
                 parseTp(sender, args);
             }

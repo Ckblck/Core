@@ -145,7 +145,7 @@ public class KickPunishment implements Punishable<Punishment> {
             e.printStackTrace();
         }
 
-        return kicks; // TODO Offset for pagination? GUI?
+        return kicks;
     }
 
 }

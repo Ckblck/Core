@@ -251,7 +251,7 @@ public class BanPunishment implements Punishable<Punishment.ExpiredPunishment> {
             e.printStackTrace();
         }
 
-        return expiredBans; // TODO Offset for pagination? GUI?
+        return expiredBans;
     }
 
 }

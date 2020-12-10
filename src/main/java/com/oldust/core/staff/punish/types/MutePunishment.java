@@ -271,7 +271,7 @@ public class MutePunishment implements Punishable<Punishment.ExpiredPunishment> 
             e.printStackTrace();
         }
 
-        return expiredMutes; // TODO Offset for pagination? GUI?
+        return expiredMutes;
     }
 
 }
