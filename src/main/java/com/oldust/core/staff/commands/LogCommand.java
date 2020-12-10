@@ -1,5 +1,6 @@
 package com.oldust.core.staff.commands;
 
+import com.google.common.net.InetAddresses;
 import com.oldust.core.inherited.commands.InheritedCommand;
 import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.staff.StaffPlugin;
@@ -12,8 +13,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
-import java.util.UUID;
 
+@SuppressWarnings("UnstableApiUsage")
 public class LogCommand extends InheritedCommand<StaffPlugin> {
 
     public LogCommand(StaffPlugin plugin) {
@@ -32,16 +33,21 @@ public class LogCommand extends InheritedCommand<StaffPlugin> {
                 return;
             }
 
+            String target = args[0];
+            boolean isIp = InetAddresses.isInetAddress(target);
+
             CUtils.runAsync(() -> {
-                UUID uuid = PlayerUtils.getUUIDByName(args[0]);
+                String nickname = (isIp)
+                        ? PlayerUtils.getPlayerNameByIp(target)
+                        : (PlayerUtils.nicknameExistsDB(target) ? target : null);
 
-                if (uuid == null) {
+                if (nickname == null && !isIp) {
                     CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.");
-
-                    return;
+                } else if (nickname == null) {
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "That IP Address could not be found in the database.");
                 }
 
-                new LogsInventory(((Player) sender), uuid);
+                new LogsInventory(((Player) sender), nickname);
             });
 
             CUtils.msg(sender, Lang.SUCCESS_COLOR + "Processing...");

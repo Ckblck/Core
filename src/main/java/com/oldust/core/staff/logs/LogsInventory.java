@@ -26,7 +26,10 @@ import org.bukkit.inventory.ItemStack;
 import javax.sql.rowset.CachedRowSet;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class LogsInventory extends AbstractInventoryProvider {
@@ -34,25 +37,25 @@ public class LogsInventory extends AbstractInventoryProvider {
     private static final String INV_NAME = "Logs (%d)";
     private static final int LIMIT = 28;
 
-    private final UUID search;
+    private final String nickname;
     private List<PlayerLog> logs;
     private int page;
     private boolean loading;
 
-    private LogsInventory(Player player, UUID search, List<PlayerLog> logs, int page) {
+    private LogsInventory(Player player, String nickname, List<PlayerLog> logs, int page) {
         super(player);
 
-        this.search = search;
+        this.nickname = nickname;
         this.logs = logs;
         this.page = page;
 
         loading = false;
     }
 
-    public LogsInventory(Player player, UUID search) {
+    public LogsInventory(Player player, String nickname) {
         super(player);
 
-        this.search = search;
+        this.nickname = nickname;
         this.page = 0;
 
         CompletableFuture.supplyAsync(this::build)
@@ -70,6 +73,7 @@ public class LogsInventory extends AbstractInventoryProvider {
             ItemStack item = new ItemBuilder(Material.PAPER)
                     .setDisplayName(ITEM_NAME)
                     .setLore(Arrays.asList(" ",
+                            "#a6a6a6 Nickname: &f" + log.getPlayerName(),
                             "#a6a6a6 IP Address: &f" + log.getIp(),
                             "#a6a6a6 Joined: &f" + log.getJoin().toString(),
                             "#a6a6a6 Exited: &f" + log.getExit().toString(),
@@ -141,32 +145,32 @@ public class LogsInventory extends AbstractInventoryProvider {
         return SmartInventory.builder()
                 .title(String.format(INV_NAME, page + 1))
                 .size(6, 9)
-                .provider(new LogsInventory(player, search, retrieveLogs(search, LIMIT, page * LIMIT), page))
+                .provider(new LogsInventory(player, nickname, retrieveLogs(LIMIT, page * LIMIT), page))
                 .manager(Core.getInstance().getInventoryManager())
                 .build();
     }
 
-    public List<PlayerLog> retrieveLogs(UUID from, int limit, int offset) {
+    public List<PlayerLog> retrieveLogs(int limit, int offset) {
         CUtils.warnSyncCall();
 
         List<PlayerLog> logs = new ArrayList<>();
 
         CachedRowSet set = MySQLManager.query(
-                "SELECT id, uuid, INET_NTOA(ip) AS ip, `exit`, `join` " +
-                        "FROM dustplayers.logs WHERE uuid = ? " +
+                "SELECT id, nickname, INET_NTOA(ip) AS ip, `exit`, `join` " +
+                        "FROM dustplayers.logs WHERE nickname = ? " +
                         "ORDER BY `exit` DESC " +
-                        "LIMIT " + limit + " OFFSET " + offset + ";", from.toString()
+                        "LIMIT " + limit + " OFFSET " + offset + ";", nickname
         );
 
         try {
             while (set.next()) {
                 int id = set.getInt("id");
-                UUID uuid = UUID.fromString(set.getString("uuid"));
+                String playerName = set.getString("nickname");
                 String ip = set.getString("ip");
                 Date join = new Date(set.getLong("join"));
                 Date exit = new Date(set.getLong("exit"));
 
-                logs.add(new PlayerLog(id, uuid, ip, join, exit));
+                logs.add(new PlayerLog(id, playerName, ip, join, exit));
             }
         } catch (SQLException e) {
             e.printStackTrace();

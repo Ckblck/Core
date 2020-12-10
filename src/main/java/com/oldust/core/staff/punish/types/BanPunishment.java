@@ -65,7 +65,7 @@ public class BanPunishment implements Punishable<Punishment.ExpiredPunishment> {
                 ? null
                 : Timestamp.valueOf(currentTimestamp.toLocalDateTime().plus(duration));
 
-        String ipAddress = (banIp) ? PlayerUtils.getIPAddress(punishedUuid) : null;
+        String ipAddress = (banIp) ? PlayerUtils.getIpAddress(punishedUuid) : null;
 
         CachedRowSet generatedKey = MySQLManager.updateWithGeneratedKeys("INSERT INTO dustbans.current_bans (uuid, reason, banned_by, ban_date, expiration, ip) VALUES (?, ?, ?, ?, ?, INET_ATON(?));",
                 punishedUuid.toString(), reason, punisherName, currentTimestamp, expiration, ipAddress);
@@ -189,7 +189,7 @@ public class BanPunishment implements Punishable<Punishment.ExpiredPunishment> {
 
         Preconditions.checkNotNull(punishedUuid);
 
-        String address = PlayerUtils.getIPAddress(punishedUuid);
+        String address = PlayerUtils.getIpAddress(punishedUuid);
 
         return currentPunishment(punishedUuid, address);
     }

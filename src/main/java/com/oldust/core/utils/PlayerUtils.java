@@ -26,12 +26,101 @@ public class PlayerUtils {
         return Bukkit.getOnlinePlayers();
     }
 
+    /**
+     * Comprobar si un nombre está registrado
+     * en la base de datos.
+     *
+     * @param nickname nombre a comprobar
+     * @return true si está almacenado en la base de datos
+     */
+
+    public boolean nicknameExistsDB(String nickname) {
+        CUtils.warnSyncCall();
+
+        CachedRowSet set = MySQLManager.query("SELECT EXISTS(SELECT * FROM dustplayers.data WHERE nickname = ?);",
+                nickname);
+
+        try {
+            if (set.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    /**
+     * Comprobar si un jugador está conectado
+     * en el servidor en cuestión.
+     *
+     * @param uuid UUID del jugador
+     * @return true si está conectado en el servidor local (NO Network-Wide).
+     */
+
     public boolean isLocallyConnected(UUID uuid) {
         return getPlayers().stream()
                 .anyMatch(player -> player.getUniqueId().equals(uuid));
     }
 
-    public String getIPAddress(UUID uuid) {
+    /**
+     * Obtiene el nombre de un jugador a partir de una IP.
+     *
+     * @param ipAddress IP pública del jugador
+     * @return nickname del jugador, o null si no se encontró
+     */
+
+    public String getPlayerNameByIp(String ipAddress) {
+        CUtils.warnSyncCall();
+
+        CachedRowSet set = MySQLManager.query("SELECT nickname FROM dustplayers.data WHERE ip = INET_ATON(?);",
+                ipAddress);
+
+        try {
+            if (set.next()) {
+                return set.getString("nickname");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * Obtiene la UUID de un jugador a partir de su IP.
+     *
+     * @param ipAddress IP del jugador.
+     * @return UUID del jugador, o null si no se encontró
+     */
+
+    public UUID getUUIDByIp(String ipAddress) {
+        CUtils.warnSyncCall();
+
+        CachedRowSet set = MySQLManager.query("SELECT uuid FROM dustplayers.data WHERE ip = INET_ATON(?);",
+                ipAddress);
+
+        try {
+            if (set.next()) {
+                return UUID.fromString(set.getString("uuid"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * Obtiene la dirección IP de un jugador a partir
+     * de su UUID.
+     *
+     * @param uuid UUID del jugador
+     * @return IP en forma de string, o null si no se encontró
+     */
+
+    public String getIpAddress(UUID uuid) {
         CUtils.warnSyncCall();
 
         WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(uuid);
@@ -40,10 +129,10 @@ public class PlayerUtils {
             return database.getValue(PlayerDatabaseKeys.PLAYER_IP_ADDRESS).asString();
         }
 
-        return getIPAddressDB(uuid);
+        return getIpAddressDB(uuid);
     }
 
-    public String getIPAddressDB(UUID uuid) {
+    public String getIpAddressDB(UUID uuid) {
         CUtils.warnSyncCall();
 
         CachedRowSet set = MySQLManager.query("SELECT INET_NTOA(ip) AS ip FROM dustplayers.data WHERE uuid = ?;",
