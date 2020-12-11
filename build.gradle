@@ -43,7 +43,6 @@ dependencies {
     api group: 'com.zaxxer', name: 'HikariCP', version: '3.4.5'
     api group: 'commons-io', name: 'commons-io', version: '2.6'
     api group: 'redis.clients', name: 'jedis', version: '3.3.0'
-    api group: 'fr.minuskube.inv', name: 'smart-invs', version: '1.2.7'
     api group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
 
     implementation group: 'org.jetbrains', name: 'annotations', version: '19.0.0'
@@ -55,6 +54,8 @@ dependencies {
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.16'
 
     compile fileTree(dir: 'libraries', include: 'StandModelLib.jar')
+    compile fileTree(dir: 'libraries', include: 'SmartInvs-1.2.7.jar')
+
     compileOnly fileTree(dir: 'libraries', include: 'craftbukkit-1.16.4.jar')
 }
 

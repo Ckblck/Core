@@ -14,8 +14,20 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
 
+/**
+ * Permite el fácil acceso a los reportes
+ * y brinda sus métodos necesarios.
+ */
+
 @Async
 public class ReportsManager {
+
+    /**
+     * Agregar un reporte a la base
+     * de datos.
+     *
+     * @param report reporte a insertar
+     */
 
     public void setReport(Report report) {
         CUtils.warnSyncCall();
@@ -24,6 +36,14 @@ public class ReportsManager {
                 report.getReported(), report.getReporter(), report.getReason(), report.getDate());
     }
 
+    /**
+     * Remover un reporte de la base
+     * de datos.
+     *
+     * @param reported nombre del jugador reportado
+     *                 cuyos eportes se eliminarán
+     */
+
     public void removeReport(String reported) {
         CUtils.warnSyncCall();
 
@@ -31,21 +51,40 @@ public class ReportsManager {
                 reported);
     }
 
-    public List<Report> fetchReports(String reported) {
+    /**
+     * Obtener todos los reportes
+     * de todos los jugadores.
+     *
+     * @return un mapa cuya Key es el nombre del jugador reportado
+     * y su Value una lista de todos los reportes que reúne,
+     * ordenados de tal forma que el primero de la lista es el
+     * último reportado hacia el jugador.
+     */
+
+    public Map<String, List<Report>> fetchReports() {
         CUtils.warnSyncCall();
 
-        List<Report> reports = new ArrayList<>();
-        CachedRowSet set = MySQLManager.query("SELECT id, reporter, reason, date FROM dustplayers.reports WHERE reported = ?;",
-                reported);
+        Map<String, List<Report>> reports = new HashMap<>();
+        CachedRowSet set = MySQLManager.query("SELECT reported, reporter, reason, date FROM dustplayers.reports ORDER BY date DESC;");
 
         try {
             while (set.next()) {
-                int id = set.getInt("id");
+                String reported = set.getString("reported");
                 String reporter = set.getString("reporter");
                 String reason = set.getString("reason");
                 Timestamp date = set.getTimestamp("date");
 
-                reports.add(new Report(reported, reporter, reason, date));
+                Report report = new Report(reported, reporter, reason, date);
+
+                reports.putIfAbsent(reported, new ArrayList<>());
+
+                reports.compute(reported, (key, value) -> {
+                    assert value != null;
+                    value.add(report);
+
+                    return value;
+                });
+
             }
         } catch (SQLException e) {
             e.printStackTrace();

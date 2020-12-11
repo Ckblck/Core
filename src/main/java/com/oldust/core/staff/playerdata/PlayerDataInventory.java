@@ -10,6 +10,7 @@ import com.oldust.core.staff.punish.types.KickPunishment;
 import com.oldust.core.staff.punish.types.MutePunishment;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.ItemBuilder;
+import com.oldust.core.utils.lang.Async;
 import com.oldust.core.utils.lang.Lang;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
@@ -39,6 +40,7 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
     private final UUID punishedUuid;
     private List<Punishment> punishments;
 
+    @Async
     public PlayerDataInventory(Player player, String punishedName, UUID punishedUuid) {
         super(player);
 
@@ -57,16 +59,6 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
         this.punishedName = punishedName;
         this.punishedUuid = punishedUuid;
         this.punishments = punishments;
-    }
-
-    @Override
-    protected SmartInventory buildInventory() {
-        return SmartInventory.builder()
-                .title(INV_NAME)
-                .size(6, 9)
-                .provider(new PlayerDataInventory(player, punishedName, punishedUuid, fetchPunishments()))
-                .manager(Core.getInstance().getInventoryManager())
-                .build();
     }
 
     @Override
@@ -254,6 +246,7 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
         return builder.build();
     }
 
+    @Async
     private List<Punishment> fetchPunishments() {
         List<Punishment> punishments = new ArrayList<>();
 
@@ -278,6 +271,16 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
         );
 
         return punishments;
+    }
+
+    @Override
+    protected SmartInventory buildInventory() {
+        return SmartInventory.builder()
+                .title(INV_NAME)
+                .size(6, 9)
+                .provider(new PlayerDataInventory(player, punishedName, punishedUuid, fetchPunishments()))
+                .manager(Core.getInstance().getInventoryManager())
+                .build();
     }
 
 }

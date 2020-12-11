@@ -1,6 +1,7 @@
 package com.oldust.core.commons;
 
 import com.oldust.core.commons.commands.MsgCommand;
+import com.oldust.core.commons.commands.ReportCommand;
 import com.oldust.core.commons.reports.ReportsManager;
 import com.oldust.core.inherited.plugins.InheritedPlugin;
 import com.oldust.core.inherited.plugins.Plugin;
@@ -14,6 +15,7 @@ public class CommonsPlugin extends Plugin {
     @Override
     public void onEnable() {
         new MsgCommand(this);
+        new ReportCommand(this);
 
         reportsManager = new ReportsManager();
     }

@@ -3,6 +3,7 @@ package com.oldust.core.commons.commands;
 import com.oldust.core.Core;
 import com.oldust.core.commons.CommonsPlugin;
 import com.oldust.core.commons.reports.Report;
+import com.oldust.core.commons.reports.ReportsInventory;
 import com.oldust.core.commons.reports.ReportsManager;
 import com.oldust.core.inherited.commands.InheritedCommand;
 import com.oldust.core.ranks.PlayerRank;
@@ -34,8 +35,8 @@ public class ReportCommand extends InheritedCommand<CommonsPlugin> {
             ReportsManager reportsManager = getPlugin().getReportsManager();
 
             future.thenAccept(rank -> {
-                if (rank.isEqualOrHigher(PlayerRank.MOD)) {
-                    // TODO
+                if (rank.isEqualOrHigher(PlayerRank.MOD) && args.length == 0 /* TODO REMOVE THIS */) {
+                    new ReportsInventory(player, getPlugin());
                 } else {
                     if (args.length == 0) {
                         CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
@@ -65,7 +66,7 @@ public class ReportCommand extends InheritedCommand<CommonsPlugin> {
                     if (offline) {
                         CUtils.msg(sender, Lang.PLAYER_OFFLINE);
 
-                        return;
+                        //return; TODO remove comment
                     }
 
                     Report report = new Report(reported, player.getName(), reason, new Timestamp(System.currentTimeMillis()));
