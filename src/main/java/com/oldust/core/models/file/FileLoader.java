@@ -2,6 +2,7 @@ package com.oldust.core.models.file;
 
 import com.oldust.core.Core;
 import com.oldust.core.utils.CUtils;
+import com.oldust.core.utils.lang.Async;
 import uk.lewdev.standmodels.exceptions.MaterialMismatchException;
 import uk.lewdev.standmodels.parser.ModelBuildInstruction;
 import uk.lewdev.standmodels.parser.ModelSpawnCommandParser;
@@ -20,6 +21,7 @@ public class FileLoader {
         MODELS_FOLDER.mkdirs();
     }
 
+    @Async
     public Set<ModelBuildInstruction> getInstructions(String fileName) throws NoSuchFileException, IllegalArgumentException, MaterialMismatchException {
         CUtils.warnSyncCall();
 

@@ -2,6 +2,7 @@ package com.oldust.sync.jedis;
 
 import com.oldust.core.Core;
 import com.oldust.core.utils.CUtils;
+import com.oldust.core.utils.lang.Async;
 import com.oldust.sync.serializer.Base64Serializer;
 import com.oldust.sync.wrappers.Savable;
 import redis.clients.jedis.Jedis;
@@ -21,6 +22,7 @@ public class RedisRepository<T extends Savable<?>> {
         this.repositoryName = repositoryName;
     }
 
+    @Async
     public void pushToList(String list, T element) {
         CUtils.warnSyncCall();
 
@@ -31,6 +33,7 @@ public class RedisRepository<T extends Savable<?>> {
         }
     }
 
+    @Async
     public void removeFromList(String list, T element) {
         if (Core.getInstance().isEnabled()) {
             CUtils.warnSyncCall();
@@ -43,6 +46,7 @@ public class RedisRepository<T extends Savable<?>> {
         }
     }
 
+    @Async
     public List<String> fetchList(String list) {
         CUtils.warnSyncCall();
 
@@ -63,6 +67,7 @@ public class RedisRepository<T extends Savable<?>> {
      * @return lista de elementos del tipo
      */
 
+    @Async
     public Set<T> fetchElements(Collection<String> keys) {
         CUtils.warnSyncCall();
 
@@ -94,6 +99,7 @@ public class RedisRepository<T extends Savable<?>> {
         return elements;
     }
 
+    @Async
     public void put(T element) {
         CUtils.warnSyncCall();
 
@@ -105,6 +111,7 @@ public class RedisRepository<T extends Savable<?>> {
         }
     }
 
+    @Async
     public T get(String key) {
         CUtils.warnSyncCall();
 
@@ -118,6 +125,7 @@ public class RedisRepository<T extends Savable<?>> {
         }
     }
 
+    @Async
     public void remove(String key) {
         if (Core.getInstance().isEnabled()) {
             CUtils.warnSyncCall();
@@ -130,6 +138,7 @@ public class RedisRepository<T extends Savable<?>> {
         }
     }
 
+    @Async
     public void update(T element) {
         CUtils.warnSyncCall();
 
@@ -141,6 +150,7 @@ public class RedisRepository<T extends Savable<?>> {
         }
     }
 
+    @Async
     public boolean exists(String name) {
         CUtils.warnSyncCall();
 

@@ -1,5 +1,6 @@
-package com.oldust.core.utils;
+package com.oldust.core.utils.lang;
 
+import com.oldust.core.utils.CUtils;
 import net.md_5.bungee.api.ChatColor;
 
 public class Lang {

@@ -2,6 +2,7 @@ package com.oldust.core.ranks;
 
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.PlayerUtils;
+import com.oldust.core.utils.lang.Async;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
@@ -46,6 +47,7 @@ public enum PlayerRank {
                 .orElseThrow(() -> new IllegalArgumentException("No se pudo encontrar rango para el nombre proporcionado: " + name));
     }
 
+    @Async
     public static PlayerRank getPlayerRank(String playerName) {
         CUtils.warnSyncCall();
 
@@ -61,6 +63,7 @@ public enum PlayerRank {
         return ranks.get(0).getRank();
     }
 
+    @Async
     public static PlayerRank getPlayerRank(CommandSender sender) {
         CUtils.warnSyncCall();
 

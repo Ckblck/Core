@@ -2,6 +2,7 @@ package com.oldust.core.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.oldust.core.utils.lang.Async;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
@@ -27,6 +28,7 @@ public class GeoIPUtils {
     private GeoIPUtils() {
     }
 
+    @Async
     public static GeoResponse gatherIpInfo(String ip) throws IOException {
         CUtils.warnSyncCall();
 

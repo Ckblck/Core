@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class Savable<T> implements Serializable {
@@ -72,6 +73,11 @@ public abstract class Savable<T> implements Serializable {
         @SuppressWarnings("unchecked")
         public <K, V> Map<K, V> asMap(Class<K> key, Class<V> val) {
             return (Map<K, V>) value;
+        }
+
+        @SuppressWarnings("unchecked")
+        public <V> Set<V> asSet(Class<V> key) {
+            return (Set<V>) value;
         }
 
     }

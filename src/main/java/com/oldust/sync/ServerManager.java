@@ -4,6 +4,7 @@ import com.oldust.core.Core;
 import com.oldust.core.commons.internal.EventsProvider;
 import com.oldust.core.commons.internal.Operation;
 import com.oldust.core.utils.CUtils;
+import com.oldust.core.utils.lang.Async;
 import com.oldust.sync.jedis.RedisRepository;
 import com.oldust.sync.wrappers.defaults.OldustServer;
 import lombok.Getter;
@@ -64,31 +65,38 @@ public class ServerManager {
         }));
     }
 
+    @Async
     public boolean contains(String serverName) {
         return serverRepository.exists(serverName);
     }
 
+    @Async
     public void remove() {
         serverRepository.remove(currentServer.getId());
         serverRepository.removeFromList(SERVER_LIST_NAME, currentServer);
     }
 
+    @Async
     public OldustServer getServer(String serverName) {
         return serverRepository.get(serverName);
     }
 
+    @Async
     public void updateCurrent() {
         serverRepository.update(currentServer);
     }
 
+    @Async
     public void update(OldustServer server) {
         serverRepository.update(server);
     }
 
+    @Async
     public boolean isPlayerOnline(String playerName) {
         return getPlayerServer(playerName).isPresent();
     }
 
+    @Async
     public Optional<String> getPlayerServer(String player) {
         List<String> servers = fetchServers();
         Set<OldustServer> svs = serverRepository.fetchElements(servers);
@@ -101,6 +109,7 @@ public class ServerManager {
                 .findAny();
     }
 
+    @Async
     public List<String> fetchServers() {
         return serverRepository.fetchList(SERVER_LIST_NAME);
     }

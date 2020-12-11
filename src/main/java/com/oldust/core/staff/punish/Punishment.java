@@ -1,6 +1,6 @@
 package com.oldust.core.staff.punish;
 
-import com.oldust.core.utils.Lang;
+import com.oldust.core.utils.lang.Lang;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;

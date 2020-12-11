@@ -1,7 +1,7 @@
 package com.oldust.core.commons.internal;
 
 import com.oldust.core.utils.CUtils;
-import com.oldust.core.utils.Lang;
+import com.oldust.core.utils.lang.Lang;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.defaults.ImmutableWrappedPlayerDatabase;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;

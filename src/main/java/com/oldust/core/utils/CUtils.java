@@ -1,6 +1,7 @@
 package com.oldust.core.utils;
 
 import com.oldust.core.Core;
+import com.oldust.core.utils.lang.Lang;
 import lombok.experimental.UtilityClass;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;

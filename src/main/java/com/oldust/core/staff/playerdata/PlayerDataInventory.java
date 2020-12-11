@@ -10,7 +10,7 @@ import com.oldust.core.staff.punish.types.KickPunishment;
 import com.oldust.core.staff.punish.types.MutePunishment;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.ItemBuilder;
-import com.oldust.core.utils.Lang;
+import com.oldust.core.utils.lang.Lang;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;

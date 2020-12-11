@@ -6,8 +6,8 @@ import com.oldust.core.staff.StaffPlugin;
 import com.oldust.core.staff.punish.PunishmentType;
 import com.oldust.core.staff.punish.types.KickPunishment;
 import com.oldust.core.utils.CUtils;
-import com.oldust.core.utils.Lang;
 import com.oldust.core.utils.lambda.TriConsumer;
+import com.oldust.core.utils.lang.Lang;
 import org.bukkit.command.CommandSender;
 
 import java.util.Arrays;

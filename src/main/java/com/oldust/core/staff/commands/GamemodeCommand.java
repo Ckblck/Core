@@ -4,8 +4,8 @@ import com.oldust.core.inherited.commands.InheritedCommand;
 import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.staff.StaffPlugin;
 import com.oldust.core.utils.CUtils;
-import com.oldust.core.utils.Lang;
 import com.oldust.core.utils.lambda.TriConsumer;
+import com.oldust.core.utils.lang.Lang;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -95,7 +95,7 @@ public class GamemodeCommand extends InheritedCommand<StaffPlugin> {
                     return;
                 }
 
-                GameMode gameMode = null;
+                GameMode gameMode;
                 String mode = args[0];
                 boolean number = NumberUtils.isNumber(mode);
 
@@ -108,15 +108,16 @@ public class GamemodeCommand extends InheritedCommand<StaffPlugin> {
                         return;
                     }
 
-                } else {
-                    if (mode.equalsIgnoreCase("creative")
-                            || mode.equalsIgnoreCase("survival")
-                            || mode.equalsIgnoreCase("spectator")) {
-                        gameMode = GameMode.valueOf(mode.toUpperCase());
-                    }
-                }
+                } else if (mode.equalsIgnoreCase("creative")
+                        || mode.equalsIgnoreCase("survival")
+                        || mode.equalsIgnoreCase("spectator")) {
 
-                assert gameMode != null;
+                    gameMode = GameMode.valueOf(mode.toUpperCase());
+                } else {
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "The specified gamemode is wrong. Available: 0/1/2/3.");
+
+                    return;
+                }
 
                 if (player.getGameMode() == gameMode) {
                     CUtils.msg(sender, Lang.ERROR_COLOR + "You already are in that gamemode!");

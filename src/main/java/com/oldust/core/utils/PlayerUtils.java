@@ -4,6 +4,7 @@ import com.oldust.core.Core;
 import com.oldust.core.mysql.MySQLManager;
 import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.ranks.RankWithExpiration;
+import com.oldust.core.utils.lang.Async;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
@@ -34,6 +35,7 @@ public class PlayerUtils {
      * @return true si está almacenado en la base de datos
      */
 
+    @Async
     public boolean nicknameExistsDB(String nickname) {
         CUtils.warnSyncCall();
 
@@ -84,6 +86,7 @@ public class PlayerUtils {
      * @return nickname del jugador, o null si no se encontró
      */
 
+    @Async
     public String getPlayerNameByIp(String ipAddress) {
         CUtils.warnSyncCall();
 
@@ -108,6 +111,7 @@ public class PlayerUtils {
      * @return UUID del jugador, o null si no se encontró
      */
 
+    @Async
     public UUID getUUIDByIp(String ipAddress) {
         CUtils.warnSyncCall();
 
@@ -133,6 +137,7 @@ public class PlayerUtils {
      * @return IP en forma de string, o null si no se encontró
      */
 
+    @Async
     public String getIpAddress(UUID uuid) {
         CUtils.warnSyncCall();
 
@@ -145,6 +150,7 @@ public class PlayerUtils {
         return getIpAddressDB(uuid);
     }
 
+    @Async
     public String getIpAddressDB(UUID uuid) {
         CUtils.warnSyncCall();
 
@@ -162,6 +168,7 @@ public class PlayerUtils {
         return null;
     }
 
+    @Async
     public UUID getUUIDByName(String playerName) {
         CUtils.warnSyncCall();
 
@@ -189,7 +196,10 @@ public class PlayerUtils {
      * @return lista ordenada de rangos con / sin expiración de un jugador
      */
 
+    @Async
     public List<RankWithExpiration> getRanks(String uuid) {
+        CUtils.warnSyncCall();
+
         CachedRowSet query = MySQLManager.query("SELECT * FROM dustplayers.rangos WHERE uuid = ?;", uuid);
         List<RankWithExpiration> playerRanks = new ArrayList<>();
 

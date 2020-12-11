@@ -1,7 +1,7 @@
 package com.oldust.core.inherited.commands;
 
 import com.oldust.core.utils.CUtils;
-import com.oldust.core.utils.Lang;
+import com.oldust.core.utils.lang.Lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

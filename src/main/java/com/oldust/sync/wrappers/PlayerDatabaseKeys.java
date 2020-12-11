@@ -8,5 +8,6 @@ public enum PlayerDatabaseKeys {
     VANISH,
     PLAYER_IP_ADDRESS,
     MUTE_DURATION,
-    NO_MPS
+    NO_MPS,
+    PLAYERS_REPORTED
 }

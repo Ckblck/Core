@@ -6,7 +6,7 @@ import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.staff.punish.Punishment;
 import com.oldust.core.staff.punish.PunishmentType;
 import com.oldust.core.utils.CUtils;
-import com.oldust.core.utils.Lang;
+import com.oldust.core.utils.lang.Lang;
 import com.oldust.sync.JedisManager;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;

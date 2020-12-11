@@ -9,8 +9,9 @@ import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.staff.punish.Punishment;
 import com.oldust.core.staff.punish.PunishmentType;
 import com.oldust.core.utils.CUtils;
-import com.oldust.core.utils.Lang;
 import com.oldust.core.utils.PlayerUtils;
+import com.oldust.core.utils.lang.Async;
+import com.oldust.core.utils.lang.Lang;
 import com.oldust.sync.JedisManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
 import org.bukkit.ChatColor;
@@ -134,6 +135,7 @@ public class BanPunishment implements Punishable<Punishment.ExpiredPunishment> {
      *            insertará
      */
 
+    @Async
     public void registerFinishedBan(Punishment.ExpiredPunishment ban) {
         CUtils.warnSyncCall();
 
@@ -157,6 +159,7 @@ public class BanPunishment implements Punishable<Punishment.ExpiredPunishment> {
         return currentPunishment(punishedUuid).isPresent();
     }
 
+    @Async
     public Optional<Punishment> currentPunishment(UUID punishedUuid, String ipAddress) {
         CUtils.warnSyncCall();
 

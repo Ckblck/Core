@@ -2,16 +2,19 @@ package com.oldust.core.commons.reports;
 
 import com.oldust.core.mysql.MySQLManager;
 import com.oldust.core.utils.CUtils;
+import com.oldust.core.utils.lang.Async;
 import com.oldust.sync.PlayerManager;
+import com.oldust.sync.wrappers.PlayerDatabaseKeys;
+import com.oldust.sync.wrappers.Savable;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.entity.Player;
 
 import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+@Async
 public class ReportsManager {
 
     public void setReport(Report report) {
@@ -42,7 +45,7 @@ public class ReportsManager {
                 String reason = set.getString("reason");
                 Timestamp date = set.getTimestamp("date");
 
-                reports.add(new Report(id, reported, reporter, reason, date));
+                reports.add(new Report(reported, reporter, reason, date));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -56,17 +59,57 @@ public class ReportsManager {
      * el reporte hacia un usuario. Permitiendo así
      * denegar el intento de múltiple reporte.
      *
-     * @param player jugador que reportó
+     * @param player   jugador que reportó
+     * @param reported jugador reportado
      */
 
-    public void registerReport(Player player) {
+    public void registerReport(Player player, String reported) {
         CUtils.warnSyncCall();
 
-        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
+        PlayerManager playerManager = PlayerManager.getInstance();
+        WrappedPlayerDatabase database = playerManager.getDatabase(player);
+        Optional<Savable.WrappedValue> reportedOpt = database.getValueOptional(PlayerDatabaseKeys.PLAYERS_REPORTED);
 
-        //database.
+        reportedOpt
+                .ifPresentOrElse((playersReported) -> {
+                    Set<String> reporteds = playersReported.asSet(String.class);
+
+                    reporteds.add(reported);
+                }, () -> {
+                    HashSet<String> reporteds = new HashSet<>();
+
+                    reporteds.add(reported);
+
+                    database.put(PlayerDatabaseKeys.PLAYERS_REPORTED, reporteds);
+                });
+
+        playerManager.update(database);
     }
 
-    //public boolean
+    /**
+     * Comprobar si un jugador ya ha previamente
+     * reportado al mismo nombre.
+     *
+     * @param reporter      jugador que está reportando y a quién se comprobará
+     * @param reportAttempt jugador que está siendo reportado
+     * @return true si ya ha sido reportado por {@param reporter}.
+     */
+
+    public boolean hasReported(Player reporter, String reportAttempt) {
+        CUtils.warnSyncCall();
+
+        PlayerManager playerManager = PlayerManager.getInstance();
+        WrappedPlayerDatabase database = playerManager.getDatabase(reporter);
+
+        Optional<Savable.WrappedValue> optional = database.getValueOptional(PlayerDatabaseKeys.PLAYERS_REPORTED);
+
+        if (optional.isPresent()) {
+            Set<String> reporteds = optional.get().asSet(String.class);
+
+            return reporteds.contains(reportAttempt);
+        }
+
+        return false;
+    }
 
 }

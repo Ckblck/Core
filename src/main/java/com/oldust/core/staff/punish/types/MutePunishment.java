@@ -9,8 +9,9 @@ import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.staff.punish.Punishment;
 import com.oldust.core.staff.punish.PunishmentType;
 import com.oldust.core.utils.CUtils;
-import com.oldust.core.utils.Lang;
 import com.oldust.core.utils.PlayerUtils;
+import com.oldust.core.utils.lang.Async;
+import com.oldust.core.utils.lang.Lang;
 import com.oldust.sync.JedisManager;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
@@ -78,6 +79,7 @@ public class MutePunishment implements Punishable<Punishment.ExpiredPunishment> 
      * @return indiferente
      */
 
+    @Async
     public boolean punish(String punisherName, String punishedName, UUID punishedUuid, TemporalAmount duration, String reason, boolean banIp) {
         CUtils.warnSyncCall();
 
@@ -166,6 +168,7 @@ public class MutePunishment implements Punishable<Punishment.ExpiredPunishment> 
      * @param mute clase que contiene los datos de la sanción expirada
      */
 
+    @Async
     public void registerFinishedMute(Punishment.ExpiredPunishment mute) {
         CUtils.warnSyncCall();
 

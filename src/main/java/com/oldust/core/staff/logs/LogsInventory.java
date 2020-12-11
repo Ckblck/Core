@@ -6,8 +6,9 @@ import com.oldust.core.mysql.MySQLManager;
 import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.GeoIPUtils;
 import com.oldust.core.utils.ItemBuilder;
-import com.oldust.core.utils.Lang;
 import com.oldust.core.utils.advancement.FakeAdvancement;
+import com.oldust.core.utils.lang.Async;
+import com.oldust.core.utils.lang.Lang;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -150,6 +151,7 @@ public class LogsInventory extends AbstractInventoryProvider {
                 .build();
     }
 
+    @Async
     public List<PlayerLog> retrieveLogs(int limit, int offset) {
         CUtils.warnSyncCall();
 

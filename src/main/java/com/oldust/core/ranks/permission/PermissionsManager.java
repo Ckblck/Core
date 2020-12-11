@@ -8,7 +8,7 @@ import com.oldust.core.inherited.plugins.Plugin;
 import com.oldust.core.mysql.MySQLManager;
 import com.oldust.core.ranks.PlayerRank;
 import com.oldust.core.utils.CUtils;
-import com.oldust.core.utils.Lang;
+import com.oldust.core.utils.lang.Lang;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;

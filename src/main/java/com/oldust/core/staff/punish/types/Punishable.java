@@ -1,12 +1,14 @@
 package com.oldust.core.staff.punish.types;
 
 import com.oldust.core.staff.punish.Punishment;
+import com.oldust.core.utils.lang.Async;
 
 import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Async
 public interface Punishable<T extends Punishment> {
 
     boolean punish(String punisherName, String punishedName, TemporalAmount duration, String reason, boolean banIp);
