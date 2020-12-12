@@ -1,5 +1,6 @@
 package com.oldust.core.commons.internal.inventories;
 
+import com.oldust.core.utils.CUtils;
 import com.oldust.core.utils.ItemBuilder;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
@@ -13,6 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
 public abstract class AbstractInventoryProvider implements InventoryProvider {
@@ -36,7 +38,10 @@ public abstract class AbstractInventoryProvider implements InventoryProvider {
                 return;
             }
 
-            buildInventory().open(player, pagination.next().getPage());
+            CompletableFuture
+                    .supplyAsync(this::buildInventory)
+                    .thenAccept(inv
+                            -> CUtils.runSync(() -> inv.open(player, pagination.next().getPage())));
         } else {
             if (pagination.isFirst()) {
                 player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.5F, Float.MIN_VALUE);
@@ -44,7 +49,10 @@ public abstract class AbstractInventoryProvider implements InventoryProvider {
                 return;
             }
 
-            buildInventory().open(player, pagination.previous().getPage());
+            CompletableFuture
+                    .supplyAsync(this::buildInventory)
+                    .thenAccept(inv
+                            -> CUtils.runSync(() -> inv.open(player, pagination.previous().getPage())));
         }
 
         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5F, Float.MAX_VALUE);

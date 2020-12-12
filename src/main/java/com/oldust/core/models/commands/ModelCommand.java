@@ -36,7 +36,7 @@ public class ModelCommand extends InheritedCommand<ModelPlugin> {
             if (isNotPlayer(sender)) return;
             CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.ADMIN);
 
-            future.thenAccept(notAbove -> {
+            future.thenAcceptAsync(notAbove -> {
                 if (notAbove) return;
                 if (args.length < 1) {
                     CUtils.msg(sender, Lang.ERROR_COLOR + String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "file_name"));

@@ -31,7 +31,7 @@ public class SendCommand extends InheritedCommand<StaffPlugin> {
             CompletableFuture<PlayerRank> future = CompletableFuture
                     .supplyAsync(() -> PlayerRank.getPlayerRank(sender));
 
-            future.thenAccept(rank -> {
+            future.thenAcceptAsync(rank -> {
                 if (label.equalsIgnoreCase("send")) {
                     if (isNotAboveOrEqual(sender, rank, PlayerRank.MOD)) return;
 

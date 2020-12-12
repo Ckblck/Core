@@ -40,20 +40,22 @@ public class StaffModeManager implements Listener {
     private final Set<UUID> vanished = new HashSet<>();
 
     public StaffModeManager() {
-        for (Player player : PlayerUtils.getPlayers()) {
-            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
-            boolean vanished = database.contains(PlayerDatabaseKeys.VANISH);
-            boolean staffMode = database.contains(PlayerDatabaseKeys.STAFF_MODE);
+        CUtils.runAsync(() -> {
+            for (Player player : PlayerUtils.getPlayers()) {
+                WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
+                boolean vanished = database.contains(PlayerDatabaseKeys.VANISH);
+                boolean staffMode = database.contains(PlayerDatabaseKeys.STAFF_MODE);
 
-            if (vanished) {
-                vanish(player);
+                if (vanished) {
+                    vanish(player);
+                }
+
+                if (staffMode) {
+                    setStaffMode(player, database);
+                }
+
             }
-
-            if (staffMode) {
-                setStaffMode(player, database);
-            }
-
-        }
+        });
 
         joinEvent();
 
@@ -105,13 +107,15 @@ public class StaffModeManager implements Listener {
     }
 
     public void vanish(Player player) {
-        Collection<? extends Player> list = PlayerUtils.getPlayers();
+        CUtils.runSync(() -> {
+            Collection<? extends Player> list = PlayerUtils.getPlayers();
 
-        for (Player otherPlayer : list) {
-            otherPlayer.hidePlayer(Core.getInstance(), player);
-        }
+            for (Player otherPlayer : list) {
+                otherPlayer.hidePlayer(Core.getInstance(), player);
+            }
 
-        vanished.add(player.getUniqueId());
+            vanished.add(player.getUniqueId());
+        });
 
         CUtils.runAsync(() -> {
             WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());

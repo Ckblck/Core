@@ -34,7 +34,7 @@ public class UnbanCommand extends InheritedCommand<StaffPlugin> {
         return (sender, label, args) -> {
             CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.MOD);
 
-            future.thenAccept(notAbove -> {
+            future.thenAcceptAsync(notAbove -> {
                 if (notAbove) return;
 
                 if (args.length == 0) {

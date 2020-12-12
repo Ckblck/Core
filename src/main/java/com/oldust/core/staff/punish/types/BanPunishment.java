@@ -84,9 +84,9 @@ public class BanPunishment implements Punishable<Punishment.ExpiredPunishment> {
 
         if (Core.getInstance().getServerManager().isPlayerOnline(punishedName)) {
             Punishment punishment = new Punishment(id, PunishmentType.BAN, punishedUuid, punisherName, reason, currentTimestamp, expiration, ipAddress);
-            reason = getPunishmentMessage(punishment);
+            String kickReason = getPunishmentMessage(punishment);
 
-            new KickPlayerAction(punishedName, reason)
+            new KickPlayerAction(punishedName, kickReason)
                     .push(JedisManager.getInstance().getPool());
         }
 

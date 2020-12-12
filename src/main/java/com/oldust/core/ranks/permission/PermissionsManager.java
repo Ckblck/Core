@@ -33,7 +33,7 @@ public class PermissionsManager extends Plugin {
 
         CompletableFuture<CachedRowSet> future = new CompletableFuture<>();
 
-        future.thenAccept(set -> {
+        future.thenAcceptAsync(set -> {
             try {
                 while (set.next()) {
                     PlayerRank rank = PlayerRank.getById(set.getInt("rank"));

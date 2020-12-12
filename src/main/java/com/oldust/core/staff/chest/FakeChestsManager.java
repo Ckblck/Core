@@ -54,7 +54,7 @@ public class FakeChestsManager implements Listener {
             CompletableFuture<Boolean> future = CompletableFuture
                     .supplyAsync(() -> PlayerRank.getPlayerRank(player).isStaff());
 
-            future.thenAccept(staff -> CUtils.runSync(() -> {
+            future.thenAcceptAsync(staff -> CUtils.runSync(() -> {
                 if (staff) {
                     fakeChest.remove(player);
                 } else {

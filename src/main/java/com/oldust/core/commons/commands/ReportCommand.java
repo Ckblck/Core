@@ -15,12 +15,13 @@ import org.bukkit.entity.Player;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 
 public class ReportCommand extends InheritedCommand<CommonsPlugin> {
 
     public ReportCommand(CommonsPlugin plugin) {
-        super(plugin, "report", null);
+        super(plugin, "report", Collections.singletonList("rp"));
     }
 
     @Override
@@ -34,8 +35,8 @@ public class ReportCommand extends InheritedCommand<CommonsPlugin> {
             Player player = (Player) sender;
             ReportsManager reportsManager = getPlugin().getReportsManager();
 
-            future.thenAccept(rank -> {
-                if (rank.isEqualOrHigher(PlayerRank.MOD) && args.length == 0 /* TODO REMOVE THIS */) {
+            future.thenAcceptAsync(rank -> {
+                if (rank.isEqualOrHigher(PlayerRank.MOD)) {
                     new ReportsInventory(player, getPlugin());
                 } else {
                     if (args.length == 0) {
@@ -66,7 +67,7 @@ public class ReportCommand extends InheritedCommand<CommonsPlugin> {
                     if (offline) {
                         CUtils.msg(sender, Lang.PLAYER_OFFLINE);
 
-                        //return; TODO remove comment
+                        return;
                     }
 
                     Report report = new Report(reported, player.getName(), reason, new Timestamp(System.currentTimeMillis()));

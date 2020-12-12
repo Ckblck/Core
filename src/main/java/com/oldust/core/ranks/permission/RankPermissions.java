@@ -48,7 +48,7 @@ public class RankPermissions {
         if (!hasPersonalPermissions) { // El jugador entró por primera vez a la network, descargamos.
             CompletableFuture<CachedRowSet> future = new CompletableFuture<>();
 
-            future.thenAccept(set -> {
+            future.thenAcceptAsync(set -> {
                 try {
                     while (set.next()) {
                         String permission = set.getString("permission");

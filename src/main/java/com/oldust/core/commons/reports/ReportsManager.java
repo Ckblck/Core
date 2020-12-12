@@ -58,14 +58,14 @@ public class ReportsManager {
      * @return un mapa cuya Key es el nombre del jugador reportado
      * y su Value una lista de todos los reportes que reúne,
      * ordenados de tal forma que el primero de la lista es el
-     * último reportado hacia el jugador.
+     * primero reportado hacia el jugador.
      */
 
     public Map<String, List<Report>> fetchReports() {
         CUtils.warnSyncCall();
 
         Map<String, List<Report>> reports = new HashMap<>();
-        CachedRowSet set = MySQLManager.query("SELECT reported, reporter, reason, date FROM dustplayers.reports ORDER BY date DESC;");
+        CachedRowSet set = MySQLManager.query("SELECT reported, reporter, reason, date FROM dustplayers.reports ORDER BY date ASC;");
 
         try {
             while (set.next()) {

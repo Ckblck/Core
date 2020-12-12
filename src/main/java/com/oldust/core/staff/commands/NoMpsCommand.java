@@ -26,7 +26,7 @@ public class NoMpsCommand extends InheritedCommand<StaffPlugin> {
             if (isNotPlayer(sender)) return;
             CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.ADMIN);
 
-            future.thenAccept(notAbove -> {
+            future.thenAcceptAsync(notAbove -> {
                 if (notAbove) return;
 
                 Player player = (Player) sender;

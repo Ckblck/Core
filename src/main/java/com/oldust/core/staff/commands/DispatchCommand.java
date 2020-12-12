@@ -25,7 +25,7 @@ public class DispatchCommand extends InheritedCommand<StaffPlugin> {
         return (sender, label, args) -> {
             CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.ADMIN);
 
-            future.thenAccept(notAbove -> {
+            future.thenAcceptAsync(notAbove -> {
                 if (notAbove) return;
 
                 if (args.length == 0) {

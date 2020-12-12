@@ -27,7 +27,7 @@ public class StaffChatCommand extends InheritedCommand<StaffPlugin> {
 
             CompletableFuture<Boolean> future = isNotStaff(sender);
 
-            future.thenAccept(notStaff -> {
+            future.thenAcceptAsync(notStaff -> {
                 if (notStaff) {
                     CUtils.msg(sender, Lang.NO_PERMISSIONS);
 

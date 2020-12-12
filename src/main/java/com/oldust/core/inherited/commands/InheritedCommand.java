@@ -73,7 +73,7 @@ public abstract class InheritedCommand<T extends Plugin> extends Command {
     public CompletableFuture<Boolean> isNotAboveOrEqual(CommandSender sender, PlayerRank rank) {
         return CompletableFuture
                 .supplyAsync(() -> !PlayerRank.getPlayerRank(sender).isEqualOrHigher(rank))
-                .thenApply(notAbove -> {
+                .thenApplyAsync(notAbove -> {
                     if (notAbove) {
                         CUtils.msg(sender, Lang.NO_PERMISSIONS);
                     }

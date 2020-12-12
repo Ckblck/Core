@@ -27,7 +27,7 @@ public class GamemodeCommand extends InheritedCommand<StaffPlugin> {
             CompletableFuture<PlayerRank> future = CompletableFuture
                     .supplyAsync(() -> PlayerRank.getPlayerRank(sender));
 
-            future.thenAccept(rank -> {
+            future.thenAcceptAsync(rank -> {
                 if (isNotAboveOrEqual(sender, rank, PlayerRank.MOD)) return;
 
                 if (!(sender instanceof Player)) {

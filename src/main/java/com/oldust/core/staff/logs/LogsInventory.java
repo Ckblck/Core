@@ -60,7 +60,7 @@ public class LogsInventory extends AbstractInventoryProvider {
         this.page = 0;
 
         CompletableFuture.supplyAsync(this::build)
-                .thenAccept(inv -> CUtils.runSync(() -> inv.open(player)));
+                .thenAcceptAsync(inv -> CUtils.runSync(() -> inv.open(player)));
     }
 
     @Override
@@ -96,13 +96,13 @@ public class LogsInventory extends AbstractInventoryProvider {
                     return response;
                 });
 
-                future.thenApply(response -> {
+                future.thenApplyAsync(response -> {
                     if (response == null) {
                         future.cancel(true);
                     }
 
                     return response;
-                }).thenAccept(geoResponse -> CUtils.runSync(() -> {
+                }).thenAcceptAsync(geoResponse -> CUtils.runSync(() -> {
                     FakeAdvancement respAdv = FakeAdvancement.builder()
                             .key(new NamespacedKey("oldust-" + RandomStringUtils.randomAlphanumeric(3).toLowerCase(), "geo/ip"))
                             .title(ChatColor.GOLD + ("#a6a6a6City: &f" + geoResponse.getCity() +
@@ -203,7 +203,7 @@ public class LogsInventory extends AbstractInventoryProvider {
         }
 
         CompletableFuture.supplyAsync(this::build)
-                .thenAccept(inv -> CUtils.runSync(() -> inv.open(player)));
+                .thenAcceptAsync(inv -> CUtils.runSync(() -> inv.open(player)));
 
         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5F, Float.MAX_VALUE);
     }

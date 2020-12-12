@@ -1,5 +1,6 @@
 package com.oldust.core.utils;
 
+import com.oldust.core.commons.internal.inventories.PageableItemStack;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -20,6 +21,14 @@ public class ItemBuilder {
 
     public ItemBuilder(Material mat) {
         stack = new ItemStack(mat);
+    }
+
+    public ItemBuilder(Material mat, boolean asPaginable) {
+        if (asPaginable) {
+            stack = new PageableItemStack(mat);
+        } else {
+            stack = new ItemStack(mat);
+        }
     }
 
     public ItemBuilder(Material mat, short sh) {

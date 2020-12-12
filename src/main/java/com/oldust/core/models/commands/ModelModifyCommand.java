@@ -64,7 +64,7 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
 
             CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.ADMIN);
 
-            future.thenAccept(notAbove -> {
+            future.thenAcceptAsync(notAbove -> {
                 if (notAbove) return;
 
                 if (args.length == 0) {
