@@ -84,7 +84,7 @@ public class StaffMode implements Serializable {
         CUtils.runAsync(() -> {
             database.put(PlayerDatabaseKeys.STAFF_MODE, this);
 
-            PlayerManager.getInstance().saveDatabase(database);
+            PlayerManager.getInstance().update(database);
         });
 
         vanish(staff);

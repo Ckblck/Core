@@ -14,6 +14,7 @@ import com.oldust.sync.wrappers.Savable;
 import com.oldust.sync.wrappers.ServerDatabaseKeys;
 import com.oldust.sync.wrappers.defaults.OldustServer;
 import com.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -22,13 +23,16 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 public class ChatListener implements Listener {
 
@@ -37,6 +41,8 @@ public class ChatListener implements Listener {
         Player player = e.getPlayer();
         String playerName = player.getName();
         String msg = e.getMessage();
+
+        // Comprobar si el chat general está silenciado.
 
         if (chatMuted() && !PlayerRank.getPlayerRank(player).isStaff()) {
             e.setCancelled(true);
@@ -47,6 +53,8 @@ public class ChatListener implements Listener {
 
         WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
         boolean staffChat = database.contains(PlayerDatabaseKeys.STAFF_CHAT);
+
+        // Comprobar si el jugador tiene el chat del Staff activado.
 
         if (staffChat) {
             e.setCancelled(true);
@@ -71,6 +79,8 @@ public class ChatListener implements Listener {
 
             return;
         }
+
+        // Comprobar que el jugador no esté silenciado.
 
         Optional<Savable.WrappedValue> muted = database.getValueOptional(PlayerDatabaseKeys.MUTE_DURATION);
 
@@ -99,6 +109,35 @@ public class ChatListener implements Listener {
         optRank.ifPresentOrElse(playerRank -> {
             PlayerRank rank = playerRank.asClass(PlayerRank.class);
 
+            // Comprobar si envió un mensaje muy rápido o repetidamente en un lapso de 0.5 segundos
+
+            Optional<Savable.WrappedValue> lastMessage = database.getValueOptional(PlayerDatabaseKeys.LAST_MESSAGE);
+
+            if (lastMessage.isPresent() && rank == PlayerRank.USER) {
+                ChatMessage chatMessage = lastMessage.get().asClass(ChatMessage.class);
+                String message = chatMessage.message;
+
+                long dateSec = TimeUnit.MILLISECONDS.toSeconds(chatMessage.date);
+                long nowSec = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+
+                if (nowSec - dateSec <= 0.5) {
+                    CUtils.msg(player, Lang.ERROR_COLOR + "You cannot send messages too quickly!");
+                    e.setCancelled(true);
+
+                    return;
+                }
+
+                if (nowSec - dateSec <= 3 && StringUtils.getJaroWinklerDistance(e.getMessage(), message) * 100 > 80) { // Similitud mayor al 80%
+                    CUtils.msg(player, Lang.ERROR_COLOR + "You cannot send the same message in a short period of time!");
+                    e.setCancelled(true);
+
+                    return;
+                }
+
+            }
+
+            // Darle formato al mensaje
+
             String format = rank.getPrefix()
                     + "%s"
                     + ChatColor.of("#fcba03")
@@ -108,7 +147,10 @@ public class ChatListener implements Listener {
 
             e.setFormat(format);
 
-            Bukkit.broadcastMessage(CUtils.color(e.getMessage()));
+            database.put(PlayerDatabaseKeys.LAST_MESSAGE, new ChatMessage(e.getMessage()));
+            PlayerManager.getInstance().update(database);
+
+            Bukkit.broadcastMessage(CUtils.color(e.getMessage())); // TODO: Remove
         }, () -> player.kickPlayer(Lang.DB_DISAPPEARED));
 
     }
@@ -117,6 +159,12 @@ public class ChatListener implements Listener {
         OldustServer currentServer = Core.getInstance().getServerManager().getCurrentServer();
 
         return currentServer.getValue(ServerDatabaseKeys.MUTED).asBoolean();
+    }
+
+    @RequiredArgsConstructor
+    private static class ChatMessage implements Serializable {
+        private final String message;
+        private final long date = System.currentTimeMillis();
     }
 
 }

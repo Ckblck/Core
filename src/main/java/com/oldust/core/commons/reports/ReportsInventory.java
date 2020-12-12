@@ -12,6 +12,7 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -23,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class ReportsInventory extends AbstractInventoryProvider {
     private static final String INV_NAME = "Reports";
@@ -56,11 +58,23 @@ public class ReportsInventory extends AbstractInventoryProvider {
 
         for (int i = 0; i < reports.size(); i++) {
             List<Report> report = reports.get(i);
+            Report firstReport = report.get(0);
             PageableItemStack pageableItem = buildItem(report);
 
             ClickableItem item = ClickableItem.of(pageableItem, (click) -> {
                 InventoryAction action = click.getAction();
                 int hotbarSlot = click.getHotbarButton() + 1;
+                String reported = firstReport.getReported();
+
+                if (click.isRightClick()) {
+                    ReportsManager reportsManager = plugin.getReportsManager();
+
+                    CompletableFuture
+                            .runAsync(() -> reportsManager.removeReport(reported))
+                            .thenRunAsync(() -> new ReportsInventory(player, plugin));
+                } else if (click.isLeftClick()) {
+                    Bukkit.dispatchCommand(player, "tp " + reported);
+                }
 
                 if (action != InventoryAction.HOTBAR_SWAP) return;
 
@@ -114,9 +128,7 @@ public class ReportsInventory extends AbstractInventoryProvider {
 
         pagination.addToIterator(iterator);
 
-        contents.set(4, 4, ClickableItem.of(NAVIGATOR, (click) -> {
-            handleClick(pagination, click);
-        }));
+        contents.set(4, 4, ClickableItem.of(NAVIGATOR, (click) -> handleClick(pagination, click)));
     }
 
     @Override

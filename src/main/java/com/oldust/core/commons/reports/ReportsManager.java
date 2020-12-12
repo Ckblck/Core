@@ -41,7 +41,7 @@ public class ReportsManager {
      * de datos.
      *
      * @param reported nombre del jugador reportado
-     *                 cuyos eportes se eliminarán
+     *                 cuyos reportes se eliminarán
      */
 
     public void removeReport(String reported) {

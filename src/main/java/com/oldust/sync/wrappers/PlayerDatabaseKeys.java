@@ -9,5 +9,6 @@ public enum PlayerDatabaseKeys {
     PLAYER_IP_ADDRESS,
     MUTE_DURATION,
     NO_MPS,
-    PLAYERS_REPORTED
+    PLAYERS_REPORTED,
+    LAST_MESSAGE
 }

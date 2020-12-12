@@ -58,7 +58,7 @@ public class RankPermissions {
                     }
 
                     playersDatabase.put(PlayerDatabaseKeys.PERSONAL_PERMISSIONS, permissionsToApply); // Guardamos en redis sus permisos personales.
-                    PlayerManager.getInstance().saveDatabase(playersDatabase);
+                    PlayerManager.getInstance().update(playersDatabase);
 
                     addRankPermissions(permissionsToApply); // Aplicamos al Map los permisos del rango.
 
