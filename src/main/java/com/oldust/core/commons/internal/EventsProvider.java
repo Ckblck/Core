@@ -64,9 +64,11 @@ public class EventsProvider implements Listener {
                 return;
             }
 
+            ImmutableWrappedPlayerDatabase inmutableDb = new ImmutableWrappedPlayerDatabase(database);
+
             CUtils.runSync(() -> {
                 for (Operation<Event> operation : operations.get(clazz)) {
-                    operation.getConsumer().accept(e, new ImmutableWrappedPlayerDatabase(database));
+                    operation.getConsumer().accept(e, inmutableDb);
                 }
             });
 

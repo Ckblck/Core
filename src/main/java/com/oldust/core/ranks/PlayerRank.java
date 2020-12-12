@@ -26,8 +26,8 @@ public enum PlayerRank {
     BUILDER(ChatColor.of("#baa988") + "BUILDER ", 50, 1),
     USER(ChatColor.of("#88baa7") + "", 0, 0);
 
+    public static final PlayerRank[] VALUES = values();
     private static final long serialVersionUID = 45346357647452345L;
-    private static final PlayerRank[] VALUES = values();
     private final String prefix;
     private final int priority;
     private final int databaseId;
@@ -86,6 +86,12 @@ public enum PlayerRank {
 
     public boolean isStaff() {
         return this == ADMIN || this == MOD || this == BUILDER;
+    }
+
+    public void setTabPrefix(Player player) {
+        String prefix = CUtils.color(getPrefix() + ((this == USER) ? "" : "&r"));
+
+        player.setPlayerListName(prefix + player.getName());
     }
 
 }

@@ -2,7 +2,7 @@ package com.oldust.core.actions.types;
 
 import com.oldust.core.actions.Action;
 import com.oldust.core.actions.ActionsReceiver;
-import com.oldust.core.ranks.permission.BukkitCompat;
+import com.oldust.core.commons.permission.BukkitCompat;
 import com.oldust.core.utils.PlayerUtils;
 import com.oldust.sync.PlayerManager;
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;

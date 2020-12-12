@@ -1,4 +1,4 @@
-package com.oldust.core.ranks.permission;
+package com.oldust.core.commons.permission;
 
 import com.oldust.core.mysql.MySQLManager;
 import com.oldust.core.ranks.PlayerRank;

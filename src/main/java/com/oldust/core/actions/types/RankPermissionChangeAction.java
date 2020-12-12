@@ -3,10 +3,10 @@ package com.oldust.core.actions.types;
 import com.google.common.base.Preconditions;
 import com.oldust.core.actions.Action;
 import com.oldust.core.actions.ActionsReceiver;
+import com.oldust.core.commons.permission.PermissionsManager;
+import com.oldust.core.commons.permission.RankPermissions;
 import com.oldust.core.inherited.plugins.InheritedPluginsManager;
 import com.oldust.core.ranks.PlayerRank;
-import com.oldust.core.ranks.permission.PermissionsManager;
-import com.oldust.core.ranks.permission.RankPermissions;
 import org.jetbrains.annotations.Nullable;
 
 /**

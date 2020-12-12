@@ -1,28 +1,29 @@
 package com.oldust.sync.wrappers.defaults;
 
 import com.oldust.sync.wrappers.PlayerDatabaseKeys;
+import com.oldust.sync.wrappers.Savable;
+import lombok.RequiredArgsConstructor;
 
-import java.io.Serializable;
+import java.util.Optional;
 
-public class ImmutableWrappedPlayerDatabase extends WrappedPlayerDatabase {
+@RequiredArgsConstructor
+public class ImmutableWrappedPlayerDatabase {
+    private final WrappedPlayerDatabase database;
 
-    public ImmutableWrappedPlayerDatabase(WrappedPlayerDatabase database) {
-        super(database.getPlayerUUID());
+    public boolean contains(PlayerDatabaseKeys key) {
+        return database.contains(key);
     }
 
-    @Override
-    public void put(PlayerDatabaseKeys key, Serializable value) {
-        throw new UnsupportedOperationException("Cannot modify an ImmutableWrappedPlayerDatabase.");
+    public Optional<Savable.WrappedValue> getValueOptional(PlayerDatabaseKeys key) {
+        return database.getValueOptional(key);
     }
 
-    @Override
-    public void putIfAbsent(PlayerDatabaseKeys key, Serializable value) {
-        throw new UnsupportedOperationException("Cannot modify an ImmutableWrappedPlayerDatabase.");
+    public Savable.WrappedValue getValue(PlayerDatabaseKeys key) {
+        return database.getValue(key);
     }
 
-    @Override
-    public WrappedValue remove(PlayerDatabaseKeys key) {
-        throw new UnsupportedOperationException("Cannot modify an ImmutableWrappedPlayerDatabase.");
+    public String getId() {
+        return database.getId();
     }
 
 }

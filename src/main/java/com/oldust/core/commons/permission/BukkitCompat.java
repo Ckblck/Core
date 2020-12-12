@@ -1,4 +1,4 @@
-package com.oldust.core.ranks.permission;
+package com.oldust.core.commons.permission;
 
 import com.oldust.core.Core;
 import org.bukkit.entity.Player;

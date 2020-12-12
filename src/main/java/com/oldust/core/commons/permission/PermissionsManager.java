@@ -1,4 +1,4 @@
-package com.oldust.core.ranks.permission;
+package com.oldust.core.commons.permission;
 
 import com.oldust.core.Core;
 import com.oldust.core.commons.internal.EventsProvider;
@@ -20,6 +20,12 @@ import java.sql.SQLException;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+
+/**
+ * InheritedPlugin encargado de
+ * establecer al jugador los permisos
+ * personales y los de su rango.
+ */
 
 @InheritedPlugin(name = "Permisos")
 public class PermissionsManager extends Plugin {
