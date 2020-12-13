@@ -47,8 +47,7 @@ public class PlayerDataCommand extends InheritedCommand<StaffPlugin> {
                     return;
                 }
 
-                new PlayerDataInventory(player, name, uuid);
-
+                new PlayerDataInventory(player, name, uuid, PlayerUtils.getIpAddress(uuid));
             });
 
         };

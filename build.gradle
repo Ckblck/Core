@@ -3,7 +3,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
-group 'com.oldust'
+group 'net.oldust'
 version '1.0-SNAPSHOT'
 
 java {
@@ -63,5 +63,6 @@ shadowJar {
     project.configurations.api.canBeResolved = true
     configurations = [project.configurations.api]
 }
+
 build.dependsOn shadowJar
 

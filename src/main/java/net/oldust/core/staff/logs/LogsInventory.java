@@ -5,7 +5,6 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
-import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_16_R3.AdvancementFrameType;
 import net.oldust.core.Core;
 import net.oldust.core.commons.internal.inventories.AbstractInventoryProvider;
@@ -102,12 +101,12 @@ public class LogsInventory extends AbstractInventoryProvider {
                     }
 
                     return response;
-                }).thenAcceptAsync(geoResponse -> CUtils.runSync(() -> {
+                }).thenAccept(geoResponse -> CUtils.runSync(() -> {
                     FakeAdvancement respAdv = FakeAdvancement.builder()
                             .key(new NamespacedKey("oldust-" + RandomStringUtils.randomAlphanumeric(3).toLowerCase(), "geo/ip"))
-                            .title(ChatColor.GOLD + ("#a6a6a6City: &f" + geoResponse.getCity() +
+                            .title("#a6a6a6City: &f" + geoResponse.getCity() +
                                     "\n#a6a6a6Region: &f" + geoResponse.getRegionName() +
-                                    "\n#a6a6a6Country: &f" + geoResponse.getCountryName()))
+                                    "\n#a6a6a6Country: &f" + geoResponse.getCountryName())
                             .item("heart_of_the_sea")
                             .description("Geo-IP")
                             .frame(AdvancementFrameType.TASK)

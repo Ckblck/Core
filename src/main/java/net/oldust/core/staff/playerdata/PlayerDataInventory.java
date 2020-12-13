@@ -38,14 +38,16 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
 
     private final String punishedName;
     private final UUID punishedUuid;
+    private final String punishedIp;
     private List<Punishment> punishments;
 
     @Async
-    public PlayerDataInventory(Player player, String punishedName, UUID punishedUuid) {
+    public PlayerDataInventory(Player player, String punishedName, UUID punishedUuid, String punishedIp) {
         super(player);
 
         this.punishedName = punishedName;
         this.punishedUuid = punishedUuid;
+        this.punishedIp = punishedIp;
 
         Preconditions.checkNotNull(punishedUuid);
 
@@ -53,11 +55,12 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
         CUtils.runSync(() -> inventory.open(player));
     }
 
-    private PlayerDataInventory(Player player, String punishedName, UUID punishedUuid, List<Punishment> punishments) {
+    private PlayerDataInventory(Player player, String punishedName, UUID punishedUuid, String punishedIp, List<Punishment> punishments) {
         super(player);
 
         this.punishedName = punishedName;
         this.punishedUuid = punishedUuid;
+        this.punishedIp = punishedIp;
         this.punishments = punishments;
     }
 
@@ -142,12 +145,13 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
             Timestamp expiration = lastPunishment.getExpiration();
             Timestamp now = new Timestamp(System.currentTimeMillis());
 
-            boolean isPunished = expiration == null || expiration.after(now);
-
-            String date = FORMAT.format(lastPunishment.getDate());
-            String expires = FORMAT.format(expiration);
+            boolean isPunished = (expiration == null || expiration.after(now))
+                    && lastPunishment.getType() != PunishmentType.KICK;
 
             if (isPunished) {
+                String date = FORMAT.format(lastPunishment.getDate());
+                String expires = FORMAT.format(expiration);
+
                 currentPunishmentInfo = new String[]{
                         "   " + Lang.ERROR_COLOR + "* #a6a6a6 Type: &f" + lastPunishment.getType().name().toLowerCase(),
                         "   " + Lang.ERROR_COLOR + "* #a6a6a6 Punisher: &f" + lastPunishment.getPunisherName(),
@@ -161,6 +165,7 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
 
         List<String> lore = new ArrayList<>(Arrays.asList(
                 " ",
+                "#a6a6a6 Last IP: &f" + punishedIp,
                 "#a6a6a6 Bans: &f" + banCount,
                 "#a6a6a6 Mutes: &f" + muteCount,
                 "#a6a6a6 Kicks: &f" + kickCount,
@@ -278,7 +283,7 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
         return SmartInventory.builder()
                 .title(INV_NAME)
                 .size(6, 9)
-                .provider(new PlayerDataInventory(player, punishedName, punishedUuid, fetchPunishments()))
+                .provider(new PlayerDataInventory(player, punishedName, punishedUuid, punishedIp, fetchPunishments()))
                 .manager(Core.getInstance().getInventoryManager())
                 .build();
     }
