@@ -127,7 +127,9 @@ public class RedisRepository<T extends Savable<?>> {
 
     @Async
     public void remove(String key) {
-        if (Core.getInstance().isEnabled()) {
+        Core core = Core.getInstance();
+
+        if (core != null && core.isEnabled()) {
             CUtils.warnSyncCall();
         }
 

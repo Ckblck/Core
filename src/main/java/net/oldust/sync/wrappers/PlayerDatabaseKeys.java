@@ -10,5 +10,6 @@ public enum PlayerDatabaseKeys {
     MUTE_DURATION,
     NO_MPS,
     PLAYERS_REPORTED,
-    LAST_MESSAGE
+    LAST_MESSAGE,
+    LAST_PLAYER_MESSAGED
 }
