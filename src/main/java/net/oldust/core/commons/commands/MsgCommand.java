@@ -48,8 +48,6 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
             }
 
             Player player = (Player) sender;
-            //todo remove
-            player.getInventory().getItemInMainHand().getItemMeta().getLore().forEach(a -> Bukkit.broadcastMessage(a));
             String target = args[0];
             String message = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
