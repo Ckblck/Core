@@ -5,6 +5,8 @@ import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lang.Async;
 import net.oldust.sync.serializer.Base64Serializer;
 import net.oldust.sync.wrappers.Savable;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
@@ -130,7 +132,14 @@ public class RedisRepository<T extends Savable<?>> {
         Core core = Core.getInstance();
 
         if (core != null && core.isEnabled()) {
-            CUtils.warnSyncCall();
+            Plugin conquer = Bukkit.getPluginManager().getPlugin("Conquer");
+
+            // Este método se ejecuta en el onDisable de Conquer,
+            // generando una excepción por hacerse en el main thread.
+            if (conquer == null || conquer.isEnabled()) {
+                CUtils.warnSyncCall();
+            }
+
         }
 
         try (Jedis jedis = pool.getResource()) {

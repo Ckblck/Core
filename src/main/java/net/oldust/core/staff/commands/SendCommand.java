@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.concurrent.CompletableFuture;
 
 public class SendCommand extends InheritedCommand<StaffPlugin> {
 
@@ -28,27 +27,25 @@ public class SendCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            CompletableFuture<PlayerRank> future = CompletableFuture
-                    .supplyAsync(() -> PlayerRank.getPlayerRank(sender));
+            PlayerRank rank = PlayerRank.getPlayerRank(sender);
 
-            future.thenAcceptAsync(rank -> {
-                if (label.equalsIgnoreCase("send")) {
-                    if (isNotAboveOrEqual(sender, rank, PlayerRank.MOD)) return;
+            if (label.equalsIgnoreCase("send")) {
+                if (isNotAboveOrEqual(sender, rank, PlayerRank.MOD)) return;
 
-                    send(sender, args);
-                } else {
-                    if (isNotAboveOrEqual(sender, rank, PlayerRank.ADMIN)) return;
+                send(sender, args);
+            } else {
+                if (isNotAboveOrEqual(sender, rank, PlayerRank.ADMIN)) return;
 
-                    sendAll(sender, args);
-                }
-            });
+                sendAll(sender, args);
+            }
 
         };
     }
 
     private void send(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, (args.length == 0) ? "nickname" : "server_name"));
+            CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE,
+                    (args.length == 0) ? "nickname" : "server_name"));
 
             return;
         }
@@ -74,7 +71,9 @@ public class SendCommand extends InheritedCommand<StaffPlugin> {
                 return;
             }
 
-            new SendToServerAction(player, server).push(JedisManager.getInstance().getPool());
+            new SendToServerAction(player, server)
+                    .push(JedisManager.getInstance().getPool());
+
             CUtils.msg(sender, Lang.SUCCESS_COLOR_ALT + "Successfully sent player " + player + " to server " + server + ".");
         });
 

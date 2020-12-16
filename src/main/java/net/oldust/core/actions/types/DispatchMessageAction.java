@@ -71,10 +71,11 @@ public class DispatchMessageAction extends Action<DispatchMessageAction> {
         boolean shouldBroadcast = channel == Channel.NETWORK_WIDE || channel.serverName.equalsIgnoreCase(Core.getInstance().getServerName());
 
         if (!shouldBroadcast) return;
+
         Collection<? extends Player> players = PlayerUtils.getPlayers();
 
         for (Player player : players) {
-            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
+            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
 
             boolean applies = requirement.test(database);
 

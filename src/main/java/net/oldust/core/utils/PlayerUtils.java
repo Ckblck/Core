@@ -141,7 +141,7 @@ public class PlayerUtils {
     public String getIpAddress(UUID uuid) {
         CUtils.warnSyncCall();
 
-        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(uuid);
+        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabaseRedis(uuid);
 
         if (database != null) {
             return database.getValue(PlayerDatabaseKeys.PLAYER_IP_ADDRESS).asString();

@@ -54,25 +54,22 @@ public class EventsProvider implements Listener {
     }
 
     private void handle(Event e, Player player) {
-        CUtils.runAsync(() -> {
-            Class<? extends Event> clazz = e.getClass();
-            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
+        Class<? extends Event> clazz = e.getClass();
+        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
 
-            if (database == null) {
-                player.kickPlayer(Lang.DB_DISAPPEARED);
+        if (database == null) { // Si esto pasa, estamos en la B, significaría que 'MandatoryCacheWrappedAction' no fue capaz de enviarse lo suficientemente rápido para cachear la Wrapped.
+            CUtils.inform("Server", "A database disappeared! These aren't good news... Is redis working correctly?");
+            player.kickPlayer(Lang.DB_DISAPPEARED);
 
-                return;
-            }
+            return;
+        }
 
-            ImmutableWrappedPlayerDatabase inmutableDb = new ImmutableWrappedPlayerDatabase(database);
+        ImmutableWrappedPlayerDatabase inmutableDb = new ImmutableWrappedPlayerDatabase(database);
 
-            CUtils.runSync(() -> {
-                for (Operation<Event> operation : operations.get(clazz)) {
-                    operation.getConsumer().accept(e, inmutableDb);
-                }
-            });
+        for (Operation<Event> operation : operations.get(clazz)) {
+            operation.getConsumer().accept(e, inmutableDb);
+        }
 
-        });
     }
 
     private void handle(PlayerEvent e) {

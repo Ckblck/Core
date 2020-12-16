@@ -33,20 +33,19 @@ public class UnmuteCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.MOD);
+            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
 
-            future.thenAcceptAsync(notMod -> {
-                if (notMod) return;
+            if (args.length == 0) {
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
 
-                if (args.length == 0) {
-                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+                return;
+            }
 
-                    return;
-                }
+            String name = args[0];
+            CompletableFuture<UUID> future = CompletableFuture.supplyAsync(() ->
+                    PlayerUtils.getUUIDByName(name));
 
-                String name = args[0];
-                UUID uuid = PlayerUtils.getUUIDByName(name);
-
+            future.thenAcceptAsync(uuid -> {
                 if (uuid == null) {
                     CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.");
 

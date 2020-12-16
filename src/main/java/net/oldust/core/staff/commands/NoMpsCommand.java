@@ -12,8 +12,6 @@ import net.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.concurrent.CompletableFuture;
-
 public class NoMpsCommand extends InheritedCommand<StaffPlugin> {
 
     public NoMpsCommand(StaffPlugin plugin) {
@@ -24,30 +22,25 @@ public class NoMpsCommand extends InheritedCommand<StaffPlugin> {
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
             if (isNotPlayer(sender)) return;
-            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.ADMIN);
+            if (isNotAboveOrEqual(sender, PlayerRank.ADMIN)) return;
 
-            future.thenAcceptAsync(notAbove -> {
-                if (notAbove) return;
+            Player player = (Player) sender;
 
-                Player player = (Player) sender;
+            PlayerManager playerManager = PlayerManager.getInstance();
+            WrappedPlayerDatabase database = playerManager.getDatabase(player);
+            boolean mpsDisabled = !database.contains(PlayerDatabaseKeys.NO_MPS);
 
-                PlayerManager playerManager = PlayerManager.getInstance();
-                WrappedPlayerDatabase database = playerManager.getDatabase(player);
-                boolean mpsDisabled = !database.contains(PlayerDatabaseKeys.NO_MPS);
+            if (mpsDisabled) {
+                database.put(PlayerDatabaseKeys.NO_MPS, true);
 
-                if (mpsDisabled) {
-                    database.put(PlayerDatabaseKeys.NO_MPS, true);
+                CUtils.msg(sender, Lang.SUCCESS_COLOR_ALT + "You are no longer receiving private messages.");
+            } else {
+                database.remove(PlayerDatabaseKeys.NO_MPS);
 
-                    CUtils.msg(sender, Lang.SUCCESS_COLOR_ALT + "You are no longer receiving private messages.");
-                } else {
-                    database.remove(PlayerDatabaseKeys.NO_MPS);
+                CUtils.msg(sender, Lang.SUCCESS_COLOR_ALT + "You are receiving private messages again.");
+            }
 
-                    CUtils.msg(sender, Lang.SUCCESS_COLOR_ALT + "You are receiving private messages again.");
-                }
-
-                playerManager.update(database);
-            });
-
+            playerManager.update(database);
         };
     }
 

@@ -2,6 +2,7 @@ package net.oldust.core.utils;
 
 import lombok.experimental.UtilityClass;
 import net.md_5.bungee.api.ChatColor;
+import net.oldust.core.BungeeCore;
 import net.oldust.core.Core;
 import net.oldust.core.utils.lang.Lang;
 import org.bukkit.Bukkit;
@@ -24,7 +25,7 @@ public class CUtils {
 
     public void warnSyncCall() {
         try {
-            if (Bukkit.isPrimaryThread()) {
+            if (!BungeeCore.IS_BUNGEE && Bukkit.isPrimaryThread()) {
                 Thread.dumpStack();
 
                 inform("Server", Lang.ERROR_COLOR + "WARNING! A call from the Main thread was made, when expected Async usage.");
@@ -114,7 +115,7 @@ public class CUtils {
     }
 
     public void runSync(Runnable runnable) {
-        if (Bukkit.isPrimaryThread()) {
+        if (BungeeCore.IS_BUNGEE || Bukkit.isPrimaryThread()) {
             runnable.run();
         } else {
             Bukkit.getScheduler().runTask(Core.getInstance(), runnable);
@@ -122,7 +123,7 @@ public class CUtils {
     }
 
     public void runAsync(Runnable runnable) {
-        if (!Bukkit.isPrimaryThread()) {
+        if (BungeeCore.IS_BUNGEE || !Bukkit.isPrimaryThread()) {
             runnable.run();
         } else {
             Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), runnable);

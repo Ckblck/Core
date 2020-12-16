@@ -13,7 +13,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
-import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("UnstableApiUsage")
 public class LogCommand extends InheritedCommand<StaffPlugin> {
@@ -26,17 +25,15 @@ public class LogCommand extends InheritedCommand<StaffPlugin> {
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
             if (isNotPlayer(sender)) return;
-            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.MOD);
+            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
 
-            future.thenAcceptAsync(notAbove -> {
-                if (notAbove) return;
+            if (args.length == 0) {
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
 
-                if (args.length == 0) {
-                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+                return;
+            }
 
-                    return;
-                }
-
+            CUtils.runAsync(() -> {
                 String target = args[0];
                 boolean isIp = InetAddresses.isInetAddress(target);
 

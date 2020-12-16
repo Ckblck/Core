@@ -51,6 +51,7 @@ public class StaffMode implements Serializable {
     }
 
     public void init(StaffModeManager manager, Player staff, WrappedPlayerDatabase database) {
+        PlayerManager playerManager = PlayerManager.getInstance();
         InteractivePanel panel = new InteractivePanel(staff);
 
         panel.add(0, ModeItems.STAFF_TOOLS, (click) -> new StaffToolsInv(Bukkit.getPlayer(player), this).open());
@@ -60,11 +61,11 @@ public class StaffMode implements Serializable {
         panel.add(4, ModeItems.STICK_ANTI_KB, (click) -> {
         });
 
-        panel.add(8, ModeItems.EXIT, (click) -> CUtils.runAsync(() -> {
+        panel.add(8, ModeItems.EXIT, (click) -> {
             Player player = Bukkit.getPlayer(this.player);
 
-            manager.exitStaffMode(player, PlayerManager.getInstance().getDatabase(player));
-        }));
+            manager.exitStaffMode(player, playerManager.getDatabase(this.player));
+        });
 
         panel.addListener(new InteractiveListener() {
             @Override
@@ -77,15 +78,12 @@ public class StaffMode implements Serializable {
             staff.setGameMode(GameMode.CREATIVE);
             staff.setAllowFlight(true);
             staff.setFlying(true);
-        }, 5);
+        }, 3);
 
         InteractivePanelManager.getInstance().setPanel(staff, panel);
 
-        CUtils.runAsync(() -> {
-            database.put(PlayerDatabaseKeys.STAFF_MODE, this);
-
-            PlayerManager.getInstance().update(database);
-        });
+        database.put(PlayerDatabaseKeys.STAFF_MODE, this);
+        playerManager.update(database);
 
         vanish(staff);
     }
@@ -95,18 +93,16 @@ public class StaffMode implements Serializable {
 
         PlayerManager.getInstance().update(database);
 
-        CUtils.runSync(() -> {
-            staff.removePotionEffect(PotionEffectType.NIGHT_VISION);
-            staff.getInventory().clear();
+        staff.removePotionEffect(PotionEffectType.NIGHT_VISION);
+        staff.getInventory().clear();
 
-            InteractivePanelManager.getInstance().exitPanel(staff);
+        InteractivePanelManager.getInstance().exitPanel(staff);
 
-            staff.setGameMode(previousGamemode);
-            staff.setAllowFlight(previousAllowFlight);
-            staff.setFlying(previousFlying);
+        staff.setGameMode(previousGamemode);
+        staff.setAllowFlight(previousAllowFlight);
+        staff.setFlying(previousFlying);
 
-            unvanish(staff);
-        });
+        unvanish(staff);
     }
 
     public void muteChat(Player staff) {

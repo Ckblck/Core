@@ -129,7 +129,7 @@ public class RankPermissions {
         PlayerManager playerManager = PlayerManager.getInstance();
 
         this.filter()
-                .forEach(player -> applyToPlayer(player, playerManager.getDatabase(player.getUniqueId())));
+                .forEach(player -> applyToPlayer(player, playerManager.getDatabase(player)));
     }
 
     private Collection<Player> filter() {
@@ -137,7 +137,7 @@ public class RankPermissions {
 
         return PlayerUtils.getPlayers().stream()
                 .filter(player -> {
-                    WrappedPlayerDatabase db = playerManager.getDatabase(player.getUniqueId());
+                    WrappedPlayerDatabase db = playerManager.getDatabase(player);
                     PlayerRank playerRank = db.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
 
                     return playerRank == rank;

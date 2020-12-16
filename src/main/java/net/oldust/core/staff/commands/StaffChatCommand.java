@@ -12,7 +12,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
 
 public class StaffChatCommand extends InheritedCommand<StaffPlugin> {
 
@@ -24,36 +23,27 @@ public class StaffChatCommand extends InheritedCommand<StaffPlugin> {
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
             if (isNotPlayer(sender)) return;
+            if (isNotStaff(sender)) return;
 
-            CompletableFuture<Boolean> future = isNotStaff(sender);
+            Player player = (Player) sender;
+            PlayerManager manager = PlayerManager.getInstance();
 
-            future.thenAcceptAsync(notStaff -> {
-                if (notStaff) {
-                    CUtils.msg(sender, Lang.NO_PERMISSIONS);
+            WrappedPlayerDatabase db = manager.getDatabase(player);
+            boolean staffChat = db.contains(PlayerDatabaseKeys.STAFF_CHAT);
 
-                    return;
-                }
+            if (staffChat) {
+                db.remove(PlayerDatabaseKeys.STAFF_CHAT);
 
-                Player player = (Player) sender;
-                PlayerManager manager = PlayerManager.getInstance();
+                CUtils.msg(sender, Lang.SUCCESS_COLOR + "Exited from the Staff chat.");
+            } else {
+                db.put(PlayerDatabaseKeys.STAFF_CHAT, true);
 
-                WrappedPlayerDatabase db = manager.getDatabase(player.getUniqueId());
-                boolean staffChat = db.contains(PlayerDatabaseKeys.STAFF_CHAT);
+                CUtils.msg(sender, Lang.SUCCESS_COLOR + "Entered Staff chat.");
+            }
 
-                if (staffChat) {
-                    db.remove(PlayerDatabaseKeys.STAFF_CHAT);
-
-                    CUtils.msg(sender, Lang.SUCCESS_COLOR + "Exited from the Staff chat.");
-                } else {
-                    db.put(PlayerDatabaseKeys.STAFF_CHAT, true);
-
-                    CUtils.msg(sender, Lang.SUCCESS_COLOR + "Entered Staff chat.");
-                }
-
-                manager.update(db);
-            });
-
+            manager.update(db);
         };
+
     }
 
 }

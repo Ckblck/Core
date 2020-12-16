@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public abstract class InheritedCommand<T extends Plugin> extends Command {
     private final TriConsumer<CommandSender, String, String[]> commandConsumer;
@@ -70,22 +69,24 @@ public abstract class InheritedCommand<T extends Plugin> extends Command {
         return false;
     }
 
-    public CompletableFuture<Boolean> isNotAboveOrEqual(CommandSender sender, PlayerRank rank) {
-        return CompletableFuture
-                .supplyAsync(() -> !PlayerRank.getPlayerRank(sender).isEqualOrHigher(rank))
-                .thenApplyAsync(notAbove -> {
-                    if (notAbove) {
-                        CUtils.msg(sender, Lang.NO_PERMISSIONS);
-                    }
+    public boolean isNotAboveOrEqual(CommandSender sender, PlayerRank rank) {
+        boolean notAbove = !PlayerRank.getPlayerRank(sender).isEqualOrHigher(rank);
 
-                    return notAbove;
-                });
+        if (notAbove) {
+            CUtils.msg(sender, Lang.NO_PERMISSIONS);
+        }
 
+        return notAbove;
     }
 
-    public CompletableFuture<Boolean> isNotStaff(CommandSender sender) {
-        return CompletableFuture
-                .supplyAsync(() -> !PlayerRank.getPlayerRank(sender).isStaff());
+    public boolean isNotStaff(CommandSender sender) {
+        boolean notStaff = !PlayerRank.getPlayerRank(sender).isStaff();
+
+        if (notStaff) {
+            CUtils.msg(sender, Lang.NO_PERMISSIONS);
+        }
+
+        return notStaff;
     }
 
 }

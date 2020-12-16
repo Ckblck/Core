@@ -104,9 +104,11 @@ public class MutePunishment implements Punishable<Punishment.ExpiredPunishment> 
         if (Core.getInstance().getServerManager().isPlayerOnline(punishedName)) {
             Punishment punishment = new Punishment(id, PunishmentType.MUTE, punishedUuid, punisherName, reason, now, expires, null);
             PlayerManager playerManager = PlayerManager.getInstance();
-            WrappedPlayerDatabase db = playerManager.getDatabase(punishedUuid);
+
+            WrappedPlayerDatabase db = playerManager.getDatabaseRedis(punishedUuid);
 
             db.put(PlayerDatabaseKeys.MUTE_DURATION, punishment);
+
             playerManager.update(db);
 
             new SendPlayerMessageAction(punishedName, getPunishmentMessage(punishment))
@@ -145,7 +147,7 @@ public class MutePunishment implements Punishable<Punishment.ExpiredPunishment> 
 
         if (Core.getInstance().getServerManager().isPlayerOnline(punishedName)) {
             PlayerManager playerManager = PlayerManager.getInstance();
-            WrappedPlayerDatabase db = playerManager.getDatabase(uuid);
+            WrappedPlayerDatabase db = playerManager.getDatabaseRedis(uuid);
 
             db.remove(PlayerDatabaseKeys.MUTE_DURATION);
 

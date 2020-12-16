@@ -40,22 +40,20 @@ public class StaffModeManager implements Listener {
     private final Set<UUID> vanished = new HashSet<>();
 
     public StaffModeManager() {
-        CUtils.runAsync(() -> {
-            for (Player player : PlayerUtils.getPlayers()) {
-                WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
-                boolean vanished = database.contains(PlayerDatabaseKeys.VANISH);
-                boolean staffMode = database.contains(PlayerDatabaseKeys.STAFF_MODE);
+        for (Player player : PlayerUtils.getPlayers()) {
+            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
+            boolean vanished = database.contains(PlayerDatabaseKeys.VANISH);
+            boolean staffMode = database.contains(PlayerDatabaseKeys.STAFF_MODE);
 
-                if (vanished) {
-                    vanish(player);
-                }
-
-                if (staffMode) {
-                    setStaffMode(player, database);
-                }
-
+            if (vanished) {
+                vanish(player);
             }
-        });
+
+            if (staffMode) {
+                setStaffMode(player, database);
+            }
+
+        }
 
         joinEvent();
 
@@ -63,19 +61,17 @@ public class StaffModeManager implements Listener {
     }
 
     public void setStaffMode(Player player, WrappedPlayerDatabase database) {
-        CUtils.runAsync(() -> {
-            boolean staffMode = database.contains(PlayerDatabaseKeys.STAFF_MODE);
-            StaffMode mode;
+        boolean staffMode = database.contains(PlayerDatabaseKeys.STAFF_MODE);
+        StaffMode mode;
 
-            if (staffMode) { // Cambió de server, tiene la instancia guardada en su DB.
-                mode = database.getValue(PlayerDatabaseKeys.STAFF_MODE).asClass(StaffMode.class);
-                mode.init(this, player, database);
-            } else {
-                mode = new StaffMode(this, player, database);
-            }
+        if (staffMode) { // Cambió de server, tiene la instancia guardada en su DB.
+            mode = database.getValue(PlayerDatabaseKeys.STAFF_MODE).asClass(StaffMode.class);
+            mode.init(this, player, database);
+        } else {
+            mode = new StaffMode(this, player, database);
+        }
 
-            staffs.put(player.getUniqueId(), mode);
-        });
+        staffs.put(player.getUniqueId(), mode);
     }
 
     /**
@@ -107,22 +103,19 @@ public class StaffModeManager implements Listener {
     }
 
     public void vanish(Player player) {
-        CUtils.runSync(() -> {
-            Collection<? extends Player> list = PlayerUtils.getPlayers();
+        PlayerManager playerManager = PlayerManager.getInstance();
+        Collection<? extends Player> list = PlayerUtils.getPlayers();
 
-            for (Player otherPlayer : list) {
-                otherPlayer.hidePlayer(Core.getInstance(), player);
-            }
+        for (Player otherPlayer : list) {
+            otherPlayer.hidePlayer(Core.getInstance(), player);
+        }
 
-            vanished.add(player.getUniqueId());
-        });
+        vanished.add(player.getUniqueId());
 
-        CUtils.runAsync(() -> {
-            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
-            database.put(PlayerDatabaseKeys.VANISH, true);
+        WrappedPlayerDatabase database = playerManager.getDatabase(player);
+        database.put(PlayerDatabaseKeys.VANISH, true);
 
-            PlayerManager.getInstance().update(database);
-        });
+        playerManager.update(database);
 
         new BukkitRunnable() {
             @Override
@@ -140,6 +133,7 @@ public class StaffModeManager implements Listener {
     }
 
     public void unvanish(Player player) {
+        PlayerManager playerManager = PlayerManager.getInstance();
         Collection<? extends Player> list = PlayerUtils.getPlayers();
 
         for (Player otherPlayer : list) {
@@ -148,12 +142,10 @@ public class StaffModeManager implements Listener {
 
         vanished.remove(player.getUniqueId());
 
-        CUtils.runAsync(() -> {
-            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
-            database.remove(PlayerDatabaseKeys.VANISH);
+        WrappedPlayerDatabase database = playerManager.getDatabase(player);
+        database.remove(PlayerDatabaseKeys.VANISH);
 
-            PlayerManager.getInstance().update(database);
-        });
+        playerManager.update(database);
 
     }
 
@@ -162,6 +154,7 @@ public class StaffModeManager implements Listener {
 
         provider.newOperation(PlayerJoinEvent.class, new Operation<PlayerJoinEvent>((join, db) -> {
             Player player = join.getPlayer();
+
             boolean vanished = db.contains(PlayerDatabaseKeys.VANISH);
             boolean staffMode = db.contains(PlayerDatabaseKeys.STAFF_MODE);
 
@@ -187,11 +180,9 @@ public class StaffModeManager implements Listener {
     }
 
     private void setStaffMode(Player player) {
-        CUtils.runAsync(() -> {
-            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
+        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
 
-            setStaffMode(player, database);
-        });
+        setStaffMode(player, database);
     }
 
     public void switchState(Player player) {

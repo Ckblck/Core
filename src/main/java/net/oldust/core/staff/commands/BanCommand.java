@@ -27,63 +27,63 @@ public class BanCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.MOD);
+            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
 
-            future.thenAcceptAsync(notAbove -> {
-                if (notAbove) return;
+            if (args.length == 0) {
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
 
-                if (args.length == 0) {
-                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+                return;
+            }
 
-                    return;
-                }
+            if (args.length == 1) {
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "duration/reason"));
 
-                if (args.length == 1) {
-                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "duration/reason"));
+                return;
+            }
 
-                    return;
-                }
+            String senderName = sender.getName();
+            String punishedName = args[0];
+            TemporalAmount duration;
 
-                String senderName = sender.getName();
-                String punishedName = args[0];
-                TemporalAmount duration;
+            try {
+                duration = CUtils.parseLiteralTime(args[1]);
+            } catch (DateTimeParseException ignored) {
+                duration = null; // Permanente
+            }
 
-                try {
-                    duration = CUtils.parseLiteralTime(args[1]);
-                } catch (DateTimeParseException ignored) {
-                    duration = null; // Permanente
-                }
+            String[] reasonRanged = (duration == null)
+                    ? Arrays.copyOfRange(args, 1, args.length)
+                    : Arrays.copyOfRange(args, 2, args.length);
 
-                String[] reasonRanged = (duration == null)
-                        ? Arrays.copyOfRange(args, 1, args.length)
-                        : Arrays.copyOfRange(args, 2, args.length);
+            String reason = String.join(" ", reasonRanged);
+            Punishable<?> handler = PunishmentType.BAN.getHandler();
+            boolean banIp = false;
 
-                String reason = String.join(" ", reasonRanged);
-                Punishable<?> handler = PunishmentType.BAN.getHandler();
-                boolean banIp = false;
+            if (StringUtils.endsWithIgnoreCase(reason, "-ip")) {
+                reason = StringUtils.removeEnd(reason, "-ip");
+                banIp = true;
+            }
 
-                if (StringUtils.endsWithIgnoreCase(reason, "-ip")) {
-                    reason = StringUtils.removeEnd(reason, "-ip");
-                    banIp = true;
-                }
+            if (reason.length() > 34) {
+                CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.");
 
-                if (reason.length() > 34) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.");
+                return;
+            }
 
-                    return;
-                }
+            if (StringUtils.isWhitespace(reason)) {
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason"));
 
-                if (StringUtils.isWhitespace(reason)) {
-                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason"));
+                return;
+            }
 
-                    return;
-                }
+            TemporalAmount finalDuration = duration;
+            String finalReason = reason;
+            boolean finalBanIp = banIp;
 
-                TemporalAmount finalDuration = duration;
-                String finalReason = reason;
-                boolean finalBanIp = banIp;
+            CompletableFuture<UUID> future = CompletableFuture.supplyAsync(() ->
+                    PlayerUtils.getUUIDByName(punishedName));
 
-                UUID uuid = PlayerUtils.getUUIDByName(punishedName);
+            future.thenAcceptAsync(uuid -> {
 
                 if (uuid == null) {
                     CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.");

@@ -9,7 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
-import java.util.concurrent.CompletableFuture;
 
 public class ClearInventoryCommand extends InheritedCommand<StaffPlugin> {
 
@@ -21,18 +20,12 @@ public class ClearInventoryCommand extends InheritedCommand<StaffPlugin> {
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
             if (isNotPlayer(sender)) return;
+            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
 
-            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.MOD);
             Player player = (Player) sender;
+            player.getInventory().clear();
 
-            future.thenAccept(notAbove -> {
-                if (notAbove) return;
-
-                CUtils.runSync(() -> player.getInventory().clear());
-
-                CUtils.msg(sender, Lang.SUCCESS_COLOR_ALT + "Your inventory has been cleared.");
-            });
-
+            CUtils.msg(sender, Lang.SUCCESS_COLOR_ALT + "Your inventory has been cleared.");
         };
     }
 

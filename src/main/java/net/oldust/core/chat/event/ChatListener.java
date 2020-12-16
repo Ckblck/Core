@@ -51,7 +51,7 @@ public class ChatListener implements Listener {
             return;
         }
 
-        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
+        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
         boolean staffChat = database.contains(PlayerDatabaseKeys.STAFF_CHAT);
 
         // Comprobar si el jugador tiene el chat del Staff activado.

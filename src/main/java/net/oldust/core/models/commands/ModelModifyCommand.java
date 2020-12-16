@@ -25,7 +25,6 @@ import uk.lewdev.standmodels.events.custom.ModelInteractEvent;
 import uk.lewdev.standmodels.model.Model;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements Listener {
     private static final ItemStack TELEPORT_MODEL = new ItemBuilder(Material.ENDER_PEARL)
@@ -61,49 +60,42 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
             if (isNotPlayer(sender)) return;
+            if (isNotAboveOrEqual(sender, PlayerRank.ADMIN)) return;
 
-            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.ADMIN);
+            if (args.length == 0) {
+                CUtils.msg(sender, Lang.ERROR_COLOR + "Insufficient arguments!");
+                CUtils.msg(sender, Lang.ERROR_COLOR + "/modelmodify enter");
+                CUtils.msg(sender, Lang.ERROR_COLOR + "/modelmodify exit");
 
-            future.thenAcceptAsync(notAbove -> {
-                if (notAbove) return;
+                return;
+            }
 
-                if (args.length == 0) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "Insufficient arguments!");
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "/modelmodify enter");
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "/modelmodify exit");
+            UUID uuid = ((Player) sender).getUniqueId();
+            String arg = args[0];
+            boolean isNotAlready = !playersModifying.containsKey(uuid);
 
-                    return;
+            if (arg.equalsIgnoreCase("enter")) {
+
+                if (isNotAlready) {
+                    playersModifying.put(uuid, null);
+                    CUtils.msg(sender, Lang.SUCCESS_COLOR + "Entered the modification panel. Interact with a model to modify it.");
+                } else {
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "You already are in the modification panel! Use «/mmodify exit» to exit.");
                 }
 
-                UUID uuid = ((Player) sender).getUniqueId();
-                String arg = args[0];
-                boolean isNotAlready = !playersModifying.containsKey(uuid);
+                return;
+            }
 
-                if (arg.equalsIgnoreCase("enter")) {
+            if (arg.equalsIgnoreCase("exit")) {
+                if (isNotAlready) {
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "You are not modifying any models!");
+                } else {
+                    InteractivePanel panel = playersModifying.remove(uuid);
+                    if (panel != null) InteractivePanelManager.getInstance().exitPanel((Player) sender);
 
-                    if (isNotAlready) {
-                        playersModifying.put(uuid, null);
-                        CUtils.msg(sender, Lang.SUCCESS_COLOR + "Entered the modification panel. Interact with a model to modify it.");
-                    } else {
-                        CUtils.msg(sender, Lang.ERROR_COLOR + "You already are in the modification panel! Use «/mmodify exit» to exit.");
-                    }
-
-                    return;
+                    CUtils.msg(sender, Lang.SUCCESS_COLOR + "Exited from the modification panel.");
                 }
-
-                if (arg.equalsIgnoreCase("exit")) {
-                    CUtils.runSync(() -> {
-                        if (isNotAlready) {
-                            CUtils.msg(sender, Lang.ERROR_COLOR + "You are not modifying any models!");
-                        } else {
-                            InteractivePanel panel = playersModifying.remove(uuid);
-                            if (panel != null) InteractivePanelManager.getInstance().exitPanel((Player) sender);
-
-                            CUtils.msg(sender, Lang.SUCCESS_COLOR + "Exited from the modification panel.");
-                        }
-                    });
-                }
-            });
+            }
 
         };
     }

@@ -27,50 +27,49 @@ public class MuteCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.MOD);
+            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
 
-            future.thenAcceptAsync(notAbove -> {
-                if (notAbove) return;
+            if (args.length == 0) {
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
 
-                if (args.length == 0) {
-                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+                return;
+            }
 
-                    return;
-                }
+            if (args.length == 1) {
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "duration"));
 
-                if (args.length == 1) {
-                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "duration"));
+                return;
+            }
 
-                    return;
-                }
+            TemporalAmount duration;
 
-                TemporalAmount duration;
+            try {
+                duration = CUtils.parseLiteralTime(args[1]);
+            } catch (DateTimeParseException e) {
+                CUtils.msg(sender, Lang.ERROR_COLOR + "The provided duration is not correct.");
 
-                try {
-                    duration = CUtils.parseLiteralTime(args[1]);
-                } catch (DateTimeParseException e) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "The provided duration is not correct.");
+                return;
+            }
 
-                    return;
-                }
+            if (args.length == 2) {
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason"));
 
-                if (args.length == 2) {
-                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason"));
+                return;
+            }
 
-                    return;
-                }
+            String name = args[0];
+            String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
 
-                String name = args[0];
-                String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+            if (reason.length() > 34) {
+                CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.");
 
-                if (reason.length() > 34) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.");
+                return;
+            }
 
-                    return;
-                }
+            CompletableFuture<UUID> future = CompletableFuture.supplyAsync(() ->
+                    PlayerUtils.getUUIDByName(name));
 
-                UUID uuid = PlayerUtils.getUUIDByName(name);
-
+            future.thenAcceptAsync(uuid -> {
                 if (uuid == null) {
                     CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.");
 
@@ -88,5 +87,4 @@ public class MuteCommand extends InheritedCommand<StaffPlugin> {
 
         };
     }
-
 }

@@ -87,7 +87,7 @@ public class PermissionsManager extends Plugin {
         eventsProvider.newOperation(PlayerJoinEvent.class, new Operation<PlayerJoinEvent>((join, db) -> {
             Player player = join.getPlayer();
 
-            CUtils.runAsync(() -> setupPlayer(player));
+            setupPlayer(player);
         }));
 
     }
@@ -101,7 +101,7 @@ public class PermissionsManager extends Plugin {
      */
 
     public void setupPlayer(Player player) {
-        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player.getUniqueId());
+        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
 
         PlayerRank playerRank = database.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
         RankPermissions rankPermissions = this.rankPermissions.get(playerRank);

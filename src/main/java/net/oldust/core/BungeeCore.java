@@ -9,4 +9,11 @@ import net.md_5.bungee.api.plugin.Plugin;
  */
 
 public class BungeeCore extends Plugin {
+    public static boolean IS_BUNGEE;
+
+    @Override
+    public void onEnable() {
+        IS_BUNGEE = true;
+    }
+
 }

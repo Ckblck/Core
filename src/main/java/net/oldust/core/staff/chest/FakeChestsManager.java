@@ -12,7 +12,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 public class FakeChestsManager implements Listener {
     private final Map<Location, FakeChest> fakeChests = new HashMap<>();
@@ -51,19 +50,15 @@ public class FakeChestsManager implements Listener {
         if (block.getType() == Material.CHEST && fakeChests.containsKey(location)) {
             FakeChest fakeChest = fakeChests.get(location);
 
-            CompletableFuture<Boolean> future = CompletableFuture
-                    .supplyAsync(() -> PlayerRank.getPlayerRank(player).isStaff());
+            boolean isStaff = PlayerRank.getPlayerRank(player).isStaff();
 
-            future.thenAcceptAsync(staff -> CUtils.runSync(() -> {
-                if (staff) {
-                    fakeChest.remove(player);
-                } else {
-                    fakeChest.alert(player);
-                }
+            if (isStaff) {
+                fakeChest.remove(player);
+            } else {
+                fakeChest.alert(player);
+            }
 
-                fakeChests.remove(location);
-            }));
-
+            fakeChests.remove(location);
         }
 
     }

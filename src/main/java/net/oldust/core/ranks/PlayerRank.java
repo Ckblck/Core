@@ -63,10 +63,7 @@ public enum PlayerRank {
         return ranks.get(0).getRank();
     }
 
-    @Async
     public static PlayerRank getPlayerRank(CommandSender sender) {
-        CUtils.warnSyncCall();
-
         if (sender instanceof Player) {
             return getPlayerRank((Player) sender);
         }

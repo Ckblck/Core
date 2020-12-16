@@ -58,14 +58,17 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
                 return;
             }
 
-            CUtils.runAsync(() -> sendMsg(player, target, message));
+            CUtils.runAsync(() ->
+                    sendMsg(player, target, message));
         };
     }
 
     @Async
     public void sendMsg(Player player, String target, String message) {
+        CUtils.warnSyncCall();
+
         PlayerManager playerManager = PlayerManager.getInstance();
-        WrappedPlayerDatabase playerDatabase = playerManager.getDatabase(player.getUniqueId());
+        WrappedPlayerDatabase playerDatabase = playerManager.getDatabase(player);
         Optional<Savable.WrappedValue> muted = playerDatabase.getValueOptional(PlayerDatabaseKeys.MUTE_DURATION);
 
         if (muted.isPresent()) {
@@ -132,7 +135,7 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
                     .orElseThrow(); // Capitalizamos su nombre de acuerdo como lo tiene.
 
             UUID targetUuid = playersConnected.get(capitalizedName); // Obtenemos su UUID para obtener desde su database su rango.
-            WrappedPlayerDatabase targetDatabase = playerManager.getDatabase(targetUuid);
+            WrappedPlayerDatabase targetDatabase = playerManager.getDatabaseRedis(targetUuid);
 
             if (targetDatabase.contains(PlayerDatabaseKeys.NO_MPS)) {
                 CUtils.msg(player, Lang.ERROR_COLOR + "That player cannot receive private messages.");

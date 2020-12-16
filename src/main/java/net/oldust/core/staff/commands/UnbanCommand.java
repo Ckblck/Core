@@ -32,22 +32,22 @@ public class UnbanCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.MOD);
+            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
 
-            future.thenAcceptAsync(notAbove -> {
-                if (notAbove) return;
+            if (args.length == 0) {
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
 
-                if (args.length == 0) {
-                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+                return;
+            }
 
-                    return;
-                }
+            String senderName = sender.getName(); // TODO: Custom name for Console
+            String punished = args[0];
+            BanPunishment handler = (BanPunishment) PunishmentType.BAN.getHandler();
 
-                String senderName = sender.getName(); // TODO: Custom name for Console
-                String punished = args[0];
-                BanPunishment handler = (BanPunishment) PunishmentType.BAN.getHandler();
+            CompletableFuture<UUID> future = CompletableFuture.supplyAsync(() ->
+                    PlayerUtils.getUUIDByName(punished));
 
-                UUID uuid = PlayerUtils.getUUIDByName(punished);
+            future.thenAcceptAsync(uuid -> {
                 Optional<Punishment> punishment;
 
                 if (uuid == null) {
@@ -88,9 +88,10 @@ public class UnbanCommand extends InheritedCommand<StaffPlugin> {
                 if (!(sender instanceof Player)) {
                     CUtils.msg(sender, Lang.SUCCESS_COLOR + "The player " + punished + " is no longer banned.");
                 }
-            });
 
+            });
         };
+
     }
 
 }

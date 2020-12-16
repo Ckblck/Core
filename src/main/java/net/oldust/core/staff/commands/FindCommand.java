@@ -12,7 +12,6 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Collections;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 public class FindCommand extends InheritedCommand<StaffPlugin> {
 
@@ -23,11 +22,9 @@ public class FindCommand extends InheritedCommand<StaffPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.MOD);
+            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
 
-            future.thenAcceptAsync(notAbove -> {
-                if (notAbove) return;
-
+            CUtils.runAsync(() -> {
                 if (args.length == 0) {
                     CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
 
@@ -39,9 +36,9 @@ public class FindCommand extends InheritedCommand<StaffPlugin> {
 
                 Optional<String> server = serverManager.getPlayerServer(player);
 
-                server.ifPresentOrElse(sv -> {
-                    CUtils.msg(sender, Lang.SUCCESS_COLOR + player + " is connected at " + sv + ".");
-                }, () -> CUtils.msg(sender, Lang.PLAYER_OFFLINE));
+                server.ifPresentOrElse(sv ->
+                                CUtils.msg(sender, Lang.SUCCESS_COLOR + player + " is connected at " + sv + "."),
+                        () -> CUtils.msg(sender, Lang.PLAYER_OFFLINE));
 
             });
 

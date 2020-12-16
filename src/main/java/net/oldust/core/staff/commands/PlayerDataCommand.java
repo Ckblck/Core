@@ -25,29 +25,30 @@ public class PlayerDataCommand extends InheritedCommand<StaffPlugin> {
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
             if (isNotPlayer(sender)) return;
-            CompletableFuture<Boolean> future = isNotAboveOrEqual(sender, PlayerRank.MOD);
+            if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
 
-            future.thenAcceptAsync(notMod -> {
-                if (notMod) return;
+            Player player = (Player) sender;
 
-                Player player = (Player) sender;
+            if (args.length == 0) {
+                CUtils.msg(player, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
 
-                if (args.length == 0) {
-                    CUtils.msg(player, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+                return;
+            }
 
-                    return;
-                }
+            String name = args[0];
+            CompletableFuture<UUID> future = CompletableFuture.supplyAsync(() ->
+                    PlayerUtils.getUUIDByName(name));
 
-                String name = args[0];
-                UUID uuid = PlayerUtils.getUUIDByName(name);
-
+            future.thenAcceptAsync(uuid -> {
                 if (uuid == null) {
                     CUtils.msg(player, Lang.ERROR_COLOR + "That player does not exist in the database.");
 
                     return;
                 }
 
-                new PlayerDataInventory(player, name, uuid, PlayerUtils.getIpAddress(uuid));
+                String ipAddress = PlayerUtils.getIpAddress(uuid);
+
+                new PlayerDataInventory(player, name, uuid, ipAddress);
             });
 
         };

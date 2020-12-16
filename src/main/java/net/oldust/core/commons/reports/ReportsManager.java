@@ -19,7 +19,6 @@ import java.util.*;
  * y brinda sus métodos necesarios.
  */
 
-@Async
 public class ReportsManager {
 
     /**
@@ -29,6 +28,7 @@ public class ReportsManager {
      * @param report reporte a insertar
      */
 
+    @Async
     public void setReport(Report report) {
         CUtils.warnSyncCall();
 
@@ -44,6 +44,7 @@ public class ReportsManager {
      *                 cuyos reportes se eliminarán
      */
 
+    @Async
     public void removeReport(String reported) {
         CUtils.warnSyncCall();
 
@@ -61,6 +62,7 @@ public class ReportsManager {
      * primero reportado hacia el jugador.
      */
 
+    @Async
     public Map<String, List<Report>> fetchReports() {
         CUtils.warnSyncCall();
 
@@ -103,8 +105,6 @@ public class ReportsManager {
      */
 
     public void registerReport(Player player, String reported) {
-        CUtils.warnSyncCall();
-
         PlayerManager playerManager = PlayerManager.getInstance();
         WrappedPlayerDatabase database = playerManager.getDatabase(player);
         Optional<Savable.WrappedValue> reportedOpt = database.getValueOptional(PlayerDatabaseKeys.PLAYERS_REPORTED);
@@ -135,8 +135,6 @@ public class ReportsManager {
      */
 
     public boolean hasReported(Player reporter, String reportAttempt) {
-        CUtils.warnSyncCall();
-
         PlayerManager playerManager = PlayerManager.getInstance();
         WrappedPlayerDatabase database = playerManager.getDatabase(reporter);
 
