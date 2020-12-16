@@ -11,5 +11,8 @@ public enum PlayerDatabaseKeys {
     NO_MPS,
     PLAYERS_REPORTED,
     LAST_MESSAGE,
-    LAST_PLAYER_MESSAGED
+    LAST_PLAYER_MESSAGED,
+
+    // Conquer
+    CONQUER_DATABASE
 }
