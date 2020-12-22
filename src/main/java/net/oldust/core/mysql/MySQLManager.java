@@ -53,7 +53,7 @@ public class MySQLManager {
             String username = (String) map.get("username");
             int port = (int) map.get("port");
 
-            config.setJdbcUrl("jdbc:mysql://" + hostName + ":" + port + "/?autoReconnect=true&allowMultiQueries=true&characterEncoding=utf-8&serverTimezone=UTC&useSSL=false");
+            config.setJdbcUrl("jdbc:mysql://" + hostName + ":" + port + "/?autoReconnect=true&allowMultiQueries=true&characterEncoding=utf-8&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true");
             config.setDriverClassName("com.mysql.jdbc.Driver");
             config.setUsername(username);
             config.setPassword(password);

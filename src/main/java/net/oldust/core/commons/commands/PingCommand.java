@@ -10,6 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
+
 public class PingCommand extends InheritedCommand<CommonsPlugin> {
 
     public PingCommand(CommonsPlugin plugin) {
@@ -22,7 +24,7 @@ public class PingCommand extends InheritedCommand<CommonsPlugin> {
             if (isNotPlayer(sender)) return;
 
             if (args.length == 0) {
-                showPing(((Player) sender));
+                showPing(sender, ((Player) sender));
             } else {
                 String who = args[0];
                 boolean connected = PlayerUtils.isLocallyConnected(who);
@@ -33,13 +35,13 @@ public class PingCommand extends InheritedCommand<CommonsPlugin> {
                     return;
                 }
 
-                showPing(Bukkit.getPlayer(who));
+                showPing(sender, Objects.requireNonNull(Bukkit.getPlayer(who)));
             }
         };
     }
 
-    private void showPing(Player player) {
-        CUtils.msg(player, Lang.SUCCESS_COLOR_ALT + player.getName() + "'s ping is: &r" + player.spigot().getPing() + "ms" + Lang.SUCCESS_COLOR_ALT + ".");
+    private void showPing(CommandSender requester, Player player) {
+        CUtils.msg(requester, Lang.SUCCESS_COLOR_ALT + player.getName() + "'s ping is: &r" + player.spigot().getPing() + "ms" + Lang.SUCCESS_COLOR_ALT + ".");
     }
 
 }

@@ -190,8 +190,12 @@ public class StaffModeManager implements Listener {
 
         if (vanished) {
             unvanish(player);
+
+            CUtils.msg(player, Lang.SUCCESS_COLOR + "You are no longer vanished.");
         } else {
             vanish(player);
+
+            CUtils.msg(player, Lang.SUCCESS_COLOR + "You are currently vanished.");
         }
 
     }
@@ -202,7 +206,7 @@ public class StaffModeManager implements Listener {
 
         if (hasStaffMode(player)) {
             e.setCancelled(true);
-            CUtils.msg(player, Lang.ERROR_COLOR + "You can't break any block while in Staff Mode!");
+            CUtils.msg(player, Lang.ERROR_COLOR + "You can't break any blocks while in Staff Mode!");
         }
     }
 

@@ -34,6 +34,7 @@ public class StaffPlugin extends Plugin {
         new NoMpsCommand(this);
         new GamemodeCommand(this);
         new ClearInventoryCommand(this);
+        new SpeedCommand(this);
 
         fakeChestsManager = new FakeChestsManager();
         staffModeManager = new StaffModeManager();

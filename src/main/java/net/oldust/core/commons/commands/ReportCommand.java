@@ -33,39 +33,39 @@ public class ReportCommand extends InheritedCommand<CommonsPlugin> {
             Player player = (Player) sender;
             ReportsManager reportsManager = getPlugin().getReportsManager();
 
-            if (rank.isEqualOrHigher(PlayerRank.MOD)) {
-                new ReportsInventory(player, getPlugin());
-            } else {
-                if (args.length == 0) {
-                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+            CUtils.runAsync(() -> {
+                if (rank.isEqualOrHigher(PlayerRank.MOD)) {
+                    new ReportsInventory(player, getPlugin());
+                } else {
+                    if (args.length == 0) {
+                        CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
 
-                    return;
-                }
+                        return;
+                    }
 
-                if (args.length == 1) {
-                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason"));
+                    if (args.length == 1) {
+                        CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason"));
 
-                    return;
-                }
+                        return;
+                    }
 
-                String reported = args[0];
-                String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+                    String reported = args[0];
+                    String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-                if (reported.equalsIgnoreCase(player.getName())) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "You can't report yourself!");
+                    if (reported.equalsIgnoreCase(player.getName())) {
+                        CUtils.msg(sender, Lang.ERROR_COLOR + "You can't report yourself!");
 
-                    return;
-                }
+                        return;
+                    }
 
-                boolean hasReported = reportsManager.hasReported(player, reported);
+                    boolean hasReported = reportsManager.hasReported(player, reported);
 
-                if (hasReported) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "You already reported that player!");
+                    if (hasReported) {
+                        CUtils.msg(sender, Lang.ERROR_COLOR + "You already reported that player!");
 
-                    return;
-                }
+                        return;
+                    }
 
-                CUtils.runAsync(() -> {
                     boolean offline = !Core.getInstance().getServerManager().isPlayerOnline(reported);
 
                     if (offline) {
@@ -80,11 +80,11 @@ public class ReportCommand extends InheritedCommand<CommonsPlugin> {
                     reportsManager.registerReport(player, reported);
 
                     CUtils.msg(sender, Lang.SUCCESS_COLOR_ALT + "Your report has been submitted. A Staff member will soon review it. Thanks!");
-                });
 
-            }
+                }
+            });
+
         };
-
     }
 
 }

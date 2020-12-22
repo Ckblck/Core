@@ -42,12 +42,12 @@ public class ReplyCommand extends InheritedCommand<CommonsPlugin> {
                 optional.ifPresentOrElse(lastPlayer -> {
                     MsgCommand msgCommand = getPlugin().getMsgCommand();
 
-                    String[] message = Arrays.copyOfRange(args, 1, args.length);
+                    String[] message = Arrays.copyOfRange(args, 0, args.length);
                     String msg = String.join(" ", message);
 
                     msgCommand.sendMsg(player, lastPlayer.asString(), msg);
 
-                }, () -> CUtils.msg(player, Lang.ERROR_COLOR + "You don't have anyone to reply!"));
+                }, () -> CUtils.msg(player, Lang.ERROR_COLOR + "You don't have anyone to reply to!"));
 
             });
 

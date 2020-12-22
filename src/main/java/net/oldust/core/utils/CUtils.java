@@ -25,7 +25,7 @@ public class CUtils {
 
     public void warnSyncCall() {
         try {
-            if (!BungeeCore.IS_BUNGEE && Bukkit.isPrimaryThread()) {
+            if (!BungeeCore.IS_BUNGEE && Bukkit.isPrimaryThread() && Bukkit.getPluginManager().isPluginEnabled("Conquer")) {
                 Thread.dumpStack();
 
                 inform("Server", Lang.ERROR_COLOR + "WARNING! A call from the Main thread was made, when expected Async usage.");

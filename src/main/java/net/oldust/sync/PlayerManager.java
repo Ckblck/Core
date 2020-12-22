@@ -1,11 +1,15 @@
 package net.oldust.sync;
 
 import lombok.Getter;
+import net.oldust.core.Core;
+import net.oldust.core.commons.internal.EventsProvider;
+import net.oldust.core.commons.internal.Operation;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lang.Async;
 import net.oldust.sync.jedis.RedisRepository;
 import net.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerQuitEvent;
 import redis.clients.jedis.JedisPool;
 
 import java.util.Map;
@@ -25,6 +29,19 @@ public class PlayerManager {
 
         JedisPool pool = JedisManager.getInstance().getPool();
         playerRepository = new RedisRepository<>(pool, "pl_repo");
+
+        Core core = Core.getInstance();
+
+        if (core != null) { // Is null for the OldustBungee
+            EventsProvider provider = core.getEventsProvider();
+
+            provider.newOperation(PlayerQuitEvent.class, new Operation<PlayerQuitEvent>((ev, db) -> {
+                UUID uuid = ev.getPlayer().getUniqueId();
+
+                cache.remove(uuid);
+            }));
+        }
+
     }
 
     public void cacheDatabase(WrappedPlayerDatabase database) {
