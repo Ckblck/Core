@@ -46,6 +46,9 @@ dependencies {
     api group: 'redis.clients', name: 'jedis', version: '3.3.0'
     api group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
 
+    api fileTree(dir: 'libraries', include: 'StandModelLib.jar')
+    api fileTree(dir: 'libraries', include: 'SmartInvs-1.2.7.jar')
+
     implementation group: 'org.jetbrains', name: 'annotations', version: '19.0.0'
     implementation group: 'net.md-5', name: 'bungeecord-api', version: '1.16-R0.4-SNAPSHOT'
     implementation group: 'com.destroystokyo.paper', name: 'paper-api', version: '1.16.4-R0.1-SNAPSHOT'
@@ -54,10 +57,7 @@ dependencies {
 
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.16'
 
-    compile fileTree(dir: 'libraries', include: 'StandModelLib.jar')
-    compile fileTree(dir: 'libraries', include: 'SmartInvs-1.2.7.jar')
-
-    compileOnly fileTree(dir: 'libraries', include: 'nms-1.16.4.jar')
+    implementation fileTree(dir: 'libraries', include: 'nms-1.16.4.jar')
 }
 
 shadowJar {
