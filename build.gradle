@@ -63,19 +63,14 @@ dependencies {
 shadowJar {
     project.configurations.api.canBeResolved = true
     configurations = [project.configurations.api]
+    archiveClassifier.set("")
 }
 
 publishing {
     publications {
         shadow(MavenPublication) { publication ->
             project.shadow.component(publication)
-        }
-        maven(MavenPublication) {
-            groupId = 'net.oldust'
             artifactId = 'core'
-            version = '1.0-SNAPSHOT'
-
-            from components.java
         }
     }
 }
