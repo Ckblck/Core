@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
@@ -56,7 +57,7 @@ dependencies {
     compile fileTree(dir: 'libraries', include: 'StandModelLib.jar')
     compile fileTree(dir: 'libraries', include: 'SmartInvs-1.2.7.jar')
 
-    compileOnly fileTree(dir: 'libraries', include: 'craftbukkit-1.16.4.jar')
+    compileOnly fileTree(dir: 'libraries', include: 'nms-1.16.4.jar')
 }
 
 shadowJar {
@@ -64,5 +65,17 @@ shadowJar {
     configurations = [project.configurations.api]
 }
 
-build.dependsOn shadowJar
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'net.oldust'
+            artifactId = 'core'
+            version = '1.0-SNAPSHOT'
+
+            from components.java
+        }
+    }
+}
+
+build.dependsOn shadowJar, publishToMavenLocal
 
