@@ -62,8 +62,7 @@ public class PlayerUtils {
      */
 
     public boolean isLocallyConnected(UUID uuid) {
-        return getPlayers().stream()
-                .anyMatch(player -> player.getUniqueId().equals(uuid));
+        return Bukkit.getPlayer(uuid) != null;
     }
 
     /**

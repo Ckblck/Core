@@ -1,6 +1,7 @@
 package net.oldust.core;
 
 import net.md_5.bungee.api.plugin.Plugin;
+import net.oldust.core.utils.CUtils;
 
 /**
  * Clase dummy para el cargado
@@ -9,11 +10,10 @@ import net.md_5.bungee.api.plugin.Plugin;
  */
 
 public class BungeeCore extends Plugin {
-    public static boolean IS_BUNGEE;
 
     @Override
     public void onEnable() {
-        IS_BUNGEE = true;
+        CUtils.IS_BUNGEE = true;
     }
 
 }

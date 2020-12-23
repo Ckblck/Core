@@ -2,7 +2,6 @@ package net.oldust.core.utils;
 
 import lombok.experimental.UtilityClass;
 import net.md_5.bungee.api.ChatColor;
-import net.oldust.core.BungeeCore;
 import net.oldust.core.Core;
 import net.oldust.core.utils.lang.Lang;
 import org.bukkit.Bukkit;
@@ -21,11 +20,13 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 public class CUtils {
+    public static boolean IS_BUNGEE;
+
     private final Pattern COLOR_PATTERN = Pattern.compile("#[a-fA-F0-9]{6}( )?");
 
     public void warnSyncCall() {
         try {
-            if (!BungeeCore.IS_BUNGEE && Bukkit.isPrimaryThread() && Bukkit.getPluginManager().isPluginEnabled("Conquer")) {
+            if (!IS_BUNGEE && Bukkit.isPrimaryThread() && Bukkit.getPluginManager().isPluginEnabled("Conquer")) {
                 Thread.dumpStack();
 
                 inform("Server", Lang.ERROR_COLOR + "WARNING! A call from the Main thread was made, when expected Async usage.");
@@ -115,7 +116,7 @@ public class CUtils {
     }
 
     public void runSync(Runnable runnable) {
-        if (BungeeCore.IS_BUNGEE || Bukkit.isPrimaryThread()) {
+        if (IS_BUNGEE || Bukkit.isPrimaryThread()) {
             runnable.run();
         } else {
             Bukkit.getScheduler().runTask(Core.getInstance(), runnable);
@@ -123,7 +124,7 @@ public class CUtils {
     }
 
     public void runAsync(Runnable runnable) {
-        if (BungeeCore.IS_BUNGEE || !Bukkit.isPrimaryThread()) {
+        if (IS_BUNGEE || !Bukkit.isPrimaryThread()) {
             runnable.run();
         } else {
             Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), runnable);
