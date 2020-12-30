@@ -1,10 +1,10 @@
-package net.oldust.core.commons.permission;
+package net.oldust.core.permission;
 
 import net.oldust.core.Core;
-import net.oldust.core.commons.internal.EventsProvider;
-import net.oldust.core.commons.internal.Operation;
 import net.oldust.core.inherited.plugins.InheritedPlugin;
 import net.oldust.core.inherited.plugins.Plugin;
+import net.oldust.core.internal.provider.EventsProvider;
+import net.oldust.core.internal.provider.Operation;
 import net.oldust.core.mysql.MySQLManager;
 import net.oldust.core.ranks.PlayerRank;
 import net.oldust.core.utils.CUtils;
@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * InheritedPlugin encargado de
+ * Plugin encargado de
  * establecer al jugador los permisos
  * personales y los de su rango.
  */
@@ -33,6 +33,12 @@ public class PermissionsManager extends Plugin {
 
     @Override
     public void onEnable() {
+        loadRankPermissions();
+
+        onJoin(); // Registramos el evento.
+    }
+
+    private void loadRankPermissions() {
         for (PlayerRank rank : PlayerRank.values()) {
             rankPermissions.put(rank, new RankPermissions(rank, this));
         }
@@ -61,6 +67,7 @@ public class PermissionsManager extends Plugin {
                     RankPermissions rankPermissions = this.rankPermissions.get(rank);
                     rankPermissions.setParent(parent);
                 }
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -72,8 +79,6 @@ public class PermissionsManager extends Plugin {
         });
 
         MySQLManager.queryAsync("SELECT * FROM dustpermissions.ranks_permissions;", future);
-
-        onJoin(); // Registramos el evento.
     }
 
     @Override

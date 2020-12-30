@@ -7,7 +7,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import net.oldust.core.Core;
-import net.oldust.core.commons.internal.inventories.AbstractInventoryProvider;
+import net.oldust.core.internal.inventories.AbstractInventoryProvider;
 import net.oldust.core.staff.punish.Punishment;
 import net.oldust.core.staff.punish.PunishmentType;
 import net.oldust.core.staff.punish.types.BanPunishment;

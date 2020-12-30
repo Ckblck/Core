@@ -1,4 +1,4 @@
-package net.oldust.core.commons.permission;
+package net.oldust.core.permission;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

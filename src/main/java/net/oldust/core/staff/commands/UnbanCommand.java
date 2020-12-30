@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class UnbanCommand extends InheritedCommand<StaffPlugin> {
-    private static final String STAFF_ALERT_MESSAGE = CUtils.color("#ff443b[!] #80918a #fcba03 %s#80918a has unbanned #fcba03%s#80918a.");
+    private static final String STAFF_ALERT_MESSAGE = CUtils.color("#ff443b [!] #80918a #fcba03 %s#80918a has unbanned #fcba03%s#80918a.");
 
     public UnbanCommand(StaffPlugin plugin) {
         super(plugin, "unban", null);
@@ -48,15 +48,13 @@ public class UnbanCommand extends InheritedCommand<StaffPlugin> {
                     PlayerUtils.getUUIDByName(punished));
 
             future.thenAcceptAsync(uuid -> {
-                Optional<Punishment> punishment;
-
                 if (uuid == null) {
                     CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.");
 
                     return;
                 }
 
-                punishment = handler.currentPunishment(uuid);
+                Optional<Punishment> punishment = handler.currentPunishment(uuid);
 
                 if (punishment.isEmpty()) {
                     CUtils.msg(sender, Lang.ERROR_COLOR + "The specified player is not banned!");
@@ -80,7 +78,7 @@ public class UnbanCommand extends InheritedCommand<StaffPlugin> {
 
                 String staffMessage = String.format(STAFF_ALERT_MESSAGE, senderName, punished);
 
-                new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, db -> {
+                new DispatchMessageAction(DispatchMessageAction.Channel.NETWORK_WIDE, db -> {
                     return db.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class).isStaff();
                 }, false, staffMessage, Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 0.5F, 1F)
                         .push(JedisManager.getInstance().getPool());

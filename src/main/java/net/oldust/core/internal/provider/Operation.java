@@ -1,4 +1,4 @@
-package net.oldust.core.commons.internal;
+package net.oldust.core.internal.provider;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

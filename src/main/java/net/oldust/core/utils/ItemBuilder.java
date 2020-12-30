@@ -1,6 +1,6 @@
 package net.oldust.core.utils;
 
-import net.oldust.core.commons.internal.inventories.PageableItemStack;
+import net.oldust.core.internal.inventories.PageableItemStack;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;

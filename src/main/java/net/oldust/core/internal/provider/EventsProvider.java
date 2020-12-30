@@ -1,4 +1,4 @@
-package net.oldust.core.commons.internal;
+package net.oldust.core.internal.provider;
 
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lang.Lang;
@@ -23,8 +23,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Un ListenerProvider es aquel
  * que se encarga de proveer a partes del Core
  * de un evento muy utilizado.
- * Además, ayuda a reducir la carga de Redis debido
- * a que solo obtiene la database una única vez por evento.
  * <p>
  * Por ejemplo, para disminuir el verbose de muchos eventos
  * OnJoin.
@@ -64,10 +62,10 @@ public class EventsProvider implements Listener {
             return;
         }
 
-        ImmutableWrappedPlayerDatabase inmutableDb = new ImmutableWrappedPlayerDatabase(database);
+        ImmutableWrappedPlayerDatabase immutableDb = new ImmutableWrappedPlayerDatabase(database);
 
         for (Operation<Event> operation : operations.get(clazz)) {
-            operation.getConsumer().accept(e, inmutableDb);
+            operation.getConsumer().accept(e, immutableDb);
         }
 
     }

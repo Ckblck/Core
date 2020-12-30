@@ -117,7 +117,7 @@ public class MutePunishment implements Punishable<Punishment.ExpiredPunishment> 
 
         String staffMessage = String.format(STAFF_ALERT_MESSAGE, punisherName, punishedName, ChatColor.stripColor(reason));
 
-        new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, db -> {
+        new DispatchMessageAction(DispatchMessageAction.Channel.NETWORK_WIDE, db -> {
             PlayerRank rank = db.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
 
             return rank.isStaff();

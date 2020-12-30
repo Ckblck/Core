@@ -2,8 +2,8 @@ package net.oldust.core.interactive.panels;
 
 import lombok.Getter;
 import net.oldust.core.Core;
-import net.oldust.core.commons.internal.EventsProvider;
-import net.oldust.core.commons.internal.Operation;
+import net.oldust.core.internal.provider.EventsProvider;
+import net.oldust.core.internal.provider.Operation;
 import net.oldust.core.utils.CUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

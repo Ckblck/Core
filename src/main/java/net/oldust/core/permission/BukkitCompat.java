@@ -1,4 +1,4 @@
-package net.oldust.core.commons.permission;
+package net.oldust.core.permission;
 
 import net.oldust.core.Core;
 import org.bukkit.entity.Player;

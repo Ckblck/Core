@@ -7,7 +7,7 @@ import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import net.minecraft.server.v1_16_R3.AdvancementFrameType;
 import net.oldust.core.Core;
-import net.oldust.core.commons.internal.inventories.AbstractInventoryProvider;
+import net.oldust.core.internal.inventories.AbstractInventoryProvider;
 import net.oldust.core.mysql.MySQLManager;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.GeoIPUtils;

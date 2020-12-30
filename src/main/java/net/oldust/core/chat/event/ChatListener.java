@@ -70,7 +70,7 @@ public class ChatListener implements Listener {
 
             String serialized = ComponentSerializer.toString(base);
 
-            new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, db -> {
+            new DispatchMessageAction(DispatchMessageAction.Channel.NETWORK_WIDE, db -> {
                 PlayerRank rank = db.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
 
                 return rank.isStaff();

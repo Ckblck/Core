@@ -2,8 +2,8 @@ package net.oldust.core.commons.tab;
 
 import net.md_5.bungee.api.ChatColor;
 import net.oldust.core.Core;
-import net.oldust.core.commons.internal.EventsProvider;
-import net.oldust.core.commons.internal.Operation;
+import net.oldust.core.internal.provider.EventsProvider;
+import net.oldust.core.internal.provider.Operation;
 import net.oldust.core.ranks.PlayerRank;
 import net.oldust.core.utils.CUtils;
 import net.oldust.sync.wrappers.PlayerDatabaseKeys;

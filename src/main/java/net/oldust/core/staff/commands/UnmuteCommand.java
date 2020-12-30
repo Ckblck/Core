@@ -70,7 +70,7 @@ public class UnmuteCommand extends InheritedCommand<StaffPlugin> {
 
                 String staffMessage = String.format(STAFF_ALERT_MESSAGE, sender.getName(), name);
 
-                new DispatchMessageAction(DispatchMessageAction.Channel.SERVER_WIDE, db -> {
+                new DispatchMessageAction(DispatchMessageAction.Channel.NETWORK_WIDE, db -> {
                     PlayerRank rank = db.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
 
                     return rank.isStaff();

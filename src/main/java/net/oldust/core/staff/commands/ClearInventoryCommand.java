@@ -1,7 +1,8 @@
-package net.oldust.core.staff;
+package net.oldust.core.staff.commands;
 
 import net.oldust.core.inherited.commands.InheritedCommand;
 import net.oldust.core.ranks.PlayerRank;
+import net.oldust.core.staff.StaffPlugin;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;

@@ -100,7 +100,6 @@ public class BanCommand extends InheritedCommand<StaffPlugin> {
                 }
 
                 handler.punish(senderName, punishedName, finalDuration, finalReason, finalBanIp);
-
             });
 
         };

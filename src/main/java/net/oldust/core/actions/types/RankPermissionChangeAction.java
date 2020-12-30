@@ -3,9 +3,9 @@ package net.oldust.core.actions.types;
 import com.google.common.base.Preconditions;
 import net.oldust.core.actions.Action;
 import net.oldust.core.actions.ActionsReceiver;
-import net.oldust.core.commons.permission.PermissionsManager;
-import net.oldust.core.commons.permission.RankPermissions;
 import net.oldust.core.inherited.plugins.InheritedPluginsManager;
+import net.oldust.core.permission.PermissionsManager;
+import net.oldust.core.permission.RankPermissions;
 import net.oldust.core.ranks.PlayerRank;
 import org.jetbrains.annotations.Nullable;
 

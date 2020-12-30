@@ -2,8 +2,8 @@ package net.oldust.sync;
 
 import lombok.Getter;
 import net.oldust.core.Core;
-import net.oldust.core.commons.internal.EventsProvider;
-import net.oldust.core.commons.internal.Operation;
+import net.oldust.core.internal.provider.EventsProvider;
+import net.oldust.core.internal.provider.Operation;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lang.Async;
 import net.oldust.sync.jedis.RedisRepository;

@@ -75,5 +75,10 @@ publishing {
     }
 }
 
+task shadowJarCustomOutput {
+    libsDirName = '/home/ckblck/Documents/Oldust/Server/plugins'
+    shadowJarCustomOutput.dependsOn shadowJar
+}
+
 build.dependsOn shadowJar, publishToMavenLocal
 

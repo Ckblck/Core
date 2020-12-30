@@ -1,4 +1,4 @@
-package net.oldust.core.commons.internal.inventories;
+package net.oldust.core.internal.inventories;
 
 import net.oldust.core.utils.CUtils;
 import org.bukkit.Material;

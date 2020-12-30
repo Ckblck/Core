@@ -1,4 +1,4 @@
-package net.oldust.core.commons.internal.inventories;
+package net.oldust.core.internal.inventories;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;

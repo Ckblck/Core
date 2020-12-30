@@ -4,7 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import net.oldust.core.Core;
-import net.oldust.core.commons.internal.inventories.AbstractInventoryProvider;
+import net.oldust.core.internal.inventories.AbstractInventoryProvider;
 import net.oldust.core.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

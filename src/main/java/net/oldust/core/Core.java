@@ -7,12 +7,12 @@ import net.oldust.core.actions.ActionsReceiver;
 import net.oldust.core.actions.types.DispatchMessageAction;
 import net.oldust.core.chat.ChatHandler;
 import net.oldust.core.commons.CommonsPlugin;
-import net.oldust.core.commons.internal.EventsProvider;
-import net.oldust.core.commons.permission.PermissionsManager;
 import net.oldust.core.inherited.plugins.InheritedPluginsManager;
 import net.oldust.core.interactive.panels.InteractivePanelManager;
+import net.oldust.core.internal.provider.EventsProvider;
 import net.oldust.core.models.ModelPlugin;
 import net.oldust.core.mysql.MySQLManager;
+import net.oldust.core.permission.PermissionsManager;
 import net.oldust.core.pool.ThreadPool;
 import net.oldust.core.staff.StaffPlugin;
 import net.oldust.core.staff.logs.LogsInventory;
@@ -72,8 +72,8 @@ public class Core extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        long start = System.currentTimeMillis();
         CUtils.inform("Core", "Initializing core...");
+        long start = System.currentTimeMillis();
 
         new ThreadPool();
         new JedisManager();
