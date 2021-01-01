@@ -3,7 +3,6 @@ package net.oldust.sync;
 import lombok.Getter;
 import net.oldust.core.Core;
 import net.oldust.core.internal.provider.EventsProvider;
-import net.oldust.core.internal.provider.Operation;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lang.Async;
 import net.oldust.sync.jedis.RedisRepository;
@@ -35,11 +34,11 @@ public class PlayerManager {
         if (core != null) { // Is null for the OldustBungee
             EventsProvider provider = core.getEventsProvider();
 
-            provider.newOperation(PlayerQuitEvent.class, new Operation<PlayerQuitEvent>((ev, db) -> {
+            provider.newOperation(PlayerQuitEvent.class, (ev, db) -> {
                 UUID uuid = ev.getPlayer().getUniqueId();
 
                 cache.remove(uuid);
-            }));
+            });
         }
 
     }

@@ -4,6 +4,7 @@ import net.oldust.core.actions.Action;
 import net.oldust.core.actions.ActionsReceiver;
 import net.oldust.core.commons.CommonsPlugin;
 import net.oldust.core.inherited.plugins.InheritedPluginsManager;
+import net.oldust.core.permission.PermissionsManager;
 import net.oldust.core.ranks.PlayerRank;
 import net.oldust.core.utils.PlayerUtils;
 import net.oldust.sync.PlayerManager;

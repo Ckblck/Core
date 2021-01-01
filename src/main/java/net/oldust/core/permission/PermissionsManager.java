@@ -4,7 +4,6 @@ import net.oldust.core.Core;
 import net.oldust.core.inherited.plugins.InheritedPlugin;
 import net.oldust.core.inherited.plugins.Plugin;
 import net.oldust.core.internal.provider.EventsProvider;
-import net.oldust.core.internal.provider.Operation;
 import net.oldust.core.mysql.MySQLManager;
 import net.oldust.core.ranks.PlayerRank;
 import net.oldust.core.utils.CUtils;
@@ -89,11 +88,11 @@ public class PermissionsManager extends Plugin {
     public void onJoin() {
         EventsProvider eventsProvider = Core.getInstance().getEventsProvider();
 
-        eventsProvider.newOperation(PlayerJoinEvent.class, new Operation<PlayerJoinEvent>((join, db) -> {
+        eventsProvider.newOperation(PlayerJoinEvent.class, (join, db) -> {
             Player player = join.getPlayer();
 
             setupPlayer(player);
-        }));
+        });
 
     }
 

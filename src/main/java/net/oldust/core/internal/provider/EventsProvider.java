@@ -51,7 +51,7 @@ public class EventsProvider implements Listener {
         handle(e);
     }
 
-    private void handle(Event e, Player player) {
+    private void handle(PlayerEvent e, Player player) {
         Class<? extends Event> clazz = e.getClass();
         WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
 
@@ -64,8 +64,8 @@ public class EventsProvider implements Listener {
 
         ImmutableWrappedPlayerDatabase immutableDb = new ImmutableWrappedPlayerDatabase(database);
 
-        for (Operation<Event> operation : operations.get(clazz)) {
-            operation.getConsumer().accept(e, immutableDb);
+        for (Operation<PlayerEvent> operation : operations.get(clazz)) {
+            operation.run(e, immutableDb);
         }
 
     }
@@ -74,7 +74,7 @@ public class EventsProvider implements Listener {
         handle(e, e.getPlayer());
     }
 
-    public void newOperation(Class<? extends Event> event, Operation<? extends Event> operation) {
+    public void newOperation(Class<? extends PlayerEvent> event, Operation<? extends Event> operation) {
         operations.get(event).add(operation);
     }
 

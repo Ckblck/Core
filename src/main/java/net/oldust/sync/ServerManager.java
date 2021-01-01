@@ -3,7 +3,6 @@ package net.oldust.sync;
 import lombok.Getter;
 import net.oldust.core.Core;
 import net.oldust.core.internal.provider.EventsProvider;
-import net.oldust.core.internal.provider.Operation;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lang.Async;
 import net.oldust.sync.jedis.RedisRepository;
@@ -44,25 +43,24 @@ public class ServerManager {
 
         EventsProvider provider = Core.getInstance().getEventsProvider();
 
-        provider.newOperation(PlayerJoinEvent.class, new Operation<PlayerJoinEvent>((pl, db)
-                -> {
+        provider.newOperation(PlayerJoinEvent.class, (pl, db) -> {
             Map<String, UUID> playersConnected = currentServer.getPlayersConnected();
             Player player = pl.getPlayer();
 
             playersConnected.put(player.getName(), player.getUniqueId());
 
             CUtils.runAsync(this::updateCurrent);
-        }));
+        });
 
-        provider.newOperation(PlayerQuitEvent.class, new Operation<PlayerQuitEvent>((pl, db)
-                -> {
+        provider.newOperation(PlayerQuitEvent.class, (pl, db) -> {
             Map<String, UUID> playersConnected = currentServer.getPlayersConnected();
             Player player = pl.getPlayer();
 
             playersConnected.remove(player.getName());
 
             CUtils.runAsync(this::updateCurrent);
-        }));
+        });
+
     }
 
     @Async

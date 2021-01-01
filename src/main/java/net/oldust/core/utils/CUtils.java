@@ -53,10 +53,6 @@ public class CUtils {
 
     }
 
-    public void logConsole(String message) {
-        Core.getInstance().getServer().getConsoleSender().sendMessage(color(message));
-    }
-
     public void inform(String prefix, String message) {
         Core.getInstance().getServer().getConsoleSender().sendMessage(ChatColor.BLUE
                 + "[" + prefix + "]"

@@ -2,7 +2,6 @@ package net.oldust.core.staff.mode;
 
 import net.oldust.core.Core;
 import net.oldust.core.internal.provider.EventsProvider;
-import net.oldust.core.internal.provider.Operation;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.PlayerUtils;
 import net.oldust.core.utils.lang.Lang;
@@ -152,7 +151,7 @@ public class StaffModeManager implements Listener {
     public void joinEvent() {
         EventsProvider provider = Core.getInstance().getEventsProvider();
 
-        provider.newOperation(PlayerJoinEvent.class, new Operation<PlayerJoinEvent>((join, db) -> {
+        provider.newOperation(PlayerJoinEvent.class, (join, db) -> {
             Player player = join.getPlayer();
 
             boolean vanished = db.contains(PlayerDatabaseKeys.VANISH);
@@ -171,11 +170,11 @@ public class StaffModeManager implements Listener {
                 setStaffMode(player);
             }
 
-        }));
+        });
 
-        provider.newOperation(PlayerQuitEvent.class, new Operation<PlayerQuitEvent>((quit, db) -> {
+        provider.newOperation(PlayerQuitEvent.class, (quit, db) -> {
             deleteStaffModeLocally(quit.getPlayer()); // Borramos localmente, no de Redis.
-        }));
+        });
 
     }
 

@@ -3,7 +3,6 @@ package net.oldust.core.interactive.panels;
 import lombok.Getter;
 import net.oldust.core.Core;
 import net.oldust.core.internal.provider.EventsProvider;
-import net.oldust.core.internal.provider.Operation;
 import net.oldust.core.utils.CUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -31,13 +30,13 @@ public class InteractivePanelManager implements Listener {
 
         EventsProvider provider = Core.getInstance().getEventsProvider();
 
-        provider.newOperation(PlayerQuitEvent.class, new Operation<PlayerQuitEvent>((quit, db) -> {
+        provider.newOperation(PlayerQuitEvent.class, (quit, db) -> {
             Player player = quit.getPlayer();
 
             if (hasNotPanel(player)) return;
 
             exitPanel(player);
-        }));
+        });
 
         CUtils.registerEvents(this);
     }

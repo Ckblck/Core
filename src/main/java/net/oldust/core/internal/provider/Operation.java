@@ -1,11 +1,7 @@
 package net.oldust.core.internal.provider;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.oldust.sync.wrappers.defaults.ImmutableWrappedPlayerDatabase;
-import org.bukkit.event.Event;
-
-import java.util.function.BiConsumer;
+import org.bukkit.event.player.PlayerEvent;
 
 /**
  * Una operación es aquella que es ejecutada
@@ -14,8 +10,7 @@ import java.util.function.BiConsumer;
  * @param <T> evento al cual escuchar
  */
 
-@Getter
-@RequiredArgsConstructor
-public class Operation<T extends Event> {
-    private final BiConsumer<T, ImmutableWrappedPlayerDatabase> consumer;
+@FunctionalInterface
+public interface Operation<T extends PlayerEvent> {
+    void run(T event, ImmutableWrappedPlayerDatabase database);
 }

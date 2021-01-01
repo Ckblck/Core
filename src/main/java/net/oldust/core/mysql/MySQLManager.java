@@ -184,9 +184,9 @@ public class MySQLManager {
         int port = server.getPort();
 
         if (address == null) {
-            CUtils.logConsole("--------------------------------------------------------------------------------------");
-            CUtils.logConsole("No ha sido posible obtener la dirección pública de la máquina.");
-            CUtils.logConsole("--------------------------------------------------------------------------------------");
+            CUtils.inform("Core", "x------------------------------x");
+            CUtils.inform("Core", "Could not get public IP address.");
+            CUtils.inform("Core", "x------------------------------x");
 
             Bukkit.shutdown();
         }
@@ -195,20 +195,21 @@ public class MySQLManager {
 
         try {
             if (set.next()) {
-                Core.getInstance().setServerName(set.getString("name"));
+                String serverName = set.getString("name");
+                Core.getInstance().setServerName(serverName);
 
                 return;
             }
 
-            CUtils.logConsole("--------------------------------------------------------------------------------------");
-            CUtils.logConsole("Este servidor no está registrado en la base de datos de Oldust.");
-            CUtils.logConsole("--------------------------------------------------------------------------------------");
+            CUtils.inform("Core", "x---------------------------------------------------x");
+            CUtils.inform("Core", "This server is not registered in the Oldust database.");
+            CUtils.inform("Core", "x---------------------------------------------------x");
 
             Bukkit.shutdown();
         } catch (SQLException e) {
-            CUtils.logConsole("--------------------------------------------------------------------------------------");
-            CUtils.logConsole("Hubo un error al obtener el nombre del servidor. No se pudo validar.");
-            CUtils.logConsole("--------------------------------------------------------------------------------------");
+            CUtils.inform("Core", "x-------------------------------------------------------------x");
+            CUtils.inform("Core", "Could not obtain server's public IP address. Validation failed.");
+            CUtils.inform("Core", "x-------------------------------------------------------------x");
 
             Bukkit.shutdown();
         }

@@ -70,6 +70,9 @@ public class DispatchMessageAction extends Action<DispatchMessageAction> {
     protected void execute() {
         boolean shouldBroadcast = channel == Channel.NETWORK_WIDE || channel.serverName.equalsIgnoreCase(Core.getInstance().getServerName());
 
+        // FIXME: Enum inner fields are not serialized, so channel.serverName is ALWAYS the value of the server in which its received
+        // So, all messages are network_wide, basically server_wide no anda
+
         if (!shouldBroadcast) return;
 
         Collection<? extends Player> players = PlayerUtils.getPlayers();

@@ -3,7 +3,6 @@ package net.oldust.core.commons.tab;
 import net.md_5.bungee.api.ChatColor;
 import net.oldust.core.Core;
 import net.oldust.core.internal.provider.EventsProvider;
-import net.oldust.core.internal.provider.Operation;
 import net.oldust.core.ranks.PlayerRank;
 import net.oldust.core.utils.CUtils;
 import net.oldust.sync.wrappers.PlayerDatabaseKeys;
@@ -43,13 +42,13 @@ public class TabListManager extends BukkitRunnable {
     private void event() {
         EventsProvider provider = Core.getInstance().getEventsProvider();
 
-        provider.newOperation(PlayerJoinEvent.class, new Operation<PlayerJoinEvent>((ev, db) -> {
+        provider.newOperation(PlayerJoinEvent.class, (ev, db) -> {
             Player player = ev.getPlayer();
             PlayerRank rank = db.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
 
             setTabPrefix(rank, player);
             setTabExtras(player);
-        }));
+        });
 
     }
 

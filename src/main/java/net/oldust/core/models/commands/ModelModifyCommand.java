@@ -5,7 +5,6 @@ import net.oldust.core.inherited.commands.InheritedCommand;
 import net.oldust.core.interactive.panels.InteractivePanel;
 import net.oldust.core.interactive.panels.InteractivePanelManager;
 import net.oldust.core.internal.provider.EventsProvider;
-import net.oldust.core.internal.provider.Operation;
 import net.oldust.core.models.ModelPlugin;
 import net.oldust.core.ranks.PlayerRank;
 import net.oldust.core.utils.CUtils;
@@ -50,8 +49,11 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
 
         EventsProvider provider = Core.getInstance().getEventsProvider();
 
-        provider.newOperation(PlayerQuitEvent.class, new Operation<PlayerQuitEvent>((event, db)
-                -> playersModifying.remove(event.getPlayer().getUniqueId())));
+        provider.newOperation(PlayerQuitEvent.class, (event, db) -> {
+            UUID uuid = event.getPlayer().getUniqueId();
+
+            playersModifying.remove(uuid);
+        });
 
         CUtils.registerEvents(this);
     }
