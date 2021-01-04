@@ -58,7 +58,7 @@ public class LogsInventory extends AbstractInventoryProvider {
         this.page = 0;
 
         CompletableFuture.supplyAsync(this::build)
-                .thenAcceptAsync(inv -> CUtils.runSync(() -> inv.open(player)));
+                .thenAccept(inv -> CUtils.runSync(() -> inv.open(player)));
     }
 
     @Override
@@ -168,7 +168,14 @@ public class LogsInventory extends AbstractInventoryProvider {
                 String playerName = set.getString("nickname");
                 String ip = set.getString("ip");
                 Date join = new Date(set.getLong("join"));
-                Date exit = new Date(set.getLong("exit"));
+
+                long exitEpoch = set.getLong("exit");
+
+                if (exitEpoch == 0) { // When 0, exit is null, therefore player is connected.
+                    continue;
+                }
+
+                Date exit = new Date(exitEpoch);
 
                 logs.add(new PlayerLog(id, playerName, ip, join, exit));
             }
