@@ -15,7 +15,6 @@ import net.oldust.core.utils.ItemBuilder;
 import net.oldust.core.utils.advancement.FakeAdvancement;
 import net.oldust.core.utils.lang.Async;
 import net.oldust.core.utils.lang.Lang;
-import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
@@ -103,7 +102,7 @@ public class LogsInventory extends AbstractInventoryProvider {
                     return response;
                 }).thenAccept(geoResponse -> CUtils.runSync(() -> {
                     FakeAdvancement respAdv = FakeAdvancement.builder()
-                            .key(new NamespacedKey("oldust-" + RandomStringUtils.randomAlphanumeric(3).toLowerCase(), "geo/ip"))
+                            .key(new NamespacedKey(Core.getInstance(), "geo/ip"))
                             .title("#a6a6a6City: &f" + geoResponse.getCity() +
                                     "\n#a6a6a6Region: &f" + geoResponse.getRegionName() +
                                     "\n#a6a6a6Country: &f" + geoResponse.getCountryName())

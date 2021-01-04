@@ -1,13 +1,5 @@
 package net.oldust.core.utils.advancement;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.ListenerOptions;
-import com.comphenix.protocol.events.ListeningWhitelist;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.events.PacketListener;
-import com.comphenix.protocol.injector.GamePhase;
-import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
@@ -23,13 +15,8 @@ import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftNamespacedKey;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.*;
-import java.util.logging.Level;
 
 /**
  * Clase que permite la creación de mensajes
@@ -51,8 +38,7 @@ import java.util.logging.Level;
  */
 
 @Builder
-@SuppressWarnings("UnstableApiUsage")
-public class FakeAdvancement implements PacketListener {
+public class FakeAdvancement {
     private static final String JSON_MODEL = "{\"parent\":\"minecraft:recipes/root\",\"display\":{\"icon\":{\"item\":\"minecraft:{item}\"},\"title\":{\"text\":\"{title}\"},\"description\":{\"text\":\"{desc}\"},\"frame\":\"{frame}\",\"show_toast\":true,\"announce_to_chat\":{announce},\"hidden\":false},\"criteria\":{\"impossible\":{\"trigger\":\"minecraft:impossible\"}},\"requirements\":[[\"impossible\"]]}";
 
     private final Set<UUID> receivers = new HashSet<>();
@@ -104,21 +90,6 @@ public class FakeAdvancement implements PacketListener {
 
     public void remove() {
         CraftMagicNumbers.INSTANCE.removeAdvancement(key);
-        ProtocolLibrary.getProtocolManager().removePacketListener(this);
-
-        File file = new File(getBukkitDataPackFolder() + File.separator + "data", key.getNamespace());
-
-        CUtils.runAsync(() -> {
-            try {
-                Files.walk(file.toPath())
-                        .sorted(Comparator.reverseOrder())
-                        .map(java.nio.file.Path::toFile)
-                        .forEach(File::delete);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-
     }
 
     public void unshow(Player player, Advancement advancement) {
@@ -143,8 +114,6 @@ public class FakeAdvancement implements PacketListener {
 
         MinecraftServer server = MinecraftServer.getServer();
 
-        ProtocolLibrary.getProtocolManager().addPacketListener(this);
-
         try {
             loadAdvancement(key, json);
         } catch (IllegalArgumentException ignored) {
@@ -156,7 +125,7 @@ public class FakeAdvancement implements PacketListener {
         return advData.a(minecraftKey);
     }
 
-    public Advancement loadAdvancement(NamespacedKey key, String advancement) {
+    public void loadAdvancement(NamespacedKey key, String advancement) {
         Preconditions.checkState(ready);
 
         if (Bukkit.getAdvancement(key) != null) {
@@ -177,78 +146,16 @@ public class FakeAdvancement implements PacketListener {
                         context);
 
         server.getAdvancementData().REGISTRY.a(Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
-        Advancement bukkit = Bukkit.getAdvancement(key);
-
-        if (bukkit != null) {
-            File file = new File(getBukkitDataPackFolder(), "data" + File.separator + key.getNamespace() + File.separator + "advancements" + File.separator + key.getKey() + ".json");
-            file.getParentFile().mkdirs();
-
-            try {
-                com.google.common.io.Files.write(advancement, file, Charsets.UTF_8);
-            } catch (IOException ex) {
-                Bukkit.getLogger().log(Level.SEVERE, "Error saving advancement " + key, ex);
-            }
-
-            server.getPlayerList().reload();
-
-            return bukkit;
-        }
-
-        return null;
-    }
-
-    private static File getBukkitDataPackFolder() {
-        return new File(MinecraftServer.getServer().a(SavedFile.DATAPACKS).toFile(), "bukkit");
-    }
-
-    /**
-     * Evitamos que el Advancement
-     * se cargue a los demás jugadores,
-     * generando un fps-spike innecesario.
-     */
-
-    @Override
-    public void onPacketSending(PacketEvent event) {
-        Player player = event.getPlayer();
-        boolean isNotAwarded = !receivers.contains(player.getUniqueId());
-
-        if (isNotAwarded) {
-            event.setCancelled(true);
-        }
-    }
-
-    @Override
-    public void onPacketReceiving(PacketEvent packetEvent) {
-        // Not used;
-    }
-
-    @Override
-    public ListeningWhitelist getSendingWhitelist() {
-        return ListeningWhitelist.newBuilder()
-                .lowest()
-                .gamePhase(GamePhase.PLAYING)
-                .options(new ListenerOptions[0])
-                .types(PacketType.Play.Server.TAGS)
-                .build();
-    }
-
-    @Override
-    public ListeningWhitelist getReceivingWhitelist() {
-        return ListeningWhitelist.newBuilder()
-                .lowest()
-                .gamePhase(GamePhase.PLAYING)
-                .options(new ListenerOptions[0])
-                .types(PacketType.Play.Server.TAGS)
-                .build();
-    }
-
-    @Override
-    public Plugin getPlugin() {
-        return Core.getInstance();
     }
 
     public static class FakeAdvancementBuilder {
         public FakeAdvancement build() {
+            Preconditions.checkNotNull(item);
+            Preconditions.checkNotNull(title);
+            Preconditions.checkNotNull(description);
+            Preconditions.checkNotNull(frame);
+            Preconditions.checkNotNull(key);
+
             json = JSON_MODEL;
 
             json = json.replace("{item}", item);

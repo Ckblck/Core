@@ -44,7 +44,12 @@ public class PlayerManager {
     }
 
     public void cacheDatabase(WrappedPlayerDatabase database) {
-        cache.put(database.getPlayerUUID(), database);
+        UUID uuid = database.getPlayerUUID();
+
+        if (!cache.containsKey(uuid)) { // Yes, I already know this is often not needed, but since this database is from Redis, I don't want any possibility in which some data might get lost.
+            cache.put(uuid, database);
+        }
+
     }
 
     public void saveDatabase(WrappedPlayerDatabase database) {
@@ -79,9 +84,7 @@ public class PlayerManager {
     public void update(WrappedPlayerDatabase database) {
         UUID uuid = database.getPlayerUUID();
 
-        if (cache.containsKey(uuid)) {
-            cache.replace(uuid, database);
-        }
+        cache.replace(uuid, database);
 
         CUtils.runAsync(() ->
                 playerRepository.update(database));

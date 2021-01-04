@@ -5,6 +5,7 @@ import net.oldust.core.commons.commands.MsgCommand;
 import net.oldust.core.commons.commands.PingCommand;
 import net.oldust.core.commons.commands.ReplyCommand;
 import net.oldust.core.commons.commands.ReportCommand;
+import net.oldust.core.commons.login.LoginEvent;
 import net.oldust.core.commons.reports.ReportsManager;
 import net.oldust.core.commons.tab.TabListManager;
 import net.oldust.core.inherited.plugins.InheritedPlugin;
@@ -22,6 +23,7 @@ public class CommonsPlugin extends Plugin {
         new ReportCommand(this);
         new PingCommand(this);
         new ReplyCommand(this);
+        new LoginEvent();
 
         msgCommand = new MsgCommand(this);
         tabListManager = new TabListManager();
