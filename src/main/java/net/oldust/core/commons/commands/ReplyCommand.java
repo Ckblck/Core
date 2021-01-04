@@ -46,7 +46,6 @@ public class ReplyCommand extends InheritedCommand<CommonsPlugin> {
                     String msg = String.join(" ", message);
 
                     msgCommand.sendMsg(player, lastPlayer.asString(), msg);
-
                 }, () -> CUtils.msg(player, Lang.ERROR_COLOR + "You don't have anyone to reply to!"));
 
             });

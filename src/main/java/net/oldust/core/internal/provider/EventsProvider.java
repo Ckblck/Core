@@ -55,8 +55,11 @@ public class EventsProvider implements Listener {
         Class<? extends Event> clazz = e.getClass();
         WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
 
-        if (database == null) { // Si esto pasa, estamos en la B, significaría que 'MandatoryCacheWrappedAction' no fue capaz de enviarse lo suficientemente rápido para cachear la Wrapped.
-            CUtils.inform("Server", "A database disappeared! These aren't good news... Is redis working correctly?");
+        if (database == null) { // Si esto pasa, estamos en la B, significaría la Wrapped no se pudo cachear lo suficientemente rápido.
+            if (e instanceof PlayerJoinEvent) {
+                CUtils.inform("Server", "A database disappeared! These aren't good news... Is the server working correctly?");
+            }
+
             player.kickPlayer(Lang.DB_DISAPPEARED);
 
             return;
