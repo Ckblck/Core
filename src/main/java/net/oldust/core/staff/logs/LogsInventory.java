@@ -38,6 +38,7 @@ public class LogsInventory extends AbstractInventoryProvider {
 
     private final String nickname;
     private List<PlayerLog> logs;
+
     private int page;
     private boolean loading;
 
