@@ -1,7 +1,8 @@
-package net.oldust.core.scoreboard;
+package net.oldust.core.scoreboard.objects;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.oldust.core.utils.CUtils;
 
 import java.text.FieldPosition;
 import java.text.MessageFormat;
@@ -41,7 +42,7 @@ public class Line {
             replacement = new Object[]{replacement};
         }
 
-        return messageFormat.format(replacement, buffer, null).toString();
+        return CUtils.color(messageFormat.format(replacement, buffer, null).toString());
     }
 
     /**
@@ -78,7 +79,9 @@ public class Line {
         MessageFormat format = new MessageFormat(text);
         format.format(replaces, buffer, new FieldPosition(0));
 
-        return new Line(format, text, buffer.toString());
+        String base = CUtils.color(buffer.toString());
+
+        return new Line(format, text, base);
     }
 
 }

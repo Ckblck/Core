@@ -1,11 +1,13 @@
 package net.oldust.core.scoreboard.entries;
 
 import com.google.common.base.Preconditions;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.oldust.core.Core;
-import net.oldust.core.scoreboard.Line;
-import net.oldust.core.scoreboard.ServerScoreboard;
-import net.oldust.core.scoreboard.TeamEntry;
+import net.oldust.core.scoreboard.objects.Line;
+import net.oldust.core.scoreboard.objects.PlayerScoreboard;
+import net.oldust.core.scoreboard.objects.TeamEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Team;
@@ -36,7 +38,7 @@ public class DynamicEntry extends TeamEntry {
     /**
      * Constructs a new DynamicEntry.
      *
-     * @param serverScoreboard  scoreboard to add line to
+     * @param playerScoreboard  scoreboard to add line to
      * @param line              line to add
      * @param properties        the properties which will modify the line
      * @param async             should the property processing be done async?
@@ -46,11 +48,11 @@ public class DynamicEntry extends TeamEntry {
      * @param cancelledConsumer nullable, consumer which will be executed after the task is cancelled
      */
 
-    private DynamicEntry(ServerScoreboard serverScoreboard, Line line,
+    private DynamicEntry(PlayerScoreboard playerScoreboard, Line line,
                          List<DynamicProperty> properties, boolean async, int taskDelay, int taskPeriod,
                          @Nullable Predicate<DynamicEntry> cancelPredicate,
                          @Nullable Consumer<DynamicEntry> cancelledConsumer) {
-        super(serverScoreboard);
+        super(playerScoreboard);
 
         this.line = line;
         this.properties = properties;
@@ -74,11 +76,10 @@ public class DynamicEntry extends TeamEntry {
     }
 
     public void run() {
-        boolean shouldCancel = cancelPredicate.test(this);
+        boolean shouldCancel = cancelPredicate != null && cancelPredicate.test(this);
 
         if (shouldCancel) {
-            task.cancel();
-            cancelledConsumer.accept(this);
+            cancel();
 
             return;
         }
@@ -97,32 +98,42 @@ public class DynamicEntry extends TeamEntry {
         iteration++;
     }
 
-    public static DynamicEntryBuilder builder() {
-        return new DynamicEntryBuilder();
+    /**
+     * Cancels the task from running.
+     * The line will not be affected,
+     * it will stay indefinitely.
+     */
+
+    public void cancel() {
+        task.cancel();
+        if (cancelledConsumer != null)
+            cancelledConsumer.accept(this);
     }
 
+    /**
+     * Cancels the task
+     * and removes the line from the scoreboard.
+     */
+
+    public void removeLine() {
+        cancel();
+        getPlayerScoreboard().removeEntry(this);
+    }
+
+    public static DynamicEntryBuilder builder(PlayerScoreboard playerScoreboard) {
+        return new DynamicEntryBuilder(playerScoreboard);
+    }
+
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     public static class DynamicEntryBuilder {
         private final List<DynamicProperty> properties = new ArrayList<>();
 
-        private ServerScoreboard serverScoreboard;
+        private final PlayerScoreboard playerScoreboard;
         private Line line;
         private boolean async = true;
         private int delay, period = -1;
         private Predicate<DynamicEntry> cancelPredicate;
         private Consumer<DynamicEntry> cancelledConsumer;
-
-        private DynamicEntryBuilder() {
-        }
-
-        /**
-         * Establishes the scoreboard to be modifying.
-         */
-
-        public DynamicEntryBuilder scoreboard(ServerScoreboard serverScoreboard) {
-            this.serverScoreboard = serverScoreboard;
-
-            return this;
-        }
 
         /**
          * Sets the task's properties.
@@ -206,13 +217,12 @@ public class DynamicEntry extends TeamEntry {
         }
 
         public DynamicEntry build() {
-            Preconditions.checkState(serverScoreboard != null, "serverScoreboard cannot be null.");
-            Preconditions.checkState(line != null, "line cannot be null");
+            Preconditions.checkState(line != null, "line cannot be null.");
             Preconditions.checkState(!properties.isEmpty(), "At least one property must be specified.");
             Preconditions.checkState(delay != -1 || period != -1, "delay or period must be specified.");
 
             return new DynamicEntry(
-                    serverScoreboard, line, properties, async,
+                    playerScoreboard, line, properties, async,
                     delay, period, cancelPredicate, cancelledConsumer
             );
         }

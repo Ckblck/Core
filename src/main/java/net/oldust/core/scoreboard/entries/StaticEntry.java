@@ -1,20 +1,21 @@
 package net.oldust.core.scoreboard.entries;
 
-import net.oldust.core.scoreboard.ScoreEntry;
-import net.oldust.core.scoreboard.ServerScoreboard;
+import net.oldust.core.scoreboard.objects.PlayerScoreboard;
+import net.oldust.core.scoreboard.objects.ScoreEntry;
+import net.oldust.core.utils.CUtils;
 
 /**
- * A StaticEntry is used when a non-changing line
+ * A StaticEntry is used when a unmodifiable/static line
  * is needed to be displayed in the scoreboard.
  */
 
 public class StaticEntry extends ScoreEntry {
     private final String text;
 
-    public StaticEntry(ServerScoreboard serverScoreboard, String text) {
-        super(serverScoreboard);
+    public StaticEntry(PlayerScoreboard playerScoreboard, String text) {
+        super(playerScoreboard);
 
-        this.text = text;
+        this.text = CUtils.color(text);
 
         setEntry(create()); // after variable initialization
     }

@@ -14,6 +14,7 @@ import net.oldust.core.models.ModelPlugin;
 import net.oldust.core.mysql.MySQLManager;
 import net.oldust.core.permission.PermissionsManager;
 import net.oldust.core.pool.ThreadPool;
+import net.oldust.core.scoreboard.ScoreboardManager;
 import net.oldust.core.staff.StaffPlugin;
 import net.oldust.core.staff.logs.LogsInventory;
 import net.oldust.core.staff.playerdata.PlayerDataInventory;
@@ -84,6 +85,8 @@ public class Core extends JavaPlugin {
         new PlayerManager();
         new ActionsReceiver();
         new PermissionsManager();
+        new ScoreboardManager();
+
         // new Interceptor(); <- Packet Interceptor -> (DEBUG Only)
 
         serverManager = new ServerManager();

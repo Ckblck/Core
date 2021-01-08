@@ -1,4 +1,4 @@
-package net.oldust.core.scoreboard;
+package net.oldust.core.scoreboard.objects;
 
 import lombok.Getter;
 import org.bukkit.scoreboard.Scoreboard;
@@ -13,14 +13,14 @@ public abstract class TeamEntry extends ScoreboardEntry<Team> {
     @Getter
     private String entryName;
 
-    protected TeamEntry(ServerScoreboard serverScoreboard) {
-        super(serverScoreboard);
+    protected TeamEntry(PlayerScoreboard playerScoreboard) {
+        super(playerScoreboard);
     }
 
     @Override
     protected Team create() {
-        ServerScoreboard serverScoreboard = getServerScoreboard();
-        Scoreboard scoreboard = serverScoreboard.getScoreboard();
+        PlayerScoreboard playerScoreboard = getPlayerScoreboard();
+        Scoreboard scoreboard = playerScoreboard.getScoreboard();
 
         String entryName = getRandomName();
 

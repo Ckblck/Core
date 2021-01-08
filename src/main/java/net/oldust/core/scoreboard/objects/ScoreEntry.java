@@ -1,18 +1,18 @@
-package net.oldust.core.scoreboard;
+package net.oldust.core.scoreboard.objects;
 
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
 public abstract class ScoreEntry extends ScoreboardEntry<Score> {
 
-    public ScoreEntry(ServerScoreboard serverScoreboard) {
-        super(serverScoreboard);
+    public ScoreEntry(PlayerScoreboard playerScoreboard) {
+        super(playerScoreboard);
     }
 
     @Override
     protected Score create() {
-        ServerScoreboard serverScoreboard = getServerScoreboard();
-        Objective objective = serverScoreboard.getObjective();
+        PlayerScoreboard playerScoreboard = getPlayerScoreboard();
+        Objective objective = playerScoreboard.getObjective();
 
         String entry = getText() + getRandomName();
 

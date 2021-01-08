@@ -1,4 +1,4 @@
-package net.oldust.core.scoreboard;
+package net.oldust.core.scoreboard.objects;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,12 +11,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
 public abstract class ScoreboardEntry<T> {
-    private final ServerScoreboard serverScoreboard;
+    private final PlayerScoreboard playerScoreboard;
     @Setter
     private T entry;
 
-    protected ScoreboardEntry(ServerScoreboard serverScoreboard) {
-        this.serverScoreboard = serverScoreboard;
+    protected ScoreboardEntry(PlayerScoreboard playerScoreboard) {
+        this.playerScoreboard = playerScoreboard;
     }
 
     public abstract String getText();
@@ -43,7 +43,7 @@ public abstract class ScoreboardEntry<T> {
             return (Score) entry;
         } else {
             Team team = (Team) entry;
-            Objective objective = getServerScoreboard().getObjective();
+            Objective objective = getPlayerScoreboard().getObjective();
 
             return objective.getScore(team.getName());
         }

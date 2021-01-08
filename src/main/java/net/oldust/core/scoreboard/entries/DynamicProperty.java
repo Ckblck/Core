@@ -1,6 +1,6 @@
 package net.oldust.core.scoreboard.entries;
 
-import net.oldust.core.scoreboard.Line;
+import net.oldust.core.scoreboard.objects.Line;
 
 @FunctionalInterface
 public interface DynamicProperty {

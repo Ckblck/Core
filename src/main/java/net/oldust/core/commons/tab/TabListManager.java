@@ -26,9 +26,6 @@ public class TabListManager extends BukkitRunnable {
     private int cache;
     private String currentFooter;
 
-    private String ipGradient = ChatColor.GRAY + "mc.oldust.net";
-    private int currentChar = 0;
-
     private boolean firstRun = true;
     private boolean reverse = false;
     private int hexNumber = 82;

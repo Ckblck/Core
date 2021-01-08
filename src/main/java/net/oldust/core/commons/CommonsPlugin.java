@@ -10,10 +10,10 @@ import net.oldust.core.commons.reports.ReportsManager;
 import net.oldust.core.commons.tab.TabListManager;
 import net.oldust.core.inherited.plugins.InheritedPlugin;
 import net.oldust.core.inherited.plugins.Plugin;
-import net.oldust.core.scoreboard.Line;
-import net.oldust.core.scoreboard.ServerScoreboard;
 import net.oldust.core.scoreboard.entries.DynamicEntry;
 import net.oldust.core.scoreboard.entries.StaticEntry;
+import net.oldust.core.scoreboard.objects.Line;
+import net.oldust.core.scoreboard.objects.PlayerScoreboard;
 import org.apache.commons.lang.RandomStringUtils;
 
 import java.text.SimpleDateFormat;
@@ -34,30 +34,27 @@ public class CommonsPlugin extends Plugin {
         new LoginEvent();
 
         // todo remove
-        ServerScoreboard serverScoreboard = new ServerScoreboard("Score", "Oldust");
-        serverScoreboard.addEntry(new StaticEntry(serverScoreboard, " "));
-        serverScoreboard.addEntry(new StaticEntry(serverScoreboard, "Entrada"));
-        serverScoreboard.addEntry(new StaticEntry(serverScoreboard, "234 "));
+        PlayerScoreboard playerScoreboard = new PlayerScoreboard("Score", "#fcba03⚔ &r&lOLDUST #fcba03⚔");
+        playerScoreboard.tryInsertAt(2, new StaticEntry(playerScoreboard, " "));
 
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
 
-        DynamicEntry build = DynamicEntry.builder()
+        DynamicEntry build = DynamicEntry.builder(playerScoreboard)
                 .line(Line.of(
                         "Hola {0}, Date: {1}",
-                        "Cookieblack", format.format(new Date()))
-                )
+                        "Cookieblack", format.format(new Date())
+                ))
                 .task(0, 20)
                 .withProperty(property -> property.formatBunch(
                         RandomStringUtils.randomAlphabetic(5), format.format(new Date())
                 ))
-                .whenCancelled(entry -> entry.getServerScoreboard().removeEntry(entry))
-                .cancelWhen(entry -> entry.getIteration() == 10)
-                .scoreboard(serverScoreboard)
+                .whenCancelled(DynamicEntry::removeLine)
+                /*.cancelWhen(entry -> entry.getIteration() == 10)*/
                 .build();
 
-        serverScoreboard.addEntry(build);
+        playerScoreboard.insertEntryAt(1, new StaticEntry(playerScoreboard, " este deberia estar en 13"));
 
-        serverScoreboard.addEntry(10, new StaticEntry(serverScoreboard, " este deberia estar en 10"));
+        playerScoreboard.addEntry(build);
 
         msgCommand = new MsgCommand(this);
         tabListManager = new TabListManager();

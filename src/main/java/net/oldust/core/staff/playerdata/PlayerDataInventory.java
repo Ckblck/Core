@@ -150,7 +150,9 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
 
             if (isPunished) {
                 String date = FORMAT.format(lastPunishment.getDate());
-                String expires = FORMAT.format(expiration);
+                String expires = (expiration == null)
+                        ? Lang.ERROR_COLOR + "never"
+                        : FORMAT.format(expiration); // TODO Is this ? : needed?
 
                 currentPunishmentInfo = new String[]{
                         "   " + Lang.ERROR_COLOR + "* #a6a6a6 Type: &f" + lastPunishment.getType().name().toLowerCase(),
