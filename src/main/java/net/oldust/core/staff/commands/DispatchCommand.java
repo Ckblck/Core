@@ -26,13 +26,13 @@ public class DispatchCommand extends InheritedCommand<StaffPlugin> {
             if (isNotAboveOrEqual(sender, PlayerRank.ADMIN)) return;
 
             if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "'*' or <server name>"));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "'*' or <server name>", LangSound.ERROR));
 
                 return;
             }
 
             if (args.length == 1) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "command"));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "command", LangSound.ERROR));
 
                 return;
             }

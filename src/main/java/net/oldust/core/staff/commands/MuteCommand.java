@@ -31,13 +31,13 @@ public class MuteCommand extends InheritedCommand<StaffPlugin> {
             if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
 
             if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname", LangSound.ERROR));
 
                 return;
             }
 
             if (args.length == 1) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "duration"));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "duration", LangSound.ERROR));
 
                 return;
             }
@@ -53,7 +53,7 @@ public class MuteCommand extends InheritedCommand<StaffPlugin> {
             }
 
             if (args.length == 2) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason"));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason", LangSound.ERROR));
 
                 return;
             }

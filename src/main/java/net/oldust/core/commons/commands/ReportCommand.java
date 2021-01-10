@@ -39,13 +39,13 @@ public class ReportCommand extends InheritedCommand<CommonsPlugin> {
                     new ReportsInventory(player, getPlugin());
                 } else {
                     if (args.length == 0) {
-                        CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+                        CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname", LangSound.ERROR));
 
                         return;
                     }
 
                     if (args.length == 1) {
-                        CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason"));
+                        CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason", LangSound.ERROR));
 
                         return;
                     }
@@ -70,7 +70,7 @@ public class ReportCommand extends InheritedCommand<CommonsPlugin> {
                     boolean offline = !Core.getInstance().getServerManager().isPlayerOnline(reported);
 
                     if (offline) {
-                        CUtils.msg(sender, Lang.PLAYER_OFFLINE);
+                        CUtils.msg(sender, Lang.PLAYER_OFFLINE, LangSound.ERROR);
 
                         return;
                     }

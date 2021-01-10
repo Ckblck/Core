@@ -29,7 +29,7 @@ public class LogCommand extends InheritedCommand<StaffPlugin> {
             if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
 
             if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname", LangSound.ERROR));
 
                 return;
             }

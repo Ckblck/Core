@@ -36,7 +36,7 @@ public class GamemodeCommand extends InheritedCommand<StaffPlugin> {
                     boolean connected = player != null;
 
                     if (!connected) {
-                        CUtils.msg(sender, Lang.PLAYER_OFFLINE);
+                        CUtils.msg(sender, Lang.PLAYER_OFFLINE, LangSound.ERROR);
 
                         return;
                     }
@@ -54,7 +54,7 @@ public class GamemodeCommand extends InheritedCommand<StaffPlugin> {
                 boolean connected = player != null;
 
                 if (!connected) {
-                    CUtils.msg(sender, Lang.PLAYER_OFFLINE);
+                    CUtils.msg(sender, Lang.PLAYER_OFFLINE, LangSound.ERROR);
 
                     return;
                 }
@@ -87,7 +87,7 @@ public class GamemodeCommand extends InheritedCommand<StaffPlugin> {
                 break;
             default:
                 if (args.length == 0) {
-                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "0/1/2/3"));
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "0/1/2/3", LangSound.ERROR));
 
                     return;
                 }

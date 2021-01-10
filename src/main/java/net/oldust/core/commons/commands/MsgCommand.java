@@ -38,13 +38,13 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
             if (isNotPlayer(sender)) return;
 
             if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname", LangSound.ERROR, LangSound.ERROR));
 
                 return;
             }
 
             if (args.length == 1) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "message"));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "message", LangSound.ERROR, LangSound.ERROR));
 
                 return;
             }
@@ -165,7 +165,7 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
             new SendPlayerMessageAction(target, finalMessage)
                     .push(JedisManager.getInstance().getPool());
 
-        }, () -> CUtils.msg(player, Lang.PLAYER_OFFLINE));
+        }, () -> CUtils.msg(player, Lang.PLAYER_OFFLINE, LangSound.ERROR));
     }
 
     private String buildFormat(Player player, String targetPlayer, PlayerRank playerRank, PlayerRank targetRank) {

@@ -37,7 +37,7 @@ public class ModelCommand extends InheritedCommand<ModelPlugin> {
             if (isNotAboveOrEqual(sender, PlayerRank.ADMIN)) return;
 
             if (args.length < 1) {
-                CUtils.msg(sender, Lang.ERROR_COLOR + String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "file_name", LangSound.ERROR));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "file_name", LangSound.ERROR));
 
                 return;
             }

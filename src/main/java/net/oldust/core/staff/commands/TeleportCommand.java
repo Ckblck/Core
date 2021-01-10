@@ -34,7 +34,7 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
             if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
 
             if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"), LangSound.ERROR);
 
                 return;
             }
@@ -97,7 +97,7 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
         boolean hasArgs = args.length >= 1;
 
         if (!hasArgs) {
-            CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"));
+            CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"), LangSound.ERROR);
 
             return;
         }
@@ -134,7 +134,7 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
                     boolean present = targetServer.isPresent();
 
                     if (!present) {
-                        CUtils.msg(sender, String.format(Lang.SPECIFIC_PLAYER_OFFLINE_FORMATABLE, target));
+                        CUtils.msg(sender, String.format(Lang.SPECIFIC_PLAYER_OFFLINE_FORMATABLE, target, LangSound.ERROR));
 
                         return;
                     }
@@ -142,7 +142,7 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
                     boolean whoOnline = svManager.isPlayerOnline(who);
 
                     if (!whoOnline) {
-                        CUtils.msg(sender, String.format(Lang.SPECIFIC_PLAYER_OFFLINE_FORMATABLE, who));
+                        CUtils.msg(sender, String.format(Lang.SPECIFIC_PLAYER_OFFLINE_FORMATABLE, who, LangSound.ERROR));
 
                         return;
                     }
@@ -177,7 +177,7 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
                 boolean present = targetSv.isPresent();
 
                 if (!present) {
-                    CUtils.msg(sender, Lang.PLAYER_OFFLINE);
+                    CUtils.msg(sender, Lang.PLAYER_OFFLINE, LangSound.ERROR);
 
                     return;
                 }
@@ -209,7 +209,7 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
             boolean present = targetServer.isPresent();
 
             if (!present) {
-                CUtils.msg(sender, Lang.PLAYER_OFFLINE);
+                CUtils.msg(sender, Lang.PLAYER_OFFLINE, LangSound.ERROR);
 
                 return;
             }

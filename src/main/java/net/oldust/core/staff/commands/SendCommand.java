@@ -46,7 +46,7 @@ public class SendCommand extends InheritedCommand<StaffPlugin> {
     private void send(CommandSender sender, String[] args) {
         if (args.length < 2) {
             CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE,
-                    (args.length == 0) ? "nickname" : "server_name"));
+                    (args.length == 0) ? "nickname" : "server_name"), LangSound.ERROR);
 
             return;
         }
@@ -67,7 +67,7 @@ public class SendCommand extends InheritedCommand<StaffPlugin> {
             boolean playerConnected = serverManager.isPlayerOnline(player);
 
             if (!playerConnected) {
-                CUtils.msg(sender, Lang.PLAYER_OFFLINE);
+                CUtils.msg(sender, Lang.PLAYER_OFFLINE, LangSound.ERROR);
 
                 return;
             }
@@ -82,7 +82,7 @@ public class SendCommand extends InheritedCommand<StaffPlugin> {
 
     private void sendAll(CommandSender sender, String[] args) {
         if (args.length == 0) {
-            CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "server"));
+            CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "server"), LangSound.ERROR);
 
             return;
         }

@@ -62,7 +62,7 @@ public abstract class InheritedCommand<T extends Plugin> extends Command {
 
     public boolean isNotAboveOrEqual(CommandSender sender, PlayerRank senderRank, PlayerRank neededRank) {
         if (!senderRank.isEqualOrHigher(neededRank)) {
-            CUtils.msg(sender, Lang.NO_PERMISSIONS);
+            CUtils.msg(sender, Lang.NO_PERMISSIONS, LangSound.ERROR);
 
             return true;
         }
@@ -74,7 +74,7 @@ public abstract class InheritedCommand<T extends Plugin> extends Command {
         boolean notAbove = !PlayerRank.getPlayerRank(sender).isEqualOrHigher(rank);
 
         if (notAbove) {
-            CUtils.msg(sender, Lang.NO_PERMISSIONS);
+            CUtils.msg(sender, Lang.NO_PERMISSIONS, LangSound.ERROR);
         }
 
         return notAbove;
@@ -84,7 +84,7 @@ public abstract class InheritedCommand<T extends Plugin> extends Command {
         boolean notStaff = !PlayerRank.getPlayerRank(sender).isStaff();
 
         if (notStaff) {
-            CUtils.msg(sender, Lang.NO_PERMISSIONS);
+            CUtils.msg(sender, Lang.NO_PERMISSIONS, LangSound.ERROR);
         }
 
         return notStaff;

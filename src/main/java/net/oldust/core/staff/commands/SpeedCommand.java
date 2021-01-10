@@ -24,7 +24,7 @@ public class SpeedCommand extends InheritedCommand<StaffPlugin> {
             if (isNotAboveOrEqual(sender, PlayerRank.ADMIN)) return;
 
             if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "amount"));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "amount"), LangSound.ERROR);
 
                 return;
             }

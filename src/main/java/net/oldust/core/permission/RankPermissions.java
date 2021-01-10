@@ -1,7 +1,7 @@
 package net.oldust.core.permission;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.oldust.core.mysql.MySQLManager;
 import net.oldust.core.ranks.PlayerRank;
@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RankPermissions {
     private final Map<String, Boolean> permissions = new HashMap<>();
 
