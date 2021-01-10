@@ -8,6 +8,7 @@ import net.oldust.core.staff.punish.types.KickPunishment;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import org.bukkit.command.CommandSender;
 
 import java.util.Arrays;
@@ -41,7 +42,7 @@ public class KickCommand extends InheritedCommand<StaffPlugin> {
             String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
             if (reason.length() > 34) {
-                CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.");
+                CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.", LangSound.ERROR);
 
                 return;
             }

@@ -6,6 +6,7 @@ import net.oldust.core.staff.StaffPlugin;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -99,7 +100,7 @@ public class GamemodeCommand extends InheritedCommand<StaffPlugin> {
                     gameMode = GameMode.getByValue(Integer.parseInt(mode));
 
                     if (gameMode == null) {
-                        CUtils.msg(sender, Lang.ERROR_COLOR + "The specified gamemode is wrong. Available: 0/1/2/3.");
+                        CUtils.msg(sender, Lang.ERROR_COLOR + "The specified gamemode is wrong. Available: 0/1/2/3.", LangSound.ERROR);
 
                         return;
                     }
@@ -111,13 +112,13 @@ public class GamemodeCommand extends InheritedCommand<StaffPlugin> {
 
                     gameMode = GameMode.valueOf(mode.toUpperCase());
                 } else {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "The specified gamemode is wrong. Available: creative/survival/spectator/adventure.");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "The specified gamemode is wrong. Available: creative/survival/spectator/adventure.", LangSound.ERROR);
 
                     return;
                 }
 
                 if (player.getGameMode() == gameMode) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "You already are in that gamemode!");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "You already are in that gamemode!", LangSound.ERROR);
 
                     return;
                 }

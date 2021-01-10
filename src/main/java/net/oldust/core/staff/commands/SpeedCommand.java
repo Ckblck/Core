@@ -6,6 +6,7 @@ import net.oldust.core.staff.StaffPlugin;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -32,7 +33,7 @@ public class SpeedCommand extends InheritedCommand<StaffPlugin> {
             boolean number = NumberUtils.isNumber(amountStr);
 
             if (!number) {
-                CUtils.msg(sender, Lang.ERROR_COLOR + "Wrong amount! 0-10");
+                CUtils.msg(sender, Lang.ERROR_COLOR + "Wrong amount! 0-10", LangSound.ERROR);
 
                 return;
             }
@@ -40,8 +41,8 @@ public class SpeedCommand extends InheritedCommand<StaffPlugin> {
             Player player = (Player) sender;
             float amount = Float.parseFloat(args[0]) / 10;
 
-            if (amount < 0 | amount > 10) {
-                CUtils.msg(sender, Lang.ERROR_COLOR + "Wrong amount! 0.0-10.0");
+            if (amount < 0F | amount > 10F) {
+                CUtils.msg(sender, Lang.ERROR_COLOR + "Wrong amount! 0.0-10.0", LangSound.ERROR);
 
                 return;
             }

@@ -10,6 +10,7 @@ import net.oldust.core.ranks.PlayerRank;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -53,7 +54,7 @@ public class ReportCommand extends InheritedCommand<CommonsPlugin> {
                     String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
                     if (reported.equalsIgnoreCase(player.getName())) {
-                        CUtils.msg(sender, Lang.ERROR_COLOR + "You can't report yourself!");
+                        CUtils.msg(sender, Lang.ERROR_COLOR + "You can't report yourself!", LangSound.ERROR);
 
                         return;
                     }
@@ -61,7 +62,7 @@ public class ReportCommand extends InheritedCommand<CommonsPlugin> {
                     boolean hasReported = reportsManager.hasReported(player, reported);
 
                     if (hasReported) {
-                        CUtils.msg(sender, Lang.ERROR_COLOR + "You already reported that player!");
+                        CUtils.msg(sender, Lang.ERROR_COLOR + "You already reported that player!", LangSound.ERROR);
 
                         return;
                     }

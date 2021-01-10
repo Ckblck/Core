@@ -34,7 +34,7 @@ public class PermissionsManager extends Plugin {
     public void onEnable() {
         loadRankPermissions();
 
-        onJoin(); // Registramos el evento.
+        onJoin(); // Register the event.
     }
 
     private void loadRankPermissions() {

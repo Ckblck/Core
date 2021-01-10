@@ -8,6 +8,7 @@ import net.oldust.core.staff.StaffPlugin;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import net.oldust.sync.JedisManager;
 import net.oldust.sync.PlayerManager;
 import net.oldust.sync.ServerManager;
@@ -69,7 +70,7 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
                 && (noZDifference || NumberUtils.isNumber(args[2]));
 
         if (!valid) {
-            CUtils.msg(sender, Lang.ERROR_COLOR + "Wrong syntax! Example: /tp 0 40 50");
+            CUtils.msg(sender, Lang.ERROR_COLOR + "Wrong syntax! Example: /tp 0 40 50", LangSound.ERROR);
 
             return;
         }

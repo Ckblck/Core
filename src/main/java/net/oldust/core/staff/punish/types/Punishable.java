@@ -1,7 +1,7 @@
 package net.oldust.core.staff.punish.types;
 
 import net.oldust.core.staff.punish.Punishment;
-import net.oldust.core.utils.lang.Async;
+import net.oldust.core.utils.Async;
 
 import java.time.temporal.TemporalAmount;
 import java.util.List;

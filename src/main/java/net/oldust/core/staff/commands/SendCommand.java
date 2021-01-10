@@ -9,6 +9,7 @@ import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.PlayerUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import net.oldust.sync.JedisManager;
 import net.oldust.sync.ServerManager;
 import org.bukkit.Bukkit;
@@ -58,7 +59,7 @@ public class SendCommand extends InheritedCommand<StaffPlugin> {
             boolean serverExists = serverManager.contains(server);
 
             if (!serverExists) {
-                CUtils.msg(sender, Lang.ERROR_COLOR + "That server does not exist.");
+                CUtils.msg(sender, Lang.ERROR_COLOR + "That server does not exist.", LangSound.ERROR);
 
                 return;
             }
@@ -87,7 +88,7 @@ public class SendCommand extends InheritedCommand<StaffPlugin> {
         }
 
         if (Bukkit.getOnlinePlayers().isEmpty()) {
-            CUtils.msg(sender, Lang.ERROR_COLOR + "This server is empty.");
+            CUtils.msg(sender, Lang.ERROR_COLOR + "This server is empty.", LangSound.ERROR);
 
             return;
         }
@@ -98,7 +99,7 @@ public class SendCommand extends InheritedCommand<StaffPlugin> {
             boolean serverExists = Core.getInstance().getServerManager().contains(server);
 
             if (!serverExists) {
-                CUtils.msg(sender, Lang.ERROR_COLOR + "That server does not exist.");
+                CUtils.msg(sender, Lang.ERROR_COLOR + "That server does not exist.", LangSound.ERROR);
 
                 return;
             }

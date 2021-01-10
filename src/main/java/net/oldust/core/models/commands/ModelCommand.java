@@ -8,6 +8,7 @@ import net.oldust.core.ranks.PlayerRank;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import org.apache.commons.io.FilenameUtils;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -36,7 +37,7 @@ public class ModelCommand extends InheritedCommand<ModelPlugin> {
             if (isNotAboveOrEqual(sender, PlayerRank.ADMIN)) return;
 
             if (args.length < 1) {
-                CUtils.msg(sender, Lang.ERROR_COLOR + String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "file_name"));
+                CUtils.msg(sender, Lang.ERROR_COLOR + String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "file_name", LangSound.ERROR));
 
                 return;
             }
@@ -48,7 +49,7 @@ public class ModelCommand extends InheritedCommand<ModelPlugin> {
             if (extension.equals("")) {
                 fileName += ".txt";
             } else if (!extension.equals("txt")) {
-                CUtils.msg(player, Lang.ERROR_COLOR + "The file must have a .txt extension!");
+                CUtils.msg(player, Lang.ERROR_COLOR + "The file must have a .txt extension!", LangSound.ERROR);
 
                 return;
             }
@@ -73,11 +74,11 @@ public class ModelCommand extends InheritedCommand<ModelPlugin> {
                     });
 
                 } catch (NoSuchFileException e) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "That file does not exist.");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "That file does not exist.", LangSound.ERROR);
                 } catch (IllegalArgumentException e) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "The file does not contain any readable model.");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "The file does not contain any readable model.", LangSound.ERROR);
                 } catch (MaterialMismatchException e) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "There is a material mismatch in the model provided. Please contact a developer.");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "There is a material mismatch in the model provided. Please contact an administrator.", LangSound.ERROR);
                     e.getMismatched().forEach(mismatch -> CUtils.msg(sender, ChatColor.of("#6e6e6e") + "  - " + mismatch + " does not exist in the materials table."));
                 }
 

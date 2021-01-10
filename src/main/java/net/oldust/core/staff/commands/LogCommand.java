@@ -9,6 +9,7 @@ import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.PlayerUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -42,9 +43,9 @@ public class LogCommand extends InheritedCommand<StaffPlugin> {
                         : (PlayerUtils.nicknameExistsDB(target) ? target : null);
 
                 if (nickname == null && !isIp) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.", LangSound.ERROR);
                 } else if (nickname == null) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "That IP Address could not be found in the database.");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "That IP Address could not be found in the database.", LangSound.ERROR);
                 }
 
                 new LogsInventory(((Player) sender), nickname);

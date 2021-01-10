@@ -11,6 +11,7 @@ import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.PlayerUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import net.oldust.sync.JedisManager;
 import net.oldust.sync.wrappers.PlayerDatabaseKeys;
 import org.bukkit.Sound;
@@ -49,7 +50,7 @@ public class UnbanCommand extends InheritedCommand<StaffPlugin> {
 
             future.thenAcceptAsync(uuid -> {
                 if (uuid == null) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.", LangSound.ERROR);
 
                     return;
                 }
@@ -57,7 +58,7 @@ public class UnbanCommand extends InheritedCommand<StaffPlugin> {
                 Optional<Punishment> punishment = handler.currentPunishment(uuid);
 
                 if (punishment.isEmpty()) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "The specified player is not banned!");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "The specified player is not banned!", LangSound.ERROR);
 
                     return;
                 }
@@ -66,7 +67,7 @@ public class UnbanCommand extends InheritedCommand<StaffPlugin> {
                 boolean success = handler.removePunishment(punished);
 
                 if (!success) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "Could not remove the current punishment of the player. Seems like it disappeared.");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "Could not remove the current punishment of the player. Seems like it disappeared.", LangSound.ERROR);
 
                     return;
                 }

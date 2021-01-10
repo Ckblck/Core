@@ -5,6 +5,7 @@ import net.oldust.core.inherited.commands.InheritedCommand;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import net.oldust.sync.PlayerManager;
 import net.oldust.sync.wrappers.PlayerDatabaseKeys;
 import net.oldust.sync.wrappers.Savable;
@@ -46,7 +47,7 @@ public class ReplyCommand extends InheritedCommand<CommonsPlugin> {
                     String msg = String.join(" ", message);
 
                     msgCommand.sendMsg(player, lastPlayer.asString(), msg);
-                }, () -> CUtils.msg(player, Lang.ERROR_COLOR + "You don't have anyone to reply to!"));
+                }, () -> CUtils.msg(player, Lang.ERROR_COLOR + "You don't have anyone to reply to!", LangSound.ERROR));
 
             });
 

@@ -9,12 +9,13 @@ import net.minecraft.server.v1_16_R3.AdvancementFrameType;
 import net.oldust.core.Core;
 import net.oldust.core.internal.inventories.AbstractInventoryProvider;
 import net.oldust.core.mysql.MySQLManager;
+import net.oldust.core.utils.Async;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.GeoIPUtils;
 import net.oldust.core.utils.ItemBuilder;
 import net.oldust.core.utils.advancement.FakeAdvancement;
-import net.oldust.core.utils.lang.Async;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
@@ -89,7 +90,7 @@ public class LogsInventory extends AbstractInventoryProvider {
                         response = GeoIPUtils.gatherIpInfo(log.getIp());
                     } catch (IOException e) {
                         e.printStackTrace();
-                        CUtils.msg(player, Lang.ERROR_COLOR + "An error occurred while sending the response to the Geo-IP API. An error stack trace was printed in the console.");
+                        CUtils.msg(player, Lang.ERROR_COLOR + "An error occurred while sending the response to the Geo-IP API. An error stack trace was printed in the console.", LangSound.ERROR);
                     }
 
                     return response;
@@ -191,7 +192,7 @@ public class LogsInventory extends AbstractInventoryProvider {
     public void handleClick(Pagination pagination, InventoryClickEvent click) {
         if (loading) {
             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.5F, Float.MIN_VALUE);
-            CUtils.msg(player, Lang.ERROR_COLOR + "Please wait until the desired page is loaded.");
+            CUtils.msg(player, Lang.ERROR_COLOR + "Please wait until the desired page is loaded.", LangSound.ERROR);
 
             return;
         }

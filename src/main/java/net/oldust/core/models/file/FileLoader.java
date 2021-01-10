@@ -1,8 +1,8 @@
 package net.oldust.core.models.file;
 
 import net.oldust.core.Core;
+import net.oldust.core.utils.Async;
 import net.oldust.core.utils.CUtils;
-import net.oldust.core.utils.lang.Async;
 import uk.lewdev.standmodels.exceptions.MaterialMismatchException;
 import uk.lewdev.standmodels.parser.ModelBuildInstruction;
 import uk.lewdev.standmodels.parser.ModelSpawnCommandParser;

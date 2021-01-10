@@ -13,6 +13,7 @@ import net.oldust.core.staff.StaffPlugin;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.PlayerUtils;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import net.oldust.sync.PlayerManager;
 import net.oldust.sync.ServerManager;
 import net.oldust.sync.wrappers.PlayerDatabaseKeys;
@@ -131,7 +132,8 @@ public class StaffMode implements Serializable {
         PlayerUtils.getPlayers().stream()
                 .filter(randomPlayer -> randomPlayer.getUniqueId() != this.player)
                 .findAny()
-                .ifPresentOrElse(staff::teleport, () -> CUtils.msg(staff, Lang.ERROR_COLOR + "There aren't any players!"));
+                .ifPresentOrElse(staff::teleport,
+                        () -> CUtils.msg(staff, Lang.ERROR_COLOR + "There aren't any players!", LangSound.ERROR));
     }
 
     public void switchVision(Player staff) {
@@ -149,7 +151,7 @@ public class StaffMode implements Serializable {
         if (success) {
             CUtils.msg(staff, Lang.SUCCESS_COLOR + "Successfully placed fake chest.");
         } else {
-            CUtils.msg(staff, Lang.ERROR_COLOR + "Could not place fake chest.");
+            CUtils.msg(staff, Lang.ERROR_COLOR + "Could not place fake chest.", LangSound.ERROR);
         }
 
     }

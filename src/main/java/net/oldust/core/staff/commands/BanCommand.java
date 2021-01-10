@@ -9,6 +9,7 @@ import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.PlayerUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
@@ -65,7 +66,7 @@ public class BanCommand extends InheritedCommand<StaffPlugin> {
             }
 
             if (reason.length() > 34) {
-                CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.");
+                CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.", LangSound.ERROR);
 
                 return;
             }
@@ -86,7 +87,7 @@ public class BanCommand extends InheritedCommand<StaffPlugin> {
             future.thenAcceptAsync(uuid -> {
 
                 if (uuid == null) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.", LangSound.ERROR);
 
                     return;
                 }
@@ -94,7 +95,7 @@ public class BanCommand extends InheritedCommand<StaffPlugin> {
                 boolean alreadyPunished = handler.hasActivePunishment(uuid);
 
                 if (alreadyPunished) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "That player is already banned!");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "That player is already banned!", LangSound.ERROR);
 
                     return;
                 }

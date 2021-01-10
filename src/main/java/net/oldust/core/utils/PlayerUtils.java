@@ -5,7 +5,6 @@ import net.oldust.core.Core;
 import net.oldust.core.mysql.MySQLManager;
 import net.oldust.core.ranks.PlayerRank;
 import net.oldust.core.ranks.RankWithExpiration;
-import net.oldust.core.utils.lang.Async;
 import net.oldust.sync.PlayerManager;
 import net.oldust.sync.wrappers.PlayerDatabaseKeys;
 import net.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;

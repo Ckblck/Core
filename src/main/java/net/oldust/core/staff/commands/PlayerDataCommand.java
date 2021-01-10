@@ -8,6 +8,7 @@ import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.PlayerUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -41,7 +42,7 @@ public class PlayerDataCommand extends InheritedCommand<StaffPlugin> {
 
             future.thenAcceptAsync(uuid -> {
                 if (uuid == null) {
-                    CUtils.msg(player, Lang.ERROR_COLOR + "That player does not exist in the database.");
+                    CUtils.msg(player, Lang.ERROR_COLOR + "That player does not exist in the database.", LangSound.ERROR);
 
                     return;
                 }

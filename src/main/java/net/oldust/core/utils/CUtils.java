@@ -4,10 +4,13 @@ import lombok.experimental.UtilityClass;
 import net.md_5.bungee.api.ChatColor;
 import net.oldust.core.Core;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.Period;
@@ -61,8 +64,27 @@ public class CUtils {
                 + message);
     }
 
+    /**
+     * Sends a message to a CommandSender.
+     */
+
     public void msg(CommandSender sender, String message) {
         sender.sendMessage(color(message));
+    }
+
+    /**
+     * Sends a message with a sound.
+     */
+
+    public void msg(CommandSender sender, String message, @Nullable LangSound sound) {
+        sender.sendMessage(color(message));
+
+        if (sound != null && sender instanceof Player) {
+            Player player = (Player) sender;
+
+            player.playSound(player.getLocation(), sound.getSoundName(), sound.getPitch(), sound.getVolume());
+        }
+
     }
 
     /**

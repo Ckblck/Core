@@ -1,6 +1,4 @@
-package net.oldust.core.utils.lang;
-
-import net.oldust.core.utils.CUtils;
+package net.oldust.core.utils;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

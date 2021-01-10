@@ -9,6 +9,7 @@ import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.PlayerUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import org.bukkit.command.CommandSender;
 
 import java.time.format.DateTimeParseException;
@@ -46,7 +47,7 @@ public class MuteCommand extends InheritedCommand<StaffPlugin> {
             try {
                 duration = CUtils.parseLiteralTime(args[1]);
             } catch (DateTimeParseException e) {
-                CUtils.msg(sender, Lang.ERROR_COLOR + "The provided duration is not correct.");
+                CUtils.msg(sender, Lang.ERROR_COLOR + "The provided duration is not correct.", LangSound.ERROR);
 
                 return;
             }
@@ -61,7 +62,7 @@ public class MuteCommand extends InheritedCommand<StaffPlugin> {
             String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
 
             if (reason.length() > 34) {
-                CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.");
+                CUtils.msg(sender, Lang.ERROR_COLOR + "That reason is too long.", LangSound.ERROR);
 
                 return;
             }
@@ -71,13 +72,13 @@ public class MuteCommand extends InheritedCommand<StaffPlugin> {
 
             future.thenAcceptAsync(uuid -> {
                 if (uuid == null) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.", LangSound.ERROR);
 
                     return;
                 }
 
                 if (HANDLER.hasActivePunishment(uuid)) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "The specified player is already muted!");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "The specified player is already muted!", LangSound.ERROR);
 
                     return;
                 }

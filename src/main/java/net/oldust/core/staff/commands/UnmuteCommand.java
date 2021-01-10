@@ -11,6 +11,7 @@ import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.PlayerUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import net.oldust.sync.JedisManager;
 import net.oldust.sync.wrappers.PlayerDatabaseKeys;
 import org.bukkit.Sound;
@@ -47,7 +48,7 @@ public class UnmuteCommand extends InheritedCommand<StaffPlugin> {
 
             future.thenAcceptAsync(uuid -> {
                 if (uuid == null) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.", LangSound.ERROR);
 
                     return;
                 }
@@ -55,7 +56,7 @@ public class UnmuteCommand extends InheritedCommand<StaffPlugin> {
                 Optional<Punishment> punishment = HANDLER.currentPunishment(uuid);
 
                 if (punishment.isEmpty()) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "The specified player is not muted.");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "The specified player is not muted.", LangSound.ERROR);
 
                     return;
                 }

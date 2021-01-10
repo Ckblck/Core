@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * A PlayerScoreboard is a scoreboard
- * that each player has.
+ * that a player can have.
  */
 
 @Getter

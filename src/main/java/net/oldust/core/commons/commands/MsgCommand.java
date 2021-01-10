@@ -7,11 +7,12 @@ import net.oldust.core.inherited.commands.InheritedCommand;
 import net.oldust.core.ranks.PlayerRank;
 import net.oldust.core.staff.punish.Punishment;
 import net.oldust.core.staff.punish.PunishmentType;
+import net.oldust.core.utils.Async;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.PlayerUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
-import net.oldust.core.utils.lang.Async;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import net.oldust.sync.JedisManager;
 import net.oldust.sync.PlayerManager;
 import net.oldust.sync.ServerManager;
@@ -53,7 +54,7 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
             String message = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
             if (player.getName().equalsIgnoreCase(target)) {
-                CUtils.msg(player, Lang.ERROR_COLOR + "You can't send a message to yourself!");
+                CUtils.msg(player, Lang.ERROR_COLOR + "You can't send a message to yourself!", LangSound.ERROR);
 
                 return;
             }
@@ -101,7 +102,7 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
             WrappedPlayerDatabase targetDatabase = playerManager.getDatabase(targetPlayer);
 
             if (targetDatabase.contains(PlayerDatabaseKeys.NO_MPS)) {
-                CUtils.msg(player, Lang.ERROR_COLOR + "That player cannot receive private messages.");
+                CUtils.msg(player, Lang.ERROR_COLOR + "That player cannot receive private messages.", LangSound.ERROR);
 
                 return;
             }
@@ -138,7 +139,7 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
             WrappedPlayerDatabase targetDatabase = playerManager.getDatabaseRedis(targetUuid);
 
             if (targetDatabase.contains(PlayerDatabaseKeys.NO_MPS)) {
-                CUtils.msg(player, Lang.ERROR_COLOR + "That player cannot receive private messages.");
+                CUtils.msg(player, Lang.ERROR_COLOR + "That player cannot receive private messages.", LangSound.ERROR);
 
                 return;
             }

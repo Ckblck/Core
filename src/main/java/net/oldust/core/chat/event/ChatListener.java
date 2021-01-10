@@ -14,6 +14,7 @@ import net.oldust.core.staff.punish.Punishment;
 import net.oldust.core.staff.punish.PunishmentType;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import net.oldust.sync.JedisManager;
 import net.oldust.sync.PlayerManager;
 import net.oldust.sync.wrappers.PlayerDatabaseKeys;
@@ -46,7 +47,7 @@ public class ChatListener implements Listener {
 
         if (chatMuted() && !PlayerRank.getPlayerRank(player).isStaff()) {
             e.setCancelled(true);
-            CUtils.msg(player, Lang.ERROR_COLOR + "The chat is muted!");
+            CUtils.msg(player, Lang.ERROR_COLOR + "The chat is muted!", LangSound.ERROR);
 
             return;
         }
@@ -121,14 +122,14 @@ public class ChatListener implements Listener {
                 long nowSec = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
 
                 if (nowSec - dateSec <= 0.5) {
-                    CUtils.msg(player, Lang.ERROR_COLOR + "You cannot send messages too quickly!");
+                    CUtils.msg(player, Lang.ERROR_COLOR + "You cannot send messages too quickly!", LangSound.ERROR);
                     e.setCancelled(true);
 
                     return;
                 }
 
                 if (nowSec - dateSec <= 3 && StringUtils.getJaroWinklerDistance(e.getMessage(), message) * 100 > 80) { // Similitud mayor al 80%
-                    CUtils.msg(player, Lang.ERROR_COLOR + "You cannot send the same message in a short period of time!");
+                    CUtils.msg(player, Lang.ERROR_COLOR + "You cannot send the same message in a short period of time!", LangSound.ERROR);
                     e.setCancelled(true);
 
                     return;

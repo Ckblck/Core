@@ -8,6 +8,7 @@ import net.oldust.core.staff.StaffPlugin;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import net.oldust.sync.JedisManager;
 import org.bukkit.command.CommandSender;
 
@@ -42,7 +43,7 @@ public class DispatchCommand extends InheritedCommand<StaffPlugin> {
                 boolean validServer = serverName.equals("*") || Core.getInstance().getServerManager().contains(serverName);
 
                 if (!validServer) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "The specified server is either invalid or not connected.");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "The specified server is either invalid or not connected.", LangSound.ERROR);
 
                     return;
                 }

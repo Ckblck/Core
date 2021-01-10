@@ -5,6 +5,7 @@ import net.oldust.core.internal.provider.EventsProvider;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.PlayerUtils;
 import net.oldust.core.utils.lang.Lang;
+import net.oldust.core.utils.lang.LangSound;
 import net.oldust.sync.PlayerManager;
 import net.oldust.sync.wrappers.PlayerDatabaseKeys;
 import net.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
@@ -205,7 +206,7 @@ public class StaffModeManager implements Listener {
 
         if (hasStaffMode(player)) {
             e.setCancelled(true);
-            CUtils.msg(player, Lang.ERROR_COLOR + "You can't break any blocks while in Staff Mode!");
+            CUtils.msg(player, Lang.ERROR_COLOR + "You can't break any blocks while in Staff Mode!", LangSound.ERROR);
         }
     }
 

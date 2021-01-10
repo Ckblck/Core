@@ -1,8 +1,8 @@
 package net.oldust.sync.jedis;
 
 import net.oldust.core.Core;
+import net.oldust.core.utils.Async;
 import net.oldust.core.utils.CUtils;
-import net.oldust.core.utils.lang.Async;
 import net.oldust.sync.serializer.Base64Serializer;
 import net.oldust.sync.wrappers.Savable;
 import org.bukkit.Bukkit;
