@@ -1,4 +1,4 @@
-package net.oldust.core.models.commands;
+package net.oldust.core.models.items.commands;
 
 import lombok.Getter;
 import net.oldust.core.Core;
@@ -7,31 +7,32 @@ import net.oldust.core.interactive.panels.InteractivePanel;
 import net.oldust.core.interactive.panels.InteractivePanelManager;
 import net.oldust.core.internal.provider.EventsProvider;
 import net.oldust.core.models.ModelPlugin;
-import net.oldust.core.models.panel.ModelInteractivePanel;
+import net.oldust.core.models.panel.ItemModelInteractivePanel;
 import net.oldust.core.ranks.PlayerRank;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.Nullable;
-import uk.lewdev.standmodels.events.custom.ModelInteractEvent;
-import uk.lewdev.standmodels.model.Model;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements Listener {
+public class ItemModelModifyCommand extends InheritedCommand<ModelPlugin> implements Listener {
 
     @Getter
     private final Map<UUID, InteractivePanel> playersModifying;
 
-    public ModelModifyCommand(ModelPlugin plugin, String name, @Nullable List<String> aliases) {
+    public ItemModelModifyCommand(ModelPlugin plugin, String name, @Nullable List<String> aliases) {
         super(plugin, name, aliases);
 
         this.playersModifying = new HashMap<>();
@@ -55,8 +56,8 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
 
             if (args.length == 0) {
                 CUtils.msg(sender, Lang.ERROR_COLOR + "Insufficient arguments!");
-                CUtils.msg(sender, Lang.ERROR_COLOR + "/modelmodify enter");
-                CUtils.msg(sender, Lang.ERROR_COLOR + "/modelmodify exit");
+                CUtils.msg(sender, Lang.ERROR_COLOR + "/itemmodelmodify enter");
+                CUtils.msg(sender, Lang.ERROR_COLOR + "/itemmodelmodify exit");
 
                 return;
             }
@@ -69,9 +70,9 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
 
                 if (isNotAlready) {
                     playersModifying.put(uuid, null);
-                    CUtils.msg(sender, Lang.SUCCESS_COLOR + "Entered the modification panel. Interact with a model to modify it.");
+                    CUtils.msg(sender, Lang.SUCCESS_COLOR + "Entered the modification panel. Interact with an armor stand to modify it.");
                 } else {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "You already are in the modification panel! Use «/modelmodify exit» to exit.");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "You already are in the modification panel! Use «/itemmodelmodify exit» to exit.");
                 }
 
                 return;
@@ -79,7 +80,7 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
 
             if (arg.equalsIgnoreCase("exit")) {
                 if (isNotAlready) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "You are not modifying any models!");
+                    CUtils.msg(sender, Lang.ERROR_COLOR + "You are not modifying any armor stand!");
                 } else {
                     InteractivePanel panel = playersModifying.remove(uuid);
                     if (panel != null) InteractivePanelManager.getInstance().exitPanel((Player) sender);
@@ -92,24 +93,29 @@ public class ModelModifyCommand extends InheritedCommand<ModelPlugin> implements
     }
 
     @EventHandler
-    public void onInteract(ModelInteractEvent e) {
-        Player player = e.getInteractor();
-        UUID uuid = e.getInteractor().getUniqueId();
+    public void onArmorStandManipulate(PlayerArmorStandManipulateEvent e) {
+        Player player = e.getPlayer();
+        ArmorStand armorStand = e.getRightClicked();
+        if (armorStand.getEquipment() == null) return;
+        if (armorStand.getEquipment().getItemInMainHand().getType() == Material.PAPER) {
+            e.setCancelled(true);
 
-        if (!playersModifying.containsKey(uuid)) return;
+            UUID uuid = player.getUniqueId();
 
-        boolean isEditing = playersModifying.get(uuid) != null;
+            if (!playersModifying.containsKey(uuid)) return;
 
-        if (isEditing) return;
+            boolean isEditing = playersModifying.get(uuid) != null;
 
-        Model model = e.getModel();
+            if (isEditing) return;
 
-        InteractivePanel panel = createPanel(player, model);
-        playersModifying.replace(uuid, panel);
+            InteractivePanel panel = createPanel(player, armorStand);
+            playersModifying.replace(uuid, panel);
+        }
+
     }
 
-    public InteractivePanel createPanel(Player player, Model model) {
-        return new ModelInteractivePanel(player, model, getPlugin());
+    public InteractivePanel createPanel(Player player, ArmorStand armorStand) {
+        return new ItemModelInteractivePanel(player, armorStand);
     }
 
 }

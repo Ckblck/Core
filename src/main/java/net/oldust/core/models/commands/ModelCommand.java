@@ -56,33 +56,31 @@ public class ModelCommand extends InheritedCommand<ModelPlugin> {
 
             String finalFileName = fileName;
 
-            CUtils.runAsync(() -> {
-                try {
-                    Set<ModelBuildInstruction> instructions = LOADER.getInstructions(finalFileName);
+            try {
+                Set<ModelBuildInstruction> instructions = LOADER.getInstructions(finalFileName);
 
-                    Location playerLocation = player.getLocation();
-                    Location location = playerLocation.getBlock().getLocation().clone().add(0.5, 0, 0.5);
-                    Axis axis = Axis.getAxis(playerLocation);
+                Location playerLocation = player.getLocation();
+                Location location = playerLocation.getBlock().getLocation().clone().add(0.5, 0, 0.5);
+                Axis axis = Axis.getAxis(playerLocation);
 
-                    CUtils.runSync(() -> {
-                        Model model = new Model(instructions, location, Axis.WEST, axis, 15);
+                CUtils.runSync(() -> {
+                    Model model = new Model(instructions, location, Axis.WEST, axis, 15);
 
-                        getPlugin().getStandModelLib().getModelManager().spawnModel(model);
-                        model.render();
+                    getPlugin().getStandModelLib().getModelManager().spawnModel(model);
+                    model.render();
 
-                        getPlugin().getModelModifyCommand().createPanel(player, model);
-                    });
+                    getPlugin().getModelModifyCommand().createPanel(player, model);
+                });
 
-                } catch (NoSuchFileException e) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "That file does not exist.", LangSound.ERROR);
-                } catch (IllegalArgumentException e) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "The file does not contain any readable model.", LangSound.ERROR);
-                } catch (MaterialMismatchException e) {
-                    CUtils.msg(sender, Lang.ERROR_COLOR + "There is a material mismatch in the model provided. Please contact an administrator.", LangSound.ERROR);
-                    e.getMismatched().forEach(mismatch -> CUtils.msg(sender, ChatColor.of("#6e6e6e") + "  - " + mismatch + " does not exist in the materials table."));
-                }
+            } catch (NoSuchFileException e) {
+                CUtils.msg(sender, Lang.ERROR_COLOR + "That file does not exist.", LangSound.ERROR);
+            } catch (IllegalArgumentException e) {
+                CUtils.msg(sender, Lang.ERROR_COLOR + "The file does not contain any readable model.", LangSound.ERROR);
+            } catch (MaterialMismatchException e) {
+                CUtils.msg(sender, Lang.ERROR_COLOR + "There is a material mismatch in the model provided. Please contact an administrator.", LangSound.ERROR);
+                e.getMismatched().forEach(mismatch -> CUtils.msg(sender, ChatColor.of("#6e6e6e") + "  - " + mismatch + " does not exist in the materials table."));
+            }
 
-            });
 
         });
     }

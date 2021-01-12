@@ -132,6 +132,13 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder setModelData(int modelData) {
+        ItemMeta meta = getItemMeta();
+        meta.setCustomModelData(modelData);
+        setItemMeta(meta);
+        return this;
+    }
+
     public ItemStack build() {
         return stack;
     }
