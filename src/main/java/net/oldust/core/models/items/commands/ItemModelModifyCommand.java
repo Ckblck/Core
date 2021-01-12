@@ -64,10 +64,10 @@ public class ItemModelModifyCommand extends InheritedCommand<ModelPlugin> implem
 
             UUID uuid = ((Player) sender).getUniqueId();
             String arg = args[0];
+
             boolean isNotAlready = !playersModifying.containsKey(uuid);
 
             if (arg.equalsIgnoreCase("enter")) {
-
                 if (isNotAlready) {
                     playersModifying.put(uuid, null);
                     CUtils.msg(sender, Lang.SUCCESS_COLOR + "Entered the modification panel. Interact with an armor stand to modify it.");
@@ -96,7 +96,9 @@ public class ItemModelModifyCommand extends InheritedCommand<ModelPlugin> implem
     public void onArmorStandManipulate(PlayerArmorStandManipulateEvent e) {
         Player player = e.getPlayer();
         ArmorStand armorStand = e.getRightClicked();
+
         if (armorStand.getEquipment() == null) return;
+
         if (armorStand.getEquipment().getItemInMainHand().getType() == Material.PAPER) {
             e.setCancelled(true);
 

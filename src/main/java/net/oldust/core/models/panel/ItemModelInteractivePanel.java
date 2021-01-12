@@ -14,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 
 public class ItemModelInteractivePanel extends InteractivePanel {
-
     private static final ItemStack TELEPORT_MODEL = new ItemBuilder(Material.ENDER_PEARL)
             .setDisplayName("#0f8c69 Teleport here").build();
     private static final ItemStack CHANGE_ROTATION_AXIS = new ItemBuilder(Material.REDSTONE)
@@ -41,7 +40,6 @@ public class ItemModelInteractivePanel extends InteractivePanel {
 
     private RotationType rotationType;
 
-
     public ItemModelInteractivePanel(Player player, ArmorStand armorStand) {
         super(player);
 
@@ -58,12 +56,15 @@ public class ItemModelInteractivePanel extends InteractivePanel {
             switch (rotationType) {
                 case X:
                     this.rotationType = RotationType.Y;
+
                     break;
                 case Y:
                     this.rotationType = RotationType.Z;
+
                     break;
                 case Z:
                     this.rotationType = RotationType.X;
+
                     break;
             }
             CUtils.msg(player, Lang.SUCCESS_COLOR + "You changed the rotation axis to " + rotationType.name() + ".");
@@ -98,12 +99,15 @@ public class ItemModelInteractivePanel extends InteractivePanel {
         switch (rotationType) {
             case X:
                 armorStand.setRightArmPose(armorStand.getRightArmPose().add(amount, 0, 0));
+
                 break;
             case Y:
                 armorStand.setRightArmPose(armorStand.getRightArmPose().add(0, amount, 0));
+
                 break;
             case Z:
                 armorStand.setRightArmPose(armorStand.getRightArmPose().add(0, 0, amount));
+
                 break;
         }
     }
@@ -111,4 +115,5 @@ public class ItemModelInteractivePanel extends InteractivePanel {
     private enum RotationType {
         X, Y, Z
     }
+
 }

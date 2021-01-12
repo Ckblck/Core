@@ -14,7 +14,6 @@ import uk.lewdev.standmodels.model.Model;
 import java.util.Arrays;
 
 public class ModelInteractivePanel extends InteractivePanel {
-
     private static final ItemStack TELEPORT_MODEL = new ItemBuilder(Material.ENDER_PEARL)
             .setDisplayName("#0f8c69 Teleport here").build();
     private static final ItemStack ROTATE_MINUS_5 = new ItemBuilder(Material.LANTERN)
@@ -63,4 +62,5 @@ public class ModelInteractivePanel extends InteractivePanel {
 
         manager.setPanel(player, this);
     }
+
 }

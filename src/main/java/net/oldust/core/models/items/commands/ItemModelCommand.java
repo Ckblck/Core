@@ -33,24 +33,29 @@ public class ItemModelCommand extends InheritedCommand<ModelPlugin> {
 
             if (args.length < 1) {
                 CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "item_name", LangSound.ERROR));
+
                 return;
             }
 
             Player player = (Player) sender;
             String itemName = args[0];
             ItemModels itemModel = ItemModels.getFromName(itemName);
+
             if (itemModel == null) {
-                CUtils.msg(player, Lang.ERROR_COLOR + "That item name does not exists!", LangSound.ERROR);
+                CUtils.msg(player, Lang.ERROR_COLOR + "That item name does not exist!", LangSound.ERROR);
+
                 return;
             }
 
             Location playerLocation = player.getLocation();
             Location location = playerLocation.getBlock().getLocation().clone().add(0.5, 0, 0.5);
             ArmorStand armorStand = player.getWorld().spawn(location, ArmorStand.class);
-            Objects.requireNonNull(armorStand.getEquipment()).setItemInMainHand(new ItemBuilder(Material.PAPER)
-                    .setModelData(itemModel.getModelData()).build());
 
-            CUtils.msg(sender, Lang.SUCCESS_COLOR + String.format("You spawned a %s armor stand.", itemModel.getItemName()));
+            Objects.requireNonNull(armorStand.getEquipment())
+                    .setItemInMainHand(new ItemBuilder(Material.PAPER)
+                            .setModelData(itemModel.getModelData()).build());
+
+            CUtils.msg(sender, Lang.SUCCESS_COLOR + String.format("You spawned a %s 3D model.", itemModel.getItemName()));
         };
     }
 

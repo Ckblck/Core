@@ -12,7 +12,7 @@ public enum ItemModels {
 
     private final String itemName;
     private final int modelData;
-    //TODO: Made this work
+    //TODO: Make this work
     private final boolean modifiable;
 
     @Nullable
@@ -22,6 +22,7 @@ public enum ItemModels {
                 return itemModels;
             }
         }
+
         return null;
     }
 
