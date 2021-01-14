@@ -1,5 +1,7 @@
 package net.oldust.core.actions.types;
 
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
@@ -27,7 +29,9 @@ import java.util.Collection;
  */
 
 public class DispatchMessageAction extends Action<DispatchMessageAction> {
-    private final Channel channel;
+    private static final Gson GSON = new Gson();
+
+    private final String channel;
     private final SerializablePredicate<WrappedPlayerDatabase> requirement;
     private final boolean usesTextComponent;
     private final String message;
@@ -49,7 +53,7 @@ public class DispatchMessageAction extends Action<DispatchMessageAction> {
     public DispatchMessageAction(Channel channel, SerializablePredicate<WrappedPlayerDatabase> requirement, boolean usesTextComponent, String message, Sound sound, float volume, float pitch) {
         super(ActionsReceiver.PREFIX);
 
-        this.channel = channel;
+        this.channel = GSON.toJson(channel);
         this.requirement = requirement;
         this.usesTextComponent = usesTextComponent;
         this.message = message;
@@ -68,12 +72,13 @@ public class DispatchMessageAction extends Action<DispatchMessageAction> {
 
     @Override
     protected void execute() {
-        boolean shouldBroadcast = channel == Channel.NETWORK_WIDE || channel.serverName.equalsIgnoreCase(Core.getInstance().getServerName());
+        Channel channel = GSON.fromJson(this.channel, Channel.class);
 
-        // FIXME: Enum inner fields are not serialized, so channel.serverName is ALWAYS the value of the server in which its received
-        // So, all messages are network_wide, basically server_wide no anda
+        boolean shouldBroadcast = channel == Channel.NETWORK_WIDE
+                || channel.serverName.equalsIgnoreCase(Core.getInstance().getServerName());
 
-        if (!shouldBroadcast) return;
+        if (!shouldBroadcast)
+            return;
 
         Collection<? extends Player> players = PlayerUtils.getPlayers();
 
@@ -106,8 +111,8 @@ public class DispatchMessageAction extends Action<DispatchMessageAction> {
 
     @RequiredArgsConstructor
     public enum Channel {
-        SERVER_WIDE(Core.getInstance().getServerName()),
-        NETWORK_WIDE("*");
+        @SerializedName("server_name") SERVER_WIDE(Core.getInstance().getServerName()),
+        @SerializedName("network_wide") NETWORK_WIDE("*");
 
         private final String serverName;
     }
