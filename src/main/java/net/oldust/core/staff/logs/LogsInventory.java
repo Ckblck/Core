@@ -5,7 +5,6 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
-import net.minecraft.server.v1_16_R3.AdvancementFrameType;
 import net.oldust.core.Core;
 import net.oldust.core.internal.inventories.AbstractInventoryProvider;
 import net.oldust.core.mysql.MySQLManager;
@@ -13,11 +12,9 @@ import net.oldust.core.utils.Async;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.GeoIPUtils;
 import net.oldust.core.utils.ItemBuilder;
-import net.oldust.core.utils.advancement.FakeAdvancement;
 import net.oldust.core.utils.lang.Lang;
 import net.oldust.core.utils.lang.LangSound;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -102,20 +99,14 @@ public class LogsInventory extends AbstractInventoryProvider {
                     }
 
                     return response;
-                }).thenAccept(geoResponse -> CUtils.runSync(() -> {
-                    FakeAdvancement respAdv = FakeAdvancement.builder()
-                            .key(new NamespacedKey(Core.getInstance(), "geo/ip"))
-                            .title("#a6a6a6City: &f" + geoResponse.getCity() +
-                                    "\n#a6a6a6Region: &f" + geoResponse.getRegionName() +
-                                    "\n#a6a6a6Country: &f" + geoResponse.getCountryName())
-                            .item("heart_of_the_sea")
-                            .description("Geo-IP")
-                            .frame(AdvancementFrameType.TASK)
-                            .announceToChat(false)
-                            .build();
-
-                    respAdv.show(player, true, true);
-                }));
+                }).thenAccept(geoResponse ->
+                        CUtils.msg(player,
+                                "&7x----------------------x" +
+                                        "\n#a6a6a6City: &f" + geoResponse.getCity() +
+                                        "\n#a6a6a6Region: &f" + geoResponse.getRegionName() +
+                                        "\n#a6a6a6Country: &f" + geoResponse.getCountryName() +
+                                        "\n&7x----------------------x"
+                        ));
             });
 
         }
