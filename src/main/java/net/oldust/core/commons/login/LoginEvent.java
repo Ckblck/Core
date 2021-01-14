@@ -40,10 +40,14 @@ public class LoginEvent implements Listener {
         PlayerManager playerManager = PlayerManager.getInstance();
         WrappedPlayerDatabase databaseRedis = playerManager.getDatabaseRedis(e.getUniqueId());
 
+        databaseRedis.setBungeeServer(Core.getInstance().getServerName());
+
         boolean success = playerManager.cacheDatabase(databaseRedis);
 
         if (!success) {
             e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, KICK_MESSAGE); // Happens almost never (might occur during the server initialization).
+        } else {
+            playerManager.update(databaseRedis);
         }
 
     }
