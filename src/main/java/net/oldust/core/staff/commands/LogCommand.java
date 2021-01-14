@@ -44,8 +44,12 @@ public class LogCommand extends InheritedCommand<StaffPlugin> {
 
                 if (nickname == null && !isIp) {
                     CUtils.msg(sender, Lang.ERROR_COLOR + "That player does not exist in the database.", LangSound.ERROR);
+
+                    return;
                 } else if (nickname == null) {
                     CUtils.msg(sender, Lang.ERROR_COLOR + "That IP Address could not be found in the database.", LangSound.ERROR);
+
+                    return;
                 }
 
                 new LogsInventory(((Player) sender), nickname);

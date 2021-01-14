@@ -43,7 +43,7 @@ public class PlayerUtils {
 
         try {
             if (set.next()) {
-                return true;
+                return set.getInt(1) == 1;
             }
         } catch (SQLException e) {
             e.printStackTrace();
