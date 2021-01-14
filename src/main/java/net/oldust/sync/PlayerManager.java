@@ -43,10 +43,15 @@ public class PlayerManager {
 
     }
 
-    public void cacheDatabase(WrappedPlayerDatabase database) {
+    public boolean cacheDatabase(WrappedPlayerDatabase database) {
+        if (database == null)
+            return false;
+
         UUID uuid = database.getPlayerUUID();
 
         cache.put(uuid, database);
+
+        return true;
     }
 
     public void saveDatabase(WrappedPlayerDatabase database) { // Executed in OldustBungee

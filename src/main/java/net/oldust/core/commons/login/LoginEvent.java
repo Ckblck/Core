@@ -2,6 +2,7 @@ package net.oldust.core.commons.login;
 
 import net.oldust.core.Core;
 import net.oldust.core.utils.CUtils;
+import net.oldust.core.utils.lang.Lang;
 import net.oldust.sync.PlayerManager;
 import net.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.event.EventHandler;
@@ -15,6 +16,8 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
  */
 
 public class LoginEvent implements Listener {
+    private static final String KICK_MESSAGE = Lang.ERROR_COLOR + "Could not download your database :(" +
+            "\n" + Lang.ERROR_COLOR + "Try joining again.";
 
     public LoginEvent() {
         CUtils.registerEvents(this);
@@ -31,12 +34,18 @@ public class LoginEvent implements Listener {
     public void onLogin(AsyncPlayerPreLoginEvent e) {
         AsyncPlayerPreLoginEvent.Result result = e.getLoginResult();
 
-        if (result != AsyncPlayerPreLoginEvent.Result.ALLOWED) return;
+        if (result != AsyncPlayerPreLoginEvent.Result.ALLOWED)
+            return;
 
         PlayerManager playerManager = PlayerManager.getInstance();
         WrappedPlayerDatabase databaseRedis = playerManager.getDatabaseRedis(e.getUniqueId());
 
-        playerManager.cacheDatabase(databaseRedis);
+        boolean success = playerManager.cacheDatabase(databaseRedis);
+
+        if (!success) {
+            e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, KICK_MESSAGE); // Happens almost never (might occur during the server initialization).
+        }
+
     }
 
 }
