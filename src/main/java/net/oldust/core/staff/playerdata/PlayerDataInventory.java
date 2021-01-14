@@ -114,10 +114,8 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
                 .setLore(lore).build(), (click) -> {
         }));
 
-        contents.set(5, 4, ClickableItem.of(NAVIGATOR, (click) -> {
-            handleClick(pagination, click);
-        }));
-
+        contents.set(5, 4, ClickableItem.of(NAVIGATOR, (click)
+                -> handleClick(pagination, click)));
     }
 
     @NotNull
@@ -135,7 +133,6 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
                 .count();
 
         String[] currentPunishmentInfo = new String[]{
-                " ",
                 Lang.ERROR_COLOR + "The player has no active punishment."
         };
 
@@ -145,17 +142,21 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
             Timestamp expiration = lastPunishment.getExpiration();
             Timestamp now = new Timestamp(System.currentTimeMillis());
 
-            boolean isPunished = (expiration == null || expiration.after(now))
-                    && lastPunishment.getType() != PunishmentType.KICK;
+            boolean permanentPunishment = expiration == null;
+
+            boolean isPunished = lastPunishment instanceof Punishment.ExpiredPunishment // Check if it is either a ban or a mute, not a KICK.
+                    && (permanentPunishment || expiration.after(now)) // Check if it is banned forever or has expiration.
+                    && ((Punishment.ExpiredPunishment) lastPunishment).getUnpunishedAt() == null; // Check if it is not unpunished.
 
             if (isPunished) {
                 String date = FORMAT.format(lastPunishment.getDate());
-                String expires = (expiration == null)
+
+                String expires = permanentPunishment
                         ? Lang.ERROR_COLOR + "never"
-                        : FORMAT.format(expiration); // TODO Is this ? : needed?
+                        : FORMAT.format(expiration);
 
                 currentPunishmentInfo = new String[]{
-                        "   " + Lang.ERROR_COLOR + "* #a6a6a6 Type: &f" + lastPunishment.getType().name().toLowerCase(),
+                        "   " + Lang.ERROR_COLOR + "* #a6a6a6 Type: &f" + lastPunishment.getType().name(),
                         "   " + Lang.ERROR_COLOR + "* #a6a6a6 Punisher: &f" + lastPunishment.getPunisherName(),
                         "   " + Lang.ERROR_COLOR + "* #a6a6a6 Reason: &f" + lastPunishment.getReason(),
                         "   " + Lang.ERROR_COLOR + "* #a6a6a6 Date: &f" + date,
@@ -172,7 +173,8 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
                 "#a6a6a6 Mutes: &f" + muteCount,
                 "#a6a6a6 Kicks: &f" + kickCount,
                 " ",
-                "#fcba03 Current Punishment"
+                "#fcba03 Current Punishment",
+                " "
         ));
 
         lore.addAll(Arrays.asList(currentPunishmentInfo));
