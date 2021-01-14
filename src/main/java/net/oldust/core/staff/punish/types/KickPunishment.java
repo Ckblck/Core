@@ -13,10 +13,8 @@ import net.oldust.core.utils.PlayerUtils;
 import net.oldust.core.utils.lang.Lang;
 import net.oldust.sync.JedisManager;
 import net.oldust.sync.wrappers.PlayerDatabaseKeys;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import javax.sql.rowset.CachedRowSet;
@@ -53,11 +51,15 @@ public class KickPunishment implements Punishable<Punishment> {
     public boolean punish(String punisherName, String punishedName, @Nullable TemporalAmount duration, String reason, boolean banIp) {
         CUtils.warnSyncCall();
 
-        Player player = Bukkit.getPlayer(punishedName);
+        boolean playerOnline = Core.getInstance().getServerManager()
+                .isPlayerOnline(punishedName);
 
-        if (player == null) return false;
+        if (!playerOnline) {
+            return false;
+        }
 
-        UUID uuid = player.getUniqueId();
+        UUID uuid = PlayerUtils.getUUIDByName(punishedName);
+
         Timestamp now = new Timestamp(System.currentTimeMillis());
 
         CachedRowSet set = MySQLManager.updateWithGeneratedKeys("INSERT INTO dustbans.kicks (uuid, date, reason, kicked_by) VALUES (?, ?, ?, ?);",
@@ -73,12 +75,13 @@ public class KickPunishment implements Punishable<Punishment> {
             throwables.printStackTrace();
         }
 
-        if (Core.getInstance().getServerManager().isPlayerOnline(punishedName)) {
-            Punishment punishment = new Punishment(id, PunishmentType.KICK, uuid, punisherName, reason, null, null, null);
+        Punishment punishment = new Punishment(
+                id, PunishmentType.KICK, uuid, punisherName, reason,
+                null, null, null
+        );
 
-            new KickPlayerAction(punishedName, getPunishmentMessage(punishment))
-                    .push(JedisManager.getInstance().getPool());
-        }
+        new KickPlayerAction(punishedName, getPunishmentMessage(punishment))
+                .push(JedisManager.getInstance().getPool());
 
         String staffMessage = String.format(STAFF_ALERT_MESSAGE, punisherName, punishedName, ChatColor.stripColor(reason));
 
