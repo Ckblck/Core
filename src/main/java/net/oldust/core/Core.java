@@ -87,7 +87,7 @@ public class Core extends JavaPlugin {
         new PermissionsManager();
         new ScoreboardManager();
 
-        // new Interceptor(); <- Packet Interceptor -> (DEBUG Only)
+        // new Interceptor(); //<- Packet Interceptor -> (DEBUG Only)
 
         serverManager = new ServerManager();
         inventoryManager = new InventoryManager(this);

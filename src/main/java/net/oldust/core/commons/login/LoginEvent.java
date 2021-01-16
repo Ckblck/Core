@@ -10,6 +10,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Force the server to
  * cache the database from Redis.
@@ -40,15 +42,24 @@ public class LoginEvent implements Listener {
         PlayerManager playerManager = PlayerManager.getInstance();
         WrappedPlayerDatabase databaseRedis = playerManager.getDatabaseRedis(e.getUniqueId());
 
+        if (databaseRedis == null) { // Happens almost never (might occur during the server initialization).
+            CUtils.runAsync(() -> {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(100);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+
+                onLogin(e);
+            });
+
+            return;
+        }
+
         databaseRedis.setBungeeServer(Core.getInstance().getServerName());
 
-        boolean success = playerManager.cacheDatabase(databaseRedis);
-
-        if (!success) {
-            e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, KICK_MESSAGE); // Happens almost never (might occur during the server initialization).
-        } else {
-            playerManager.update(databaseRedis);
-        }
+        playerManager.cacheDatabase(databaseRedis);
+        playerManager.update(databaseRedis);
 
     }
 

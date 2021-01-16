@@ -76,7 +76,9 @@ public class Interceptor {
             PacketType.Play.Server.STATISTIC,
             PacketType.Play.Server.MAP_CHUNK_BULK,
             PacketType.Play.Server.MAP_CHUNK,
-            PacketType.Play.Server.TRANSACTION
+            PacketType.Play.Server.TRANSACTION,
+            PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER,
+            PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER
     );
 
     public Interceptor() {
