@@ -27,7 +27,7 @@ public class NoMpsCommand extends InheritedCommand<StaffPlugin> {
             Player player = (Player) sender;
 
             PlayerManager playerManager = PlayerManager.getInstance();
-            WrappedPlayerDatabase database = playerManager.getDatabase(player);
+            WrappedPlayerDatabase database = playerManager.get(player);
 
             boolean mpsDisabled = !database.contains(PlayerDatabaseKeys.NO_MPS);
 

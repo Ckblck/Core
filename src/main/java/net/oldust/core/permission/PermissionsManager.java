@@ -105,7 +105,7 @@ public class PermissionsManager extends Plugin {
      */
 
     public void setupPlayer(Player player) {
-        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
+        WrappedPlayerDatabase database = PlayerManager.getInstance().get(player);
 
         PlayerRank playerRank = database.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
         RankPermissions rankPermissions = this.rankPermissions.get(playerRank);

@@ -65,7 +65,7 @@ public class StaffMode implements Serializable {
         panel.add(8, ModeItems.EXIT, (click) -> {
             Player player = Bukkit.getPlayer(this.player);
 
-            manager.exitStaffMode(player, playerManager.getDatabase(this.player));
+            manager.exitStaffMode(player, playerManager.get(this.player));
         });
 
         panel.addListener(new InteractiveListener() {

@@ -41,19 +41,19 @@ public class EventsProvider implements Listener {
         CUtils.registerEvents(this);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent e) {
         handle(e);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onQuit(PlayerQuitEvent e) {
         handle(e);
     }
 
     private void handle(PlayerEvent e, Player player) {
         Class<? extends Event> clazz = e.getClass();
-        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
+        WrappedPlayerDatabase database = PlayerManager.getInstance().get(player);
 
         if (database == null) { // Si esto pasa, estamos en la B, significaría la Wrapped no se pudo cachear lo suficientemente rápido.
             if (e instanceof PlayerJoinEvent) {

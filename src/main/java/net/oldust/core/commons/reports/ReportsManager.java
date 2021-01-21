@@ -106,7 +106,7 @@ public class ReportsManager {
 
     public void registerReport(Player player, String reported) {
         PlayerManager playerManager = PlayerManager.getInstance();
-        WrappedPlayerDatabase database = playerManager.getDatabase(player);
+        WrappedPlayerDatabase database = playerManager.get(player);
         Optional<Savable.WrappedValue> reportedOpt = database.getValueOptional(PlayerDatabaseKeys.PLAYERS_REPORTED);
 
         reportedOpt
@@ -136,7 +136,7 @@ public class ReportsManager {
 
     public boolean hasReported(Player reporter, String reportAttempt) {
         PlayerManager playerManager = PlayerManager.getInstance();
-        WrappedPlayerDatabase database = playerManager.getDatabase(reporter);
+        WrappedPlayerDatabase database = playerManager.get(reporter);
 
         Optional<Savable.WrappedValue> optional = database.getValueOptional(PlayerDatabaseKeys.PLAYERS_REPORTED);
 

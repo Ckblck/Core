@@ -40,7 +40,7 @@ public class RankUpdateAction extends Action<RankUpdateAction> {
 
         Player player = Bukkit.getPlayer(this.player);
         PlayerManager manager = PlayerManager.getInstance();
-        WrappedPlayerDatabase database = manager.getDatabase(this.player);
+        WrappedPlayerDatabase database = manager.get(this.player);
         PlayerRank rank = database.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
 
         assert player != null;

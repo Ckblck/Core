@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PlayerManager {
+public class PlayerManager implements SyncedManager<UUID, WrappedPlayerDatabase> {
     @Getter
     private static PlayerManager instance;
 
@@ -31,7 +31,7 @@ public class PlayerManager {
 
         Core core = Core.getInstance();
 
-        if (core != null) { // Is null for the OldustBungee
+        if (core != null) { // Is null when the instantiation is done as a Bungee Plugin
             EventsProvider provider = core.getEventsProvider();
 
             provider.newOperation(PlayerQuitEvent.class, (ev, db) -> {
@@ -53,12 +53,24 @@ public class PlayerManager {
         playerRepository.put(database);
     }
 
-    public WrappedPlayerDatabase getDatabase(UUID uuid) {
-        return cache.get(uuid);
+    @Override
+    public WrappedPlayerDatabase get(UUID playerUuid) {
+        return cache.get(playerUuid);
     }
 
-    public WrappedPlayerDatabase getDatabase(Player player) {
-        return cache.get(player.getUniqueId());
+    @Override
+    public boolean contains(UUID uuid) {
+        return cache.containsKey(uuid);
+    }
+
+    @Override
+    public void update(WrappedPlayerDatabase database) {
+        CUtils.runAsync(() ->
+                playerRepository.update(database));
+    }
+
+    public WrappedPlayerDatabase get(Player player) {
+        return get(player.getUniqueId());
     }
 
     @Async
@@ -71,24 +83,11 @@ public class PlayerManager {
         return getDatabaseRedis(player.getUniqueId());
     }
 
-    public void remove(UUID uuid) { // Executed in OldustBungee
+    public void remove(UUID uuid) { // Invoked in OldustBungee
         cache.remove(uuid);
 
         CUtils.runAsync(() ->
                 playerRepository.remove(uuid.toString()));
-    }
-
-    public void update(WrappedPlayerDatabase database) {
-        UUID uuid = database.getPlayerUUID();
-
-        cache.replace(uuid, database);
-
-        CUtils.runAsync(() ->
-                playerRepository.update(database));
-    }
-
-    public boolean contains(UUID uuid) {
-        return cache.containsKey(uuid);
     }
 
     @Async

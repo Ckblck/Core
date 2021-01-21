@@ -41,7 +41,7 @@ public class StaffModeManager implements Listener {
 
     public StaffModeManager() {
         for (Player player : PlayerUtils.getPlayers()) {
-            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
+            WrappedPlayerDatabase database = PlayerManager.getInstance().get(player);
             boolean vanished = database.contains(PlayerDatabaseKeys.VANISH);
             boolean staffMode = database.contains(PlayerDatabaseKeys.STAFF_MODE);
 
@@ -112,7 +112,7 @@ public class StaffModeManager implements Listener {
 
         vanished.add(player.getUniqueId());
 
-        WrappedPlayerDatabase database = playerManager.getDatabase(player);
+        WrappedPlayerDatabase database = playerManager.get(player);
         database.put(PlayerDatabaseKeys.VANISH, true);
 
         playerManager.update(database);
@@ -142,7 +142,7 @@ public class StaffModeManager implements Listener {
 
         vanished.remove(player.getUniqueId());
 
-        WrappedPlayerDatabase database = playerManager.getDatabase(player);
+        WrappedPlayerDatabase database = playerManager.get(player);
         database.remove(PlayerDatabaseKeys.VANISH);
 
         playerManager.update(database);
@@ -180,7 +180,7 @@ public class StaffModeManager implements Listener {
     }
 
     private void setStaffMode(Player player) {
-        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
+        WrappedPlayerDatabase database = PlayerManager.getInstance().get(player);
 
         setStaffMode(player, database);
     }

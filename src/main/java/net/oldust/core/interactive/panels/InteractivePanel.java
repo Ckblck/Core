@@ -59,7 +59,7 @@ public class InteractivePanel implements Serializable {
      */
 
     protected void exit(Player player) {
-        if (previousInventory == null) { // Se perdió tras una posible serialización.
+        if (previousInventory == null) { // Se perdió tras serialización.
             player.getInventory().clear();
         } else {
             for (int i = 0; i < previousInventory.length; i++) {

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 public class CUtils {
-    public static boolean IS_BUNGEE;
+    public boolean IS_BUNGEE;
 
     private final Pattern COLOR_PATTERN = Pattern.compile("#[a-fA-F0-9]{6}( )?");
 

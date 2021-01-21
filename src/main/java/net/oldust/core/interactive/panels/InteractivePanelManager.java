@@ -33,7 +33,8 @@ public class InteractivePanelManager implements Listener {
         provider.newOperation(PlayerQuitEvent.class, (quit, db) -> {
             Player player = quit.getPlayer();
 
-            if (hasNotPanel(player)) return;
+            if (hasNotPanel(player))
+                return;
 
             exitPanel(player);
         });
@@ -53,7 +54,8 @@ public class InteractivePanelManager implements Listener {
     public void exitPanel(Player player) {
         InteractivePanel panel = panels.remove(player.getUniqueId());
 
-        if (panel == null) return;
+        if (panel == null)
+            return;
 
         panel.exit(player);
     }

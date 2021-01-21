@@ -26,7 +26,7 @@ public class ModeCommand extends InheritedCommand<StaffPlugin> {
             if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
 
             Player player = (Player) sender;
-            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
+            WrappedPlayerDatabase database = PlayerManager.getInstance().get(player);
             StaffModeManager modeManager = getPlugin().getStaffModeManager();
 
             if (database.contains(PlayerDatabaseKeys.STAFF_MODE)) {

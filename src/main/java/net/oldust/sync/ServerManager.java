@@ -23,7 +23,7 @@ import java.util.*;
  * acordate de generar el cambio en el servidor en cuestión.
  */
 
-public class ServerManager {
+public class ServerManager implements SyncedManager<String, OldustServer> {
     private static final String SERVER_LIST_NAME = "servers";
 
     @Getter
@@ -64,6 +64,13 @@ public class ServerManager {
     }
 
     @Async
+    @Override
+    public OldustServer get(String serverName) {
+        return serverRepository.get(serverName);
+    }
+
+    @Async
+    @Override
     public boolean contains(String serverName) {
         return serverRepository.exists(serverName);
     }
@@ -75,16 +82,12 @@ public class ServerManager {
     }
 
     @Async
-    public OldustServer getServer(String serverName) {
-        return serverRepository.get(serverName);
-    }
-
-    @Async
     public void updateCurrent() {
         serverRepository.update(currentServer);
     }
 
     @Async
+    @Override
     public void update(OldustServer server) {
         serverRepository.update(server);
     }

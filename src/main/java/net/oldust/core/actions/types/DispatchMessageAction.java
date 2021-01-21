@@ -83,7 +83,7 @@ public class DispatchMessageAction extends Action<DispatchMessageAction> {
         Collection<? extends Player> players = PlayerUtils.getPlayers();
 
         for (Player player : players) {
-            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
+            WrappedPlayerDatabase database = PlayerManager.getInstance().get(player);
 
             boolean applies = requirement.test(database);
 

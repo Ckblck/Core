@@ -76,7 +76,7 @@ publishing {
 }
 
 task shadowJarCustomOutput {
-    libsDirName = '/home/ckblck/Documents/Oldust/Server/plugins'
+    libsDirName = 'C:\\Users\\Ckblck\\Documents\\Oldust\\Server\\plugins'
     shadowJarCustomOutput.dependsOn shadowJar
 }
 

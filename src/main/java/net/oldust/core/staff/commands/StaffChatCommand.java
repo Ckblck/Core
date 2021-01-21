@@ -28,7 +28,7 @@ public class StaffChatCommand extends InheritedCommand<StaffPlugin> {
             Player player = (Player) sender;
             PlayerManager manager = PlayerManager.getInstance();
 
-            WrappedPlayerDatabase db = manager.getDatabase(player);
+            WrappedPlayerDatabase db = manager.get(player);
             boolean staffChat = db.contains(PlayerDatabaseKeys.STAFF_CHAT);
 
             if (staffChat) {

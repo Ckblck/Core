@@ -22,7 +22,6 @@ import net.oldust.sync.wrappers.Savable;
 import net.oldust.sync.wrappers.ServerDatabaseKeys;
 import net.oldust.sync.wrappers.defaults.OldustServer;
 import net.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.Player;
@@ -52,7 +51,7 @@ public class ChatListener implements Listener {
             return;
         }
 
-        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(player);
+        WrappedPlayerDatabase database = PlayerManager.getInstance().get(player);
         boolean staffChat = database.contains(PlayerDatabaseKeys.STAFF_CHAT);
 
         // Comprobar si el jugador tiene el chat del Staff activado.
@@ -150,8 +149,6 @@ public class ChatListener implements Listener {
 
             database.put(PlayerDatabaseKeys.LAST_MESSAGE, new ChatMessage(e.getMessage()));
             PlayerManager.getInstance().update(database);
-
-            Bukkit.broadcastMessage(CUtils.color(e.getMessage())); // TODO: Remove
         }, () -> player.kickPlayer(Lang.DB_DISAPPEARED));
 
     }

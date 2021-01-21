@@ -128,7 +128,7 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
             } else {
                 CUtils.runAsync(() -> {
                     Optional<String> targetServer = (targetPl != null)
-                            ? Optional.of(manager.getDatabase(targetPl).getBungeeServer())
+                            ? Optional.of(manager.get(targetPl).getBungeeServer())
                             : svManager.getPlayerServer(target);
 
                     boolean present = targetServer.isPresent();
@@ -202,7 +202,7 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
         }
 
         CUtils.runAsync(() -> {
-            WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(sender);
+            WrappedPlayerDatabase database = PlayerManager.getInstance().get(sender);
             String playerServer = database.getBungeeServer();
 
             Optional<String> targetServer = Core.getInstance().getServerManager().getPlayerServer(targetName);

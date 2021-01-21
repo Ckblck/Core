@@ -69,7 +69,7 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
         CUtils.warnSyncCall();
 
         PlayerManager playerManager = PlayerManager.getInstance();
-        WrappedPlayerDatabase playerDatabase = playerManager.getDatabase(player);
+        WrappedPlayerDatabase playerDatabase = playerManager.get(player);
         Optional<Savable.WrappedValue> muted = playerDatabase.getValueOptional(PlayerDatabaseKeys.MUTE_DURATION);
 
         if (muted.isPresent()) {
@@ -99,7 +99,7 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
             Player targetPlayer = Bukkit.getPlayer(target);
             assert targetPlayer != null;
 
-            WrappedPlayerDatabase targetDatabase = playerManager.getDatabase(targetPlayer);
+            WrappedPlayerDatabase targetDatabase = playerManager.get(targetPlayer);
 
             if (targetDatabase.contains(PlayerDatabaseKeys.NO_MPS)) {
                 CUtils.msg(player, Lang.ERROR_COLOR + "That player cannot receive private messages.", LangSound.ERROR);
@@ -127,7 +127,7 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
         Optional<String> targetServer = serverManager.getPlayerServer(target);
 
         targetServer.ifPresentOrElse(server -> {
-            Map<String, UUID> playersConnected = serverManager.getServer(server).getPlayersConnected();
+            Map<String, UUID> playersConnected = serverManager.get(server).getPlayersConnected();
 
             String capitalizedName = playersConnected.keySet()
                     .stream()

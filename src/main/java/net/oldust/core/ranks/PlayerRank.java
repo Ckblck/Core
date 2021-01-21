@@ -72,7 +72,7 @@ public enum PlayerRank {
     }
 
     private static PlayerRank getPlayerRank(Player sender) {
-        WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabase(sender);
+        WrappedPlayerDatabase database = PlayerManager.getInstance().get(sender);
 
         return database.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
     }
