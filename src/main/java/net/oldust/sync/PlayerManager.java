@@ -8,6 +8,7 @@ import net.oldust.core.utils.CUtils;
 import net.oldust.sync.jedis.RedisRepository;
 import net.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerQuitEvent;
 import redis.clients.jedis.JedisPool;
 
@@ -38,7 +39,7 @@ public class PlayerManager implements SyncedManager<UUID, WrappedPlayerDatabase>
                 UUID uuid = ev.getPlayer().getUniqueId();
 
                 cache.remove(uuid);
-            });
+            }, EventPriority.LOWEST);
         }
 
     }
