@@ -14,22 +14,21 @@ The utility provides two variables at the moment of execution, `? extends Player
 Usage examples:
 
 ```java
-provider.newOperation(PlayerQuitEvent.class,(ev,db)->{
-        UUID uuid=ev.getPlayer().getUniqueId();
+provider.newOperation(PlayerQuitEvent.class, (ev, db) -> {
+    UUID uuid=ev.getPlayer().getUniqueId();
 
-        cache.remove(uuid);
-        },EventPriority.LOWEST);
-
+    cache.remove(uuid);
+}, EventPriority.LOWEST);
 ```
 
 ```java
-provider.newOperation(PlayerJoinEvent.class,(ev,db)->{
-        Player player=ev.getPlayer();
+provider.newOperation(PlayerJoinEvent.class, (ev, db) -> {
+    Player player=ev.getPlayer();
 
-        ConquerPlayer conquerPlayer=createInstance(player.getUniqueId());
+    ConquerPlayer conquerPlayer=createInstance(player.getUniqueId());
 
-        server.onPlayerJoin(player,conquerPlayer);
-        },EventPriority.HIGHEST);
+    server.onPlayerJoin(player,conquerPlayer);
+}, EventPriority.HIGHEST);
 ```
 
 Keep in mind the operations are invoked in the server's **main-thread**.
