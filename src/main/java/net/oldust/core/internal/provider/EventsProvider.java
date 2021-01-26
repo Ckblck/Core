@@ -69,7 +69,6 @@ public class EventsProvider implements Listener {
         ImmutableWrappedPlayerDatabase immutableDb = new ImmutableWrappedPlayerDatabase(database);
 
         for (Operation<PlayerEvent> operation : operations.get(clazz)) {
-            System.out.println("executing " + operation.getPriority().name());
             operation.accept(e, immutableDb);
         }
 
@@ -81,7 +80,7 @@ public class EventsProvider implements Listener {
 
     /**
      * Inserts a new operation at a given event,
-     * with an specific priority.
+     * with a specific priority.
      * <p>
      * NOTE: Higher priorities WILL BE EXECUTED FIRST.
      *
