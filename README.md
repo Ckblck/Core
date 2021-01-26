@@ -1,6 +1,6 @@
 # OldustCore
 
-OldustCore is the Core of the server. It aims to provide a **wide**, **extense** and **flexible** codebase for the
+OldustCore is the Core of the server. It aims to provide a **wide**, **extensive** and **flexible** codebase for the
 future ideas and projects.
 
 ## EventsProvider
@@ -34,9 +34,10 @@ provider.newOperation(PlayerJoinEvent.class,(ev,db)->{
 
 Keep in mind the operations are invoked in the server's **main-thread**.
 
-> **Why is the WrappedDatabase Immutable?** These operations are executed procedurally and in a matter of nanoseconds. If we modified the database and **uploaded then to Redis**, it would cause some major problems, because the Redis upload is **not a blocking operation**, as it **has to be done asynchronously**.
+> **Why is the WrappedDatabase Immutable?** These operations are executed procedurally and in a matter of nanoseconds. If we modified the database and then **uploaded it to Redis**, it would cause some major problems, because Redis uploads are **not blocking operations**, as they **has to be done asynchronously**.
 > This doesn't happen when the class is modified, though, because the reference is stored in cache, and the **WrappedDatabase** object is **ThreadSafe**.
-> To keep it simple, as long as the modifications are NOT uploaded to Redis, all will be OK. But **in order to avoid having to deal with these complications**, *the database was marked as **Immutable***.
+> To keep it simple, as long as the modifications are NOT uploaded to Redis, all will be OK.
+> Either way, **in order to avoid having to deal with these complications**, *the database was marked as **Immutable***.
 
 ## Simple considerations
 
@@ -50,4 +51,4 @@ Keep in mind the operations are invoked in the server's **main-thread**.
 
 ---
 
-> This **README** was created to explain some project-related features that might be difficult to understand at first. If you think a new change you have made might need explicit explanation, don't mind to extend this **README**.
+> This **README** was created to explain some project-related features that might be difficult to understand at first. If you think a new change you have made might need explicit explanation, don't mind extending this **README**.
