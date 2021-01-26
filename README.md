@@ -15,7 +15,7 @@ Usage examples:
 
 ```java
 provider.newOperation(PlayerQuitEvent.class, (ev, db) -> {
-    UUID uuid=ev.getPlayer().getUniqueId();
+    UUID uuid = ev.getPlayer().getUniqueId();
 
     cache.remove(uuid);
 }, EventPriority.LOWEST);
@@ -23,9 +23,9 @@ provider.newOperation(PlayerQuitEvent.class, (ev, db) -> {
 
 ```java
 provider.newOperation(PlayerJoinEvent.class, (ev, db) -> {
-    Player player=ev.getPlayer();
+    Player player = ev.getPlayer();
 
-    ConquerPlayer conquerPlayer=createInstance(player.getUniqueId());
+    ConquerPlayer conquerPlayer = createInstance(player.getUniqueId());
 
     server.onPlayerJoin(player,conquerPlayer);
 }, EventPriority.HIGHEST);
