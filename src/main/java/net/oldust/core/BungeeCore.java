@@ -6,16 +6,15 @@ import net.oldust.sync.JedisManager;
 import net.oldust.sync.PlayerManager;
 
 /**
- * Clase dummy para el cargado
- * de la dependencia del core
- * en Bungee.
+ * Dummy class for the load of the Core
+ * in a Bungee environment.
  */
 
 public class BungeeCore extends Plugin {
 
     @Override
     public void onEnable() {
-        CUtils.IS_BUNGEE = true;
+        CUtils.IS_PROXY = true;
 
         new JedisManager();
         new PlayerManager();

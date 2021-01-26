@@ -23,13 +23,13 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 public class CUtils {
-    public boolean IS_BUNGEE;
+    public boolean IS_PROXY;
 
     private final Pattern COLOR_PATTERN = Pattern.compile("#[a-fA-F0-9]{6}( )?");
 
     public void warnSyncCall() {
         try {
-            if (!IS_BUNGEE && Bukkit.isPrimaryThread() && Bukkit.getPluginManager().isPluginEnabled("Conquer")) {
+            if (!IS_PROXY && Bukkit.isPrimaryThread() && Bukkit.getPluginManager().isPluginEnabled("Conquer")) {
                 Thread.dumpStack();
 
                 inform("Server", Lang.ERROR_COLOR + "WARNING! A call from the Main thread was made, when expected Async usage.");
@@ -134,7 +134,7 @@ public class CUtils {
     }
 
     public void runSync(Runnable runnable) {
-        if (IS_BUNGEE || Bukkit.isPrimaryThread()) {
+        if (IS_PROXY || Bukkit.isPrimaryThread()) {
             runnable.run();
         } else {
             Bukkit.getScheduler().runTask(Core.getInstance(), runnable);
@@ -142,7 +142,7 @@ public class CUtils {
     }
 
     public void runAsync(Runnable runnable) {
-        if (IS_BUNGEE || !Bukkit.isPrimaryThread()) {
+        if (IS_PROXY || !Bukkit.isPrimaryThread()) {
             runnable.run();
         } else {
             Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), runnable);

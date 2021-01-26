@@ -21,7 +21,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -166,11 +165,21 @@ public class MySQLManager {
         File file = new File(credentialsFile.toURI());
 
         try {
-            FileUtils.copyInputStreamToFile(Objects.requireNonNull(Core.getInstance().getResource("db_credentials.yml")), credentialsFile);
+            InputStream resource = Core.class.getResourceAsStream("/db_credentials.yml");
+
+            System.out.println(resource + " ???");
+
+            FileUtils.copyInputStreamToFile(resource, credentialsFile);
             Files.copy(file.toPath(), credentialsFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
             System.out.println("Se ha creado el archivo de credenciales para la base de datos por primera vez. Rellénalo y reinicia el servidor.");
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 

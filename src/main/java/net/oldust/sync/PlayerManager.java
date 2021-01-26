@@ -31,7 +31,7 @@ public class PlayerManager implements SyncedManager<UUID, WrappedPlayerDatabase>
 
         Core core = Core.getInstance();
 
-        if (core != null) { // Is null when the instantiation is done as a Bungee Plugin
+        if (core != null) { // It is null when the instantiation is done as a Bungee Plugin
             EventsProvider provider = core.getEventsProvider();
 
             provider.newOperation(PlayerQuitEvent.class, (ev, db) -> {
