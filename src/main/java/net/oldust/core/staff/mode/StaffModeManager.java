@@ -10,15 +10,19 @@ import net.oldust.sync.PlayerManager;
 import net.oldust.sync.wrappers.PlayerDatabaseKeys;
 import net.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -201,11 +205,32 @@ public class StaffModeManager implements Listener {
     }
 
     @EventHandler
+    public void onClick(InventoryClickEvent e) {
+        HumanEntity player = e.getWhoClicked();
+
+        if (hasStaffMode(player)) {
+            e.setCancelled(true);
+        }
+
+    }
+
+    @EventHandler
+    public void onDrop(PlayerDropItemEvent e) {
+        Player player = e.getPlayer();
+
+        if (hasStaffMode(player)) {
+            e.setCancelled(true);
+        }
+
+    }
+
+    @EventHandler
     public void onBreak(BlockBreakEvent e) {
         Player player = e.getPlayer();
 
         if (hasStaffMode(player)) {
             e.setCancelled(true);
+
             CUtils.msg(player, Lang.ERROR_COLOR + "You can't break any blocks while in Staff Mode!", LangSound.ERROR);
         }
     }
@@ -222,6 +247,41 @@ public class StaffModeManager implements Listener {
         if (e.getEntity() instanceof Player && hasStaffMode(e.getEntity())) {
             e.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onFrameRotate(PlayerInteractEntityEvent e) {
+        if (e.getRightClicked().getType() != EntityType.ITEM_FRAME)
+            return;
+
+        if (hasStaffMode(e.getPlayer())) {
+            e.setCancelled(true);
+        }
+
+    }
+
+    @EventHandler
+    public void onFrameHit(EntityDamageByEntityEvent e) {
+        if (e.getEntity() instanceof ItemFrame) {
+            Entity damager = e.getDamager();
+
+            if (damager instanceof Player && !hasStaffMode(damager)) {
+                return;
+            }
+
+            if (damager instanceof Projectile) {
+                ProjectileSource shooter = ((Projectile) damager).getShooter();
+
+                if (shooter instanceof Player && !hasStaffMode((Entity) shooter)) {
+                    return;
+                }
+
+                damager.remove();
+            }
+
+            e.setCancelled(true);
+        }
+
     }
 
     private boolean hasStaffMode(Entity player) {

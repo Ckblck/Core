@@ -22,12 +22,16 @@ import net.oldust.sync.wrappers.defaults.OldustServer;
 import net.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 public class StaffMode implements Serializable {
     private static final TextComponent RETURN_COMPONENT = new EasyTextComponent()
@@ -66,6 +70,10 @@ public class StaffMode implements Serializable {
             Player player = Bukkit.getPlayer(this.player);
 
             manager.exitStaffMode(player, playerManager.get(this.player));
+
+            assert player != null;
+
+            player.playSound(player.getLocation(), Sound.ENTITY_CHICKEN_EGG, 0.5F, Float.MAX_VALUE);
         });
 
         panel.addListener(new InteractiveListener() {
@@ -129,11 +137,21 @@ public class StaffMode implements Serializable {
     }
 
     public void randomTeleport(Player staff) {
-        PlayerUtils.getPlayers().stream()
+        List<? extends Player> randomList = PlayerUtils.getPlayers()
+                .stream()
                 .filter(randomPlayer -> randomPlayer.getUniqueId() != this.player)
-                .findAny()
-                .ifPresentOrElse(staff::teleport,
-                        () -> CUtils.msg(staff, Lang.ERROR_COLOR + "There aren't any players!", LangSound.ERROR));
+                .collect(Collectors.toList());
+
+        if (!randomList.isEmpty()) {
+            int randomIndex = ThreadLocalRandom.current().nextInt(0, randomList.size());
+
+            Player player = randomList.get(randomIndex);
+
+            staff.teleport(player);
+        } else {
+            CUtils.msg(staff, Lang.ERROR_COLOR + "There aren't any players!", LangSound.ERROR);
+        }
+
     }
 
     public void switchVision(Player staff) {
