@@ -10,19 +10,23 @@ import net.oldust.sync.PlayerManager;
 import net.oldust.sync.wrappers.PlayerDatabaseKeys;
 import net.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -235,57 +239,54 @@ public class StaffModeManager implements Listener {
         }
     }
 
-    @EventHandler
-    public void onHit(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player && hasStaffMode(e.getEntity())) {
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onDamage(EntityDamageEvent e) {
+        if (hasStaffMode(e.getEntity())) {
             e.setCancelled(true);
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onHit(EntityDamageByEntityEvent e) {
+        if (hasStaffMode(e.getDamager())) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPickUp(EntityPickupItemEvent e) {
         if (e.getEntity() instanceof Player && hasStaffMode(e.getEntity())) {
             e.setCancelled(true);
         }
     }
 
-    @EventHandler
-    public void onFrameRotate(PlayerInteractEntityEvent e) {
-        if (e.getRightClicked().getType() != EntityType.ITEM_FRAME)
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onFrameBreak(HangingBreakByEntityEvent e) {
+        if (e.getEntity().getType() != EntityType.ITEM_FRAME)
             return;
 
-        if (hasStaffMode(e.getPlayer())) {
+        Entity remover = e.getRemover();
+
+        if (remover != null && hasStaffMode(remover)) {
             e.setCancelled(true);
         }
 
     }
 
-    @EventHandler
-    public void onFrameHit(EntityDamageByEntityEvent e) {
-        if (e.getEntity() instanceof ItemFrame) {
-            Entity damager = e.getDamager();
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onFrameRotate(PlayerInteractEntityEvent e) {
+        if (e.getRightClicked().getType() == EntityType.ITEM_FRAME) {
+            Player player = e.getPlayer();
 
-            if (damager instanceof Player && !hasStaffMode(damager)) {
-                return;
+            if (hasStaffMode(player)) {
+                e.setCancelled(true);
             }
 
-            if (damager instanceof Projectile) {
-                ProjectileSource shooter = ((Projectile) damager).getShooter();
-
-                if (shooter instanceof Player && !hasStaffMode((Entity) shooter)) {
-                    return;
-                }
-
-                damager.remove();
-            }
-
-            e.setCancelled(true);
         }
-
     }
 
-    private boolean hasStaffMode(Entity player) {
-        return staffs.containsKey(player.getUniqueId());
+    private boolean hasStaffMode(Entity entity) {
+        return staffs.containsKey(entity.getUniqueId());
     }
 
 }
