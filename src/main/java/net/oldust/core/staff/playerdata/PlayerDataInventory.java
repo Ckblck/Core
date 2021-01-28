@@ -234,15 +234,21 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
 
         builder.setDisplayName(itemName);
 
-        List<String> lore = new ArrayList<>(Arrays.asList(
-                "#404040 #" + punishment.getPunishmentId(),
-                " ",
-                "#a6a6a6 " + word + punishment.getPunisherName(),
-                "#a6a6a6 " + "Reason: &f" + punishment.getReason(),
-                "#a6a6a6 " + "Date: &f" + date,
-                "#a6a6a6 " + "Expiration: &f" + expires,
-                unpunishedDate,
-                unpunisher));
+        List<String> lore = new ArrayList<>(
+                Arrays.asList(
+                        "#404040 #" + punishment.getPunishmentId(),
+                        " ",
+                        "#a6a6a6 " + word + punishment.getPunisherName(),
+                        "#a6a6a6 " + "Reason: &f" + punishment.getReason(),
+                        "#a6a6a6 " + "Date: &f" + date,
+                        unpunishedDate,
+                        unpunisher
+                )
+        );
+
+        if (type != PunishmentType.KICK) { // Kicks do not show an expiration.
+            lore.add(5,  "#a6a6a6 " + "Expiration: &f" + expires);
+        }
 
         if (unpunisher.equals("")) {
             lore.remove(lore.size() - 1);

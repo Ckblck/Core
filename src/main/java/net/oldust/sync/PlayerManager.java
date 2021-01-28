@@ -38,7 +38,11 @@ public class PlayerManager implements SyncedManager<UUID, WrappedPlayerDatabase>
             provider.newOperation(PlayerQuitEvent.class, (ev, db) -> {
                 UUID uuid = ev.getPlayer().getUniqueId();
 
-                cache.remove(uuid);
+                WrappedPlayerDatabase database = cache.remove(uuid);
+
+                // Upload, just in case of cache-modifications, the database to Redis
+
+                update(database);
             }, EventPriority.LOWEST);
         }
 
