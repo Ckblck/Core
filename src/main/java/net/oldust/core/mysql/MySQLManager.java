@@ -197,7 +197,10 @@ public class MySQLManager {
             CUtils.inform("Core", "Could not get public IP address.");
             CUtils.inform("Core", "x------------------------------x");
 
-            Bukkit.shutdown();
+            try {
+                Bukkit.shutdown();
+            } catch (NullPointerException ignored) {}
+
         }
 
         CachedRowSet set = query("SELECT name FROM dustservers.servers WHERE address = ? AND port = ?;", address, port);
@@ -214,13 +217,17 @@ public class MySQLManager {
             CUtils.inform("Core", "This server is not registered in the Oldust database.");
             CUtils.inform("Core", "x---------------------------------------------------x");
 
-            Bukkit.shutdown();
+            try {
+                Bukkit.shutdown();
+            } catch (NullPointerException ignored) {}
         } catch (SQLException e) {
             CUtils.inform("Core", "x-------------------------------------------------------------x");
             CUtils.inform("Core", "Could not obtain server's public IP address. Validation failed.");
             CUtils.inform("Core", "x-------------------------------------------------------------x");
 
-            Bukkit.shutdown();
+            try {
+                Bukkit.shutdown();
+            } catch (NullPointerException ignored) {}
         }
 
     }

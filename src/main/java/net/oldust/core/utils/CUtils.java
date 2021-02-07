@@ -29,7 +29,7 @@ public class CUtils {
 
     public void warnSyncCall() {
         try {
-            if (!IS_PROXY && Bukkit.isPrimaryThread() && Bukkit.getPluginManager().isPluginEnabled("Conquer")) {
+            if (!IS_PROXY && Bukkit.isPrimaryThread()) {
                 Thread.dumpStack();
 
                 inform("Server", Lang.ERROR_COLOR + "WARNING! A call from the Main thread was made, when expected Async usage.");
@@ -82,7 +82,7 @@ public class CUtils {
         if (sound != null && sender instanceof Player) {
             Player player = (Player) sender;
 
-            player.playSound(player.getLocation(), sound.getSoundName(), sound.getPitch(), sound.getVolume());
+            sound.play(player);
         }
 
     }

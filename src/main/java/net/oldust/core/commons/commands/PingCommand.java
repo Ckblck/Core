@@ -22,9 +22,9 @@ public class PingCommand extends InheritedCommand<CommonsPlugin> {
     @Override
     public TriConsumer<CommandSender, String, String[]> onCommand() {
         return (sender, label, args) -> {
-            if (isNotPlayer(sender)) return;
-
             if (args.length == 0) {
+                if (isNotPlayer(sender)) return;
+
                 showPing(sender, ((Player) sender));
             } else {
                 String who = args[0];

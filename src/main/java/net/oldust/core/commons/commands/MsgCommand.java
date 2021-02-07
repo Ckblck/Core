@@ -113,6 +113,9 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
             player.sendMessage(finalMessage + message);
             targetPlayer.sendMessage(finalMessage + message);
 
+            LangSound.CHAT_POPUP_1.play(player);
+            LangSound.CHAT_POPUP_2.play(targetPlayer);
+
             // Establecemos el último jugador que contactó para el comando /reply
 
             playerDatabase.put(PlayerDatabaseKeys.LAST_PLAYER_MESSAGED, target);
@@ -151,6 +154,7 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
             String finalMessage = buildFormat(player, capitalizedName, playerRank, targetRank) + message;
 
             player.sendMessage(finalMessage);
+            LangSound.CHAT_POPUP_1.play(player);
 
             // Establecemos el último jugador que contactó para el comando /reply
 
@@ -162,7 +166,7 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
 
             // Enviamos acción cross-server
 
-            new SendPlayerMessageAction(target, finalMessage)
+            new SendPlayerMessageAction(target, finalMessage, LangSound.CHAT_POPUP_2)
                     .push(JedisManager.getInstance().getPool());
 
         }, () -> CUtils.msg(player, Lang.PLAYER_OFFLINE, LangSound.ERROR));
