@@ -4,6 +4,7 @@ import fr.minuskube.inv.InventoryManager;
 import lombok.Getter;
 import lombok.Setter;
 import net.oldust.core.actions.ActionsReceiver;
+import net.oldust.core.actions.reliable.AckReceiver;
 import net.oldust.core.actions.types.DispatchMessageAction;
 import net.oldust.core.chat.ChatHandler;
 import net.oldust.core.commons.CommonsPlugin;
@@ -68,6 +69,7 @@ public class Core extends JavaPlugin {
     private InventoryManager inventoryManager;
     private ServerManager serverManager;
     private EventsProvider eventsProvider;
+    private AckReceiver ackReceiver;
 
     @Override
     public void onEnable() {
@@ -81,9 +83,10 @@ public class Core extends JavaPlugin {
         new MySQLManager().validateAddress();
 
         eventsProvider = new EventsProvider();
+        ackReceiver = new AckReceiver();
 
-        new PlayerManager();
         new ActionsReceiver();
+        new PlayerManager();
         new PermissionsManager();
         new ScoreboardManager();
 

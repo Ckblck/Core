@@ -167,18 +167,16 @@ public class MySQLManager {
         try {
             InputStream resource = Core.class.getResourceAsStream("/db_credentials.yml");
 
-            System.out.println(resource + " ???");
-
             FileUtils.copyInputStreamToFile(resource, credentialsFile);
             Files.copy(file.toPath(), credentialsFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-            System.out.println("Se ha creado el archivo de credenciales para la base de datos por primera vez. Rellénalo y reinicia el servidor.");
+            System.out.println("The Database credentials file was created. Fill it correctly and start the server again.");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         try {
-            Thread.sleep(2500);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

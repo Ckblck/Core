@@ -135,7 +135,8 @@ public class RankPermissions {
     private Collection<Player> filter() {
         PlayerManager playerManager = PlayerManager.getInstance();
 
-        return PlayerUtils.getPlayers().stream()
+        return PlayerUtils.getPlayers()
+                .stream()
                 .filter(player -> {
                     WrappedPlayerDatabase db = playerManager.get(player);
                     PlayerRank playerRank = db.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);

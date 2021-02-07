@@ -36,7 +36,7 @@ public class ReplyCommand extends InheritedCommand<CommonsPlugin> {
 
             CUtils.runAsync(() -> {
                 Player player = (Player) sender;
-                WrappedPlayerDatabase database = PlayerManager.getInstance().getDatabaseRedis(player);
+                WrappedPlayerDatabase database = PlayerManager.getInstance().get(player);
 
                 Optional<Savable.WrappedValue> optional = database.getValueOptional(PlayerDatabaseKeys.LAST_PLAYER_MESSAGED);
 
