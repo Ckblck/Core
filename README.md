@@ -33,8 +33,8 @@ provider.newOperation(PlayerJoinEvent.class, (ev, db) -> {
 
 Keep in mind the operations are invoked in the server's **main-thread**.
 
-> **Why is the WrappedDatabase Immutable?** These operations are executed procedurally and in a matter of nanoseconds. If we modified the database and then **uploaded it to Redis**, it would cause some major problems, because Redis uploads are **not blocking operations**, as they **has to be done asynchronously**.
-> This doesn't happen when the class is modified, though, because the reference is stored in cache, and the **WrappedDatabase** object is **ThreadSafe**.
+> **Why is the WrappedDatabase Immutable?** These operations are executed procedurally and in a matter of nanoseconds. If we modified the database and then **uploaded it to Redis**, it would cause some major problems, because Redis uploads are **not blocking operations**, as they **have to be done asynchronously**.
+> Although this doesn't happen when the class is modified, because the reference is stored in cache, and the **WrappedDatabase** object is **ThreadSafe**.
 > To keep it simple, as long as the modifications are NOT uploaded to Redis, all will be OK.
 > Either way, **in order to avoid having to deal with these complications**, *the database was marked as **Immutable***.
 
