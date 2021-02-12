@@ -31,7 +31,7 @@ public class PlayerDataCommand extends InheritedCommand<StaffPlugin> {
             Player player = (Player) sender;
 
             if (args.length == 0) {
-                CUtils.msg(player, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname", LangSound.ERROR));
+                CUtils.msg(player, String.format(Lang.MISSING_ARGUMENT_FORMATTABLE, "nickname", LangSound.ERROR));
 
                 return;
             }

@@ -5,6 +5,7 @@ import net.oldust.core.Core;
 import net.oldust.core.internal.provider.EventsProvider;
 import net.oldust.core.utils.Async;
 import net.oldust.core.utils.CUtils;
+import net.oldust.sync.jedis.JedisManager;
 import net.oldust.sync.jedis.RedisRepository;
 import net.oldust.sync.wrappers.defaults.OldustServer;
 import org.bukkit.entity.Player;

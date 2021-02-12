@@ -5,14 +5,13 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import com.google.common.collect.ImmutableSet;
 import net.oldust.core.Core;
 
 import java.util.Set;
 
 public class Interceptor {
 
-    private static final Set<PacketType> DISABLED_PACKETS = ImmutableSet.of(
+    private static final Set<PacketType> DISABLED_PACKETS = Set.of(
             PacketType.Play.Client.FLYING,
             PacketType.Play.Client.POSITION,
             PacketType.Play.Client.POSITION_LOOK,
@@ -33,14 +32,13 @@ public class Interceptor {
             PacketType.Play.Client.HELD_ITEM_SLOT
     );
 
-    private static final Set<PacketType> DISABLED_PACKETS_CLIENT_SIDE = ImmutableSet.of(
+    private static final Set<PacketType> DISABLED_PACKETS_CLIENT_SIDE = Set.of(
             PacketType.Play.Server.CHAT,
             PacketType.Play.Server.UNLOAD_CHUNK,
             PacketType.Play.Server.BLOCK_CHANGE,
             PacketType.Play.Server.LIGHT_UPDATE,
             PacketType.Play.Server.TAB_COMPLETE,
             PacketType.Play.Server.ABILITIES,
-            PacketType.Play.Server.EXPERIENCE,
             PacketType.Play.Server.RECIPES,
             PacketType.Play.Server.RECIPE_UPDATE,
             PacketType.Play.Server.VIEW_CENTRE,
@@ -60,7 +58,6 @@ public class Interceptor {
             PacketType.Play.Server.PLAYER_INFO,
             PacketType.Play.Server.NAMED_SOUND_EFFECT,
             PacketType.Play.Server.REL_ENTITY_MOVE_LOOK,
-            PacketType.Play.Server.REL_ENTITY_MOVE_LOOK,
             PacketType.Play.Server.ANIMATION,
             PacketType.Play.Server.ENTITY_TELEPORT,
             PacketType.Play.Server.EXPERIENCE,
@@ -71,7 +68,6 @@ public class Interceptor {
             PacketType.Play.Server.MAP_CHUNK_BULK,
             PacketType.Play.Server.MAP_CHUNK,
             PacketType.Play.Server.TRANSACTION,
-            PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER,
             PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER
     );
 

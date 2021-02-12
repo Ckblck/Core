@@ -3,6 +3,7 @@ package net.oldust.core.utils;
 import lombok.experimental.UtilityClass;
 import net.md_5.bungee.api.ChatColor;
 import net.oldust.core.Core;
+import net.oldust.core.VelocityCore;
 import net.oldust.core.utils.lang.Lang;
 import net.oldust.core.utils.lang.LangSound;
 import org.bukkit.Bukkit;
@@ -29,7 +30,7 @@ public class CUtils {
 
     public void warnSyncCall() {
         try {
-            if (!IS_PROXY && Bukkit.isPrimaryThread()) {
+            if (!IS_PROXY && Bukkit.isPrimaryThread() && Bukkit.getPluginManager().isPluginEnabled("Conquer")) { // Conquer uses this method explicitly.
                 Thread.dumpStack();
 
                 inform("Server", Lang.ERROR_COLOR + "WARNING! A call from the Main thread was made, when expected Async usage.");
@@ -57,11 +58,17 @@ public class CUtils {
     }
 
     public void inform(String prefix, String message) {
-        Core.getInstance().getServer().getConsoleSender().sendMessage(ChatColor.BLUE
+        String finalMessage = ChatColor.BLUE
                 + "[" + prefix + "]"
                 + ChatColor.DARK_GRAY
                 + " -> " + ChatColor.RESET
-                + message);
+                + message;
+
+        if (!IS_PROXY) {
+            Bukkit.getServer().getConsoleSender().sendMessage(finalMessage);
+        } else {
+            VelocityCore.getInstance().getLogger().info(finalMessage);
+        }
     }
 
     /**

@@ -1,10 +1,11 @@
-package net.oldust.core.actions.reliable;
+package net.oldust.core.actions.reliable.ack;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import net.oldust.core.Core;
-import net.oldust.sync.JedisManager;
+import net.oldust.core.actions.reliable.ReliableAction;
+import net.oldust.sync.jedis.JedisManager;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
@@ -16,24 +17,26 @@ public class AckReceiver extends JedisPubSub implements Runnable {
 
     private final Cache<String, Consumer<Acknowledgment>> acknowledgementCache = CacheBuilder
             .newBuilder()
-            .expireAfterWrite(3, TimeUnit.SECONDS)
+            .expireAfterWrite(5, TimeUnit.SECONDS)
             .removalListener((RemovalListener<String, Consumer<Acknowledgment>>) notification -> {
                 boolean wasEvicted = notification.wasEvicted();
 
                 if (wasEvicted) {
                     Consumer<Acknowledgment> consumer = notification.getValue();
 
-                    consumer.accept(Acknowledgment.INVALID);
+                    consumer.accept(Acknowledgment.TIMED_OUT);
                 }
 
             })
             .build();
 
     public AckReceiver() {
+        boolean hasCore = Core.getInstance() != null;
+
         new Thread(this).start();
 
         new Thread(() -> {
-            while (Core.getInstance().isEnabled()) {
+            while (hasCore && Core.getInstance().isEnabled()) {
                 acknowledgementCache.cleanUp();
 
                 try {
@@ -44,6 +47,13 @@ public class AckReceiver extends JedisPubSub implements Runnable {
             }
         }).start();
 
+    }
+
+    @Override
+    public void run() {
+        try (Jedis jedis = JedisManager.getInstance().getPool().getResource()) {
+            jedis.subscribe(this, ACTION_ACKNOWLEDGE);
+        }
     }
 
     @Override
@@ -60,13 +70,6 @@ public class AckReceiver extends JedisPubSub implements Runnable {
             acknowledgment.accept(value);
         }
 
-    }
-
-    @Override
-    public void run() {
-        try (Jedis jedis = JedisManager.getInstance().getPool().getResource()) {
-            jedis.subscribe(this, ACTION_ACKNOWLEDGE);
-        }
     }
 
     private Consumer<Acknowledgment> remove(String identifier) {

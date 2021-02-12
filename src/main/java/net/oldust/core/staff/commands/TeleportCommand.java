@@ -9,9 +9,9 @@ import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
 import net.oldust.core.utils.lang.LangSound;
-import net.oldust.sync.JedisManager;
 import net.oldust.sync.PlayerManager;
 import net.oldust.sync.ServerManager;
+import net.oldust.sync.jedis.JedisManager;
 import net.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -34,7 +34,7 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
             if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
 
             if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"), LangSound.ERROR);
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATTABLE, "nickname"), LangSound.ERROR);
 
                 return;
             }
@@ -97,7 +97,7 @@ public class TeleportCommand extends InheritedCommand<StaffPlugin> {
         boolean hasArgs = args.length >= 1;
 
         if (!hasArgs) {
-            CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"), LangSound.ERROR);
+            CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATTABLE, "nickname"), LangSound.ERROR);
 
             return;
         }

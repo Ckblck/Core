@@ -87,7 +87,7 @@ public class GamemodeCommand extends InheritedCommand<StaffPlugin> {
                 break;
             default:
                 if (args.length == 0) {
-                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "0/1/2/3", LangSound.ERROR));
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATTABLE, "0/1/2/3", LangSound.ERROR));
 
                     return;
                 }

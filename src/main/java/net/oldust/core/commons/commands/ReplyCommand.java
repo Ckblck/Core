@@ -29,7 +29,7 @@ public class ReplyCommand extends InheritedCommand<CommonsPlugin> {
             if (isNotPlayer(sender)) return;
 
             if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "message", LangSound.ERROR));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATTABLE, "message", LangSound.ERROR));
 
                 return;
             }

@@ -4,7 +4,7 @@ import fr.minuskube.inv.InventoryManager;
 import lombok.Getter;
 import lombok.Setter;
 import net.oldust.core.actions.ActionsReceiver;
-import net.oldust.core.actions.reliable.AckReceiver;
+import net.oldust.core.actions.reliable.ack.AckReceiver;
 import net.oldust.core.actions.types.DispatchMessageAction;
 import net.oldust.core.chat.ChatHandler;
 import net.oldust.core.commons.CommonsPlugin;
@@ -21,9 +21,9 @@ import net.oldust.core.staff.logs.LogsInventory;
 import net.oldust.core.staff.playerdata.PlayerDataInventory;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lambda.SerializablePredicate;
-import net.oldust.sync.JedisManager;
 import net.oldust.sync.PlayerManager;
 import net.oldust.sync.ServerManager;
+import net.oldust.sync.jedis.JedisManager;
 import net.oldust.sync.wrappers.defaults.OldustServer;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -60,9 +60,13 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 
 @Getter
-public class Core extends JavaPlugin {
+public class Core extends JavaPlugin implements OldustPlugin {
     @Getter
     private static Core instance;
+
+    @Getter
+    @Setter
+    private static OldustPlugin multiplatformPlugin;
 
     @Setter
     private String serverName;
@@ -74,6 +78,7 @@ public class Core extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        multiplatformPlugin = this;
 
         CUtils.inform("Core", "Initializing core...");
         long start = System.currentTimeMillis();

@@ -13,9 +13,9 @@ import net.oldust.core.utils.PlayerUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
 import net.oldust.core.utils.lang.LangSound;
-import net.oldust.sync.JedisManager;
 import net.oldust.sync.PlayerManager;
 import net.oldust.sync.ServerManager;
+import net.oldust.sync.jedis.JedisManager;
 import net.oldust.sync.wrappers.PlayerDatabaseKeys;
 import net.oldust.sync.wrappers.Savable;
 import net.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
@@ -38,13 +38,13 @@ public class MsgCommand extends InheritedCommand<CommonsPlugin> {
             if (isNotPlayer(sender)) return;
 
             if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname", LangSound.ERROR, LangSound.ERROR));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATTABLE, "nickname", LangSound.ERROR, LangSound.ERROR));
 
                 return;
             }
 
             if (args.length == 1) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "message", LangSound.ERROR, LangSound.ERROR));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATTABLE, "message", LangSound.ERROR, LangSound.ERROR));
 
                 return;
             }

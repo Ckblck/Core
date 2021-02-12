@@ -1,4 +1,4 @@
-package net.oldust.sync;
+package net.oldust.sync.jedis;
 
 import lombok.Getter;
 import net.oldust.core.Core;

@@ -2,7 +2,6 @@ package net.oldust.core.commons.login;
 
 import net.oldust.core.Core;
 import net.oldust.core.utils.CUtils;
-import net.oldust.core.utils.lang.Lang;
 import net.oldust.sync.PlayerManager;
 import net.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.event.EventHandler;
@@ -18,8 +17,6 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class LoginEvent implements Listener {
-    private static final String KICK_MESSAGE = Lang.ERROR_COLOR + "Could not download your database :(" +
-            "\n" + Lang.ERROR_COLOR + "Try joining again.";
 
     public LoginEvent() {
         CUtils.registerEvents(this);
@@ -60,7 +57,6 @@ public class LoginEvent implements Listener {
 
         playerManager.cacheDatabase(databaseRedis);
         playerManager.update(databaseRedis);
-
     }
 
 }

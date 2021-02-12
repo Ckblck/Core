@@ -32,7 +32,7 @@ public class ItemModelCommand extends InheritedCommand<ModelPlugin> {
             if (isNotAboveOrEqual(sender, PlayerRank.ADMIN)) return;
 
             if (args.length < 1) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "item_name", LangSound.ERROR));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATTABLE, "item_name", LangSound.ERROR));
 
                 return;
             }

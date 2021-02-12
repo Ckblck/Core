@@ -6,7 +6,7 @@ import net.oldust.core.ranks.PlayerRank;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.lambda.SerializablePredicate;
 import net.oldust.core.utils.lang.Lang;
-import net.oldust.sync.JedisManager;
+import net.oldust.sync.jedis.JedisManager;
 import net.oldust.sync.wrappers.PlayerDatabaseKeys;
 import net.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.Location;

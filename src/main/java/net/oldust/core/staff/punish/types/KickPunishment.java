@@ -11,7 +11,7 @@ import net.oldust.core.staff.punish.PunishmentType;
 import net.oldust.core.utils.CUtils;
 import net.oldust.core.utils.PlayerUtils;
 import net.oldust.core.utils.lang.Lang;
-import net.oldust.sync.JedisManager;
+import net.oldust.sync.jedis.JedisManager;
 import net.oldust.sync.wrappers.PlayerDatabaseKeys;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;

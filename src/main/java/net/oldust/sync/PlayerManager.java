@@ -5,6 +5,7 @@ import net.oldust.core.Core;
 import net.oldust.core.internal.provider.EventsProvider;
 import net.oldust.core.utils.Async;
 import net.oldust.core.utils.CUtils;
+import net.oldust.sync.jedis.JedisManager;
 import net.oldust.sync.jedis.RedisRepository;
 import net.oldust.sync.wrappers.defaults.WrappedPlayerDatabase;
 import org.bukkit.entity.Player;
@@ -40,7 +41,7 @@ public class PlayerManager implements SyncedManager<UUID, WrappedPlayerDatabase>
 
                 WrappedPlayerDatabase database = cache.remove(uuid);
 
-                // Upload, just in case of cache-modifications, the database to Redis
+                // Upload, just in case of cache-modifications, the database to Redis, remember that the PlayerQuitEvent also gets called when a player switch servers. Here we are contemplating it.
 
                 update(database);
             }, EventPriority.LOWEST);

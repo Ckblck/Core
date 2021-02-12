@@ -27,7 +27,7 @@ public class FindCommand extends InheritedCommand<StaffPlugin> {
 
             CUtils.runAsync(() -> {
                 if (args.length == 0) {
-                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname", LangSound.ERROR));
+                    CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATTABLE, "nickname", LangSound.ERROR));
 
                     return;
                 }

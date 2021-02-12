@@ -31,13 +31,13 @@ public class BanCommand extends InheritedCommand<StaffPlugin> {
             if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
 
             if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname", LangSound.ERROR));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATTABLE, "nickname", LangSound.ERROR));
 
                 return;
             }
 
             if (args.length == 1) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "duration/reason", LangSound.ERROR));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATTABLE, "duration/reason", LangSound.ERROR));
 
                 return;
             }
@@ -72,7 +72,7 @@ public class BanCommand extends InheritedCommand<StaffPlugin> {
             }
 
             if (StringUtils.isWhitespace(reason)) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "reason", LangSound.ERROR));
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATTABLE, "reason", LangSound.ERROR));
 
                 return;
             }

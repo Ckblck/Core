@@ -12,7 +12,7 @@ import net.oldust.core.utils.PlayerUtils;
 import net.oldust.core.utils.lambda.TriConsumer;
 import net.oldust.core.utils.lang.Lang;
 import net.oldust.core.utils.lang.LangSound;
-import net.oldust.sync.JedisManager;
+import net.oldust.sync.jedis.JedisManager;
 import net.oldust.sync.wrappers.PlayerDatabaseKeys;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
@@ -37,7 +37,7 @@ public class UnmuteCommand extends InheritedCommand<StaffPlugin> {
             if (isNotAboveOrEqual(sender, PlayerRank.MOD)) return;
 
             if (args.length == 0) {
-                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATABLE, "nickname"), LangSound.ERROR);
+                CUtils.msg(sender, String.format(Lang.MISSING_ARGUMENT_FORMATTABLE, "nickname"), LangSound.ERROR);
 
                 return;
             }
