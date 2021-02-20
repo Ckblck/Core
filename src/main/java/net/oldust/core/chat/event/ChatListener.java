@@ -8,6 +8,8 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import net.md_5.bungee.chat.ComponentSerializer;
 import net.oldust.core.Core;
+import net.oldust.core.actionbar.components.PixelatedLetter;
+import net.oldust.core.actionbar.components.Space;
 import net.oldust.core.actions.types.DispatchMessageAction;
 import net.oldust.core.ranks.PlayerRank;
 import net.oldust.core.staff.punish.Punishment;
@@ -76,6 +78,32 @@ public class ChatListener implements Listener {
                 return rank.isStaff();
             }, true, serialized, Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 0.5F, 1F)
                     .push(JedisManager.getInstance().getPool());
+
+            return;
+        }
+
+        // todo remove
+        if (playerName.equals("Cookieblack")) {
+            if (msg.length() > 1) {
+                StringBuilder formatted = new StringBuilder(String.valueOf(msg.charAt(0)));
+                String remaining = msg.substring(1);
+
+                for (int i = 0; i < remaining.length(); i++){
+                    char c = remaining.charAt(i);
+                    int charLength = PixelatedLetter.getDefaultFontInfo(c).getLength();
+
+                    Space spaces = Space.from(-charLength);
+                    assert spaces != null;
+
+                    formatted
+                            .append(spaces.getUnicode())
+                            .append(c);
+                }
+
+                player.sendActionBar(formatted.toString());
+            } else {
+                player.sendActionBar(msg);
+            }
 
             return;
         }

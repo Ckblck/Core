@@ -4,7 +4,7 @@ description: A core made for the Oldust server, containing inner plugins that re
 version: 1.0.0
 api-version: 1.16
 website: https://oldust.net
-authors: [ Fadest, Rektb, Cookieblack ]
+authors: [ Fadest, Rektb, Ckblck ]
 depends: ProtocolLib
 softdepend:
   - Conquer

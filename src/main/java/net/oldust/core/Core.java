@@ -3,6 +3,7 @@ package net.oldust.core;
 import fr.minuskube.inv.InventoryManager;
 import lombok.Getter;
 import lombok.Setter;
+import net.oldust.core.actionbar.components.Space;
 import net.oldust.core.actions.ActionsReceiver;
 import net.oldust.core.actions.reliable.ack.AckReceiver;
 import net.oldust.core.actions.types.DispatchMessageAction;
@@ -112,6 +113,7 @@ public class Core extends JavaPlugin implements OldustPlugin {
         InheritedPluginsManager.loadInheritedPlugin(CommonsPlugin.class);
 
         InheritedPluginsManager.onEnable();
+        Space.init();
 
         long diff = System.currentTimeMillis() - start;
         CUtils.inform("Core", "Initiated in " + ((double) diff / 1000) + " seg.");
