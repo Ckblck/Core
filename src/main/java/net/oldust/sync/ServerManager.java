@@ -103,7 +103,8 @@ public class ServerManager implements SyncedManager<String, OldustServer> {
         List<String> servers = fetchServers();
         Set<OldustServer> svs = serverRepository.fetchElements(servers);
 
-        return svs.stream()
+        return svs
+                .stream()
                 .filter(sv -> sv.getPlayersConnected().keySet()
                         .stream()
                         .anyMatch(pl -> pl.equalsIgnoreCase(player)))
