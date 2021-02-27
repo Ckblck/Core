@@ -248,9 +248,17 @@ public class StaffModeManager implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onHit(EntityDamageByEntityEvent e) {
-        if (hasStaffMode(e.getDamager())) {
+        Entity damager = e.getDamager();
+
+        if (!(damager instanceof Player))
+            return;
+
+        Player playerDamager = (Player) damager;
+
+        if (hasStaffMode(playerDamager) && !ModeItems.STICK_ANTI_KB.isSimilar(playerDamager.getActiveItem())) {
             e.setCancelled(true);
         }
+
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

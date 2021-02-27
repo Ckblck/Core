@@ -246,7 +246,7 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
                 )
         );
 
-        if (type != PunishmentType.KICK) { // Kicks do not show an expiration.
+        if (type != PunishmentType.KICK) { // Kicks do not have expiration.
             lore.add(5,  "#a6a6a6 " + "Expiration: &f" + expires);
         }
 

@@ -28,7 +28,7 @@ public final class ModeItems {
     public static final ItemStack RANDOM_TELEPORT = new ItemBuilder(Material.COMPASS)
             .setDisplayName("#2133eb Random TP")
             .setLore(RANDOM_TELEPORT_LORE).build();
-    private static final List<String> STICK_LORE = Arrays.asList(
+    public static final List<String> STICK_LORE = Arrays.asList(
             "#333436 Others",
             " ",
             "#b0b0b0 A stick whose function is to",
