@@ -144,24 +144,30 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
 
             boolean permanentPunishment = expiration == null;
 
-            boolean isPunished = lastPunishment instanceof Punishment.ExpiredPunishment // Check if it is either a ban or a mute, not a KICK.
-                    && (permanentPunishment || expiration.after(now)) // Check if it is banned forever or has expiration.
-                    && ((Punishment.ExpiredPunishment) lastPunishment).getUnpunishedAt() == null; // Check if it is not unpunished.
+            boolean isPunished = (permanentPunishment || expiration.after(now)) // Check if it is banned forever or has expiration.
+                    && lastPunishment.getType() != PunishmentType.KICK; // Kicks are not shown as current punishment.
 
-            if (isPunished) {
-                String date = FORMAT.format(lastPunishment.getDate());
+            if (isPunished) { // Build the Current Punishment part of the lore.
+                boolean expiredPunishment = lastPunishment instanceof Punishment.ExpiredPunishment;
 
-                String expires = permanentPunishment
-                        ? Lang.ERROR_COLOR + "never"
-                        : FORMAT.format(expiration);
+                if (!expiredPunishment | (expiredPunishment &&
+                        ((Punishment.ExpiredPunishment) lastPunishment).getUnpunishedAt() == null)) { // Check if it is not unpunished.
 
-                currentPunishmentInfo = new String[]{
-                        "   " + Lang.ERROR_COLOR + "* #a6a6a6 Type: &f" + lastPunishment.getType().name(),
-                        "   " + Lang.ERROR_COLOR + "* #a6a6a6 Punisher: &f" + lastPunishment.getPunisherName(),
-                        "   " + Lang.ERROR_COLOR + "* #a6a6a6 Reason: &f" + lastPunishment.getReason(),
-                        "   " + Lang.ERROR_COLOR + "* #a6a6a6 Date: &f" + date,
-                        "   " + Lang.ERROR_COLOR + "* #a6a6a6 Expires: &f" + expires
-                };
+                    String date = FORMAT.format(lastPunishment.getDate());
+
+                    String expires = permanentPunishment
+                            ? Lang.ERROR_COLOR + "never"
+                            : FORMAT.format(expiration);
+
+                    currentPunishmentInfo = new String[]{
+                            "   " + Lang.ERROR_COLOR + "* #a6a6a6 Type: &f" + lastPunishment.getType().name(),
+                            "   " + Lang.ERROR_COLOR + "* #a6a6a6 Punisher: &f" + lastPunishment.getPunisherName(),
+                            "   " + Lang.ERROR_COLOR + "* #a6a6a6 Reason: &f" + lastPunishment.getReason(),
+                            "   " + Lang.ERROR_COLOR + "* #a6a6a6 Date: &f" + date,
+                            "   " + Lang.ERROR_COLOR + "* #a6a6a6 Expires: &f" + expires
+                    };
+                }
+
             }
 
         }
@@ -247,7 +253,7 @@ public class PlayerDataInventory extends AbstractInventoryProvider {
         );
 
         if (type != PunishmentType.KICK) { // Kicks do not have expiration.
-            lore.add(5,  "#a6a6a6 " + "Expiration: &f" + expires);
+            lore.add(5, "#a6a6a6 " + "Expiration: &f" + expires);
         }
 
         if (unpunisher.equals("")) {
