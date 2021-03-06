@@ -13,8 +13,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,6 +54,18 @@ public class EventsProvider implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onQuit(PlayerQuitEvent e) {
         handle(e);
+    }
+
+    @EventHandler
+    public void onDisable(PluginDisableEvent e) {
+        Class<? extends Plugin> aClass = e.getPlugin().getClass();
+
+        Collection<List<Operation>> operationsList = operations.values();
+
+        for (List<Operation> operationList : operationsList) {
+            operationList.removeIf(operation -> operation.getPluginClass().equals(aClass));
+        }
+
     }
 
     private void handle(PlayerEvent e, Player player) {
@@ -88,19 +104,22 @@ public class EventsProvider implements Listener {
      * <p>
      * NOTE: Higher priorities WILL BE EXECUTED FIRST.
      *
-     * @param event     event to listen
-     * @param operation operation to execute when event gets fired
-     * @param priority  priority of this operation
-     * @param <F>       type of event, same class as {@param event}
+     * @param pluginClass class of the plugin firing this operation
+     * @param eventClass  event to listen
+     * @param operation   operation to execute when event gets fired
+     * @param priority    priority of this operation
+     * @param <F>         type of event, same class as {@param event}
      */
 
     public <F extends PlayerEvent> void newOperation(
-            Class<? extends PlayerEvent> event,
+            Class<? extends JavaPlugin> pluginClass,
+            Class<? extends PlayerEvent> eventClass,
             BiConsumer<F, ImmutableWrappedPlayerDatabase> operation,
-            EventPriority priority) {
+            EventPriority priority
+    ) {
 
-        Operation<F> operationInstance = new Operation<>(operation, priority);
-        List<Operation> operationList = this.operations.get(event);
+        Operation<F> operationInstance = new Operation<>(operation, priority, pluginClass);
+        List<Operation> operationList = this.operations.get(eventClass);
 
         operationList.add(operationInstance);
 
@@ -119,15 +138,18 @@ public class EventsProvider implements Listener {
      * <p>
      * NOTE: Higher priorities WILL BE EXECUTED FIRST.
      *
-     * @param event     event to listen
-     * @param operation operation to execute when event gets fired
-     * @param <F>       type of event, same class as {@param event}
+     * @param pluginClass class of the plugin firing this operation
+     * @param eventClass  class of the event to listen
+     * @param operation   operation to execute when event gets fired
+     * @param <F>         type of event, same class as {@param event}
      */
 
     public <F extends PlayerEvent> void newOperation(
-            Class<? extends PlayerEvent> event,
-            BiConsumer<F, ImmutableWrappedPlayerDatabase> operation) {
-        newOperation(event, operation, EventPriority.NORMAL);
+            Class<? extends JavaPlugin> pluginClass,
+            Class<? extends PlayerEvent> eventClass,
+            BiConsumer<F, ImmutableWrappedPlayerDatabase> operation
+    ) {
+        newOperation(pluginClass, eventClass, operation, EventPriority.NORMAL);
     }
 
 }

@@ -17,7 +17,7 @@ public class ActionbarManager extends BukkitRunnable {
         Core core = Core.getInstance();
         EventsProvider provider = core.getEventsProvider();
 
-        provider.newOperation(PlayerQuitEvent.class, (ev, db)
+        provider.newOperation(Core.class, PlayerQuitEvent.class, (ev, db)
                 -> actionbars.remove(ev.getPlayer().getUniqueId()));
 
         runTaskTimerAsynchronously(core, 0, 1);

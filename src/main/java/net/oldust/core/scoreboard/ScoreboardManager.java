@@ -21,7 +21,7 @@ public class ScoreboardManager {
 
         EventsProvider provider = Core.getInstance().getEventsProvider();
 
-        provider.newOperation(PlayerQuitEvent.class, (ev, db)
+        provider.newOperation(Core.class, PlayerQuitEvent.class, (ev, db)
                 -> scoreboards.remove(ev.getPlayer().getUniqueId()));
     }
 

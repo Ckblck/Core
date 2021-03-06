@@ -39,7 +39,7 @@ public class TabListManager extends BukkitRunnable {
     private void event() {
         EventsProvider provider = Core.getInstance().getEventsProvider();
 
-        provider.newOperation(PlayerJoinEvent.class, (ev, db) -> {
+        provider.newOperation(Core.class, PlayerJoinEvent.class, (ev, db) -> {
             Player player = ev.getPlayer();
             PlayerRank rank = db.getValue(PlayerDatabaseKeys.RANK).asClass(PlayerRank.class);
 

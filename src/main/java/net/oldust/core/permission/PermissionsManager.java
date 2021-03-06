@@ -88,7 +88,7 @@ public class PermissionsManager extends Plugin {
     public void onJoin() {
         EventsProvider eventsProvider = Core.getInstance().getEventsProvider();
 
-        eventsProvider.newOperation(PlayerJoinEvent.class, (join, db) -> {
+        eventsProvider.newOperation(Core.class, PlayerJoinEvent.class, (join, db) -> {
             Player player = join.getPlayer();
 
             setupPlayer(player);

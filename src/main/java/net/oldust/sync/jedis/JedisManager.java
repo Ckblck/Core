@@ -45,7 +45,7 @@ public class JedisManager {
             GenericObjectPoolConfig<?> jedisPoolConfig = new GenericObjectPoolConfig<>();
 
             jedisPoolConfig.setMaxTotal(30);
-            jedisPoolConfig.setMaxIdle(30);
+            jedisPoolConfig.setMaxIdle(0);
             jedisPoolConfig.setMinIdle(12);
             jedisPoolConfig.setBlockWhenExhausted(true);
             jedisPoolConfig.setMaxWaitMillis(5000);

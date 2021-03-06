@@ -44,7 +44,7 @@ public class ServerManager implements SyncedManager<String, OldustServer> {
 
         EventsProvider provider = Core.getInstance().getEventsProvider();
 
-        provider.newOperation(PlayerJoinEvent.class, (pl, db) -> {
+        provider.newOperation(Core.class, PlayerJoinEvent.class, (pl, db) -> {
             Map<String, UUID> playersConnected = currentServer.getPlayersConnected();
             Player player = pl.getPlayer();
 
@@ -53,7 +53,7 @@ public class ServerManager implements SyncedManager<String, OldustServer> {
             CUtils.runAsync(this::updateCurrent);
         });
 
-        provider.newOperation(PlayerQuitEvent.class, (pl, db) -> {
+        provider.newOperation(Core.class, PlayerQuitEvent.class, (pl, db) -> {
             Map<String, UUID> playersConnected = currentServer.getPlayersConnected();
             Player player = pl.getPlayer();
 

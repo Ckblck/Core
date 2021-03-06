@@ -39,7 +39,7 @@ public class ItemModelModifyCommand extends InheritedCommand<ModelPlugin> implem
 
         EventsProvider provider = Core.getInstance().getEventsProvider();
 
-        provider.newOperation(PlayerQuitEvent.class, (event, db) -> {
+        provider.newOperation(Core.class, PlayerQuitEvent.class, (event, db) -> {
             UUID uuid = event.getPlayer().getUniqueId();
 
             playersModifying.remove(uuid);

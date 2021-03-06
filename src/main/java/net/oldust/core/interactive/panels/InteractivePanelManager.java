@@ -30,7 +30,7 @@ public class InteractivePanelManager implements Listener {
 
         EventsProvider provider = Core.getInstance().getEventsProvider();
 
-        provider.newOperation(PlayerQuitEvent.class, (quit, db) -> {
+        provider.newOperation(Core.class, PlayerQuitEvent.class, (quit, db) -> {
             Player player = quit.getPlayer();
 
             if (hasNotPanel(player))

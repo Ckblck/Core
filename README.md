@@ -14,7 +14,7 @@ The utility provides two variables at the moment of execution, `? extends Player
 Usage examples:
 
 ```java
-provider.newOperation(PlayerQuitEvent.class, (ev, db) -> {
+provider.newOperation(Core.class, PlayerQuitEvent.class, (ev, db) -> {
     UUID uuid = ev.getPlayer().getUniqueId();
 
     cache.remove(uuid);
@@ -22,7 +22,7 @@ provider.newOperation(PlayerQuitEvent.class, (ev, db) -> {
 ```
 
 ```java
-provider.newOperation(PlayerJoinEvent.class, (ev, db) -> {
+provider.newOperation(ore.class, PlayerJoinEvent.class, (ev, db) -> {
     Player player = ev.getPlayer();
 
     ConquerPlayer conquerPlayer = createInstance(player.getUniqueId());

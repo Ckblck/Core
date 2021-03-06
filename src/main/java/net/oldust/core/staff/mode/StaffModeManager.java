@@ -160,7 +160,7 @@ public class StaffModeManager implements Listener {
     public void joinEvent() {
         EventsProvider provider = Core.getInstance().getEventsProvider();
 
-        provider.newOperation(PlayerJoinEvent.class, (join, db) -> {
+        provider.newOperation(Core.class, PlayerJoinEvent.class, (join, db) -> {
             Player player = join.getPlayer();
 
             boolean vanished = db.contains(PlayerDatabaseKeys.VANISH);
@@ -181,7 +181,7 @@ public class StaffModeManager implements Listener {
 
         });
 
-        provider.newOperation(PlayerQuitEvent.class, (quit, db) -> {
+        provider.newOperation(Core.class, PlayerQuitEvent.class, (quit, db) -> {
             deleteStaffModeLocally(quit.getPlayer()); // Borramos localmente, no de Redis.
         });
 
