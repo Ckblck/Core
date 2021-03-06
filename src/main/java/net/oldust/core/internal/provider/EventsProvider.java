@@ -14,6 +14,8 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.event.server.PluginEnableEvent;
+import org.bukkit.event.server.PluginEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -57,15 +59,26 @@ public class EventsProvider implements Listener {
     }
 
     @EventHandler
+    public void onEnable(PluginEnableEvent e) {
+        changeOperationStatus(e, true);
+    }
+
+    @EventHandler
     public void onDisable(PluginDisableEvent e) {
-        Class<? extends Plugin> aClass = e.getPlugin().getClass();
+        changeOperationStatus(e, false);
+    }
+
+    private void changeOperationStatus(PluginEvent event, boolean active) {
+        Class<? extends Plugin> aClass = event.getPlugin().getClass();
 
         Collection<List<Operation>> operationsList = operations.values();
 
         for (List<Operation> operationList : operationsList) {
-            operationList.removeIf(operation -> operation.getPluginClass().equals(aClass));
+            operationList
+                    .stream()
+                    .filter(operation -> operation.getPluginClass().equals(aClass))
+                    .forEach(operation -> operation.setActive(active));
         }
-
     }
 
     private void handle(PlayerEvent e, Player player) {
