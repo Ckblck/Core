@@ -98,6 +98,8 @@ public class EventsProvider implements Listener {
         ImmutableWrappedPlayerDatabase immutableDb = new ImmutableWrappedPlayerDatabase(database);
 
         for (Operation<PlayerEvent> operation : operations.get(clazz)) {
+            if (!operation.isActive()) continue;
+
             try {
                 operation.accept(e, immutableDb);
             } catch (Exception ex) {
